@@ -1,0 +1,60 @@
+/* 1) Более предсказуемая модель размеров */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 2) Убираем стандартные отступы */
+* {
+    margin: 0;
+}
+
+/* 3) Улучшаем типографику по умолчанию */
+html:focus-within {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 4) Медиа-элементы проще вёрстать */
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* 5) Формы наследуют шрифт */
+input, button, textarea, select {
+    font: inherit;
+}
+
+/* 6) Переносы длинного текста не ломают вёрстку */
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+/* 7) Убираем маркеры у списков, когда список используется как "layout" */
+ul[role="list"], ol[role="list"] {
+    list-style: none;
+}
+
+/* 8) Чуть более безопасные настройки для якорей */
+:target {
+    scroll-margin-block: 5ex;
+}
+
+/* 9) Уважение к настройке "меньше анимаций" */
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

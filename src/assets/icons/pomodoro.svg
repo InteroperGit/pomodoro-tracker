@@ -1,0 +1,17 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Тело помидора -->
+  <circle cx="32" cy="36" r="20" fill="#EF4444" stroke="#B91C1C" stroke-width="2" />
+  <!-- Хвостик/листочки -->
+  <path
+    d="M32 12 
+       C30 6, 34 6, 32 12 
+       M32 12 
+       C26 10, 26 14, 32 16 
+       C38 14, 38 10, 32 12"
+    fill="#15803D"
+    stroke="#166534"
+    stroke-width="2"
+  />
+  <!-- Блик -->
+  <circle cx="24" cy="28" r="4" fill="#FCA5A5" opacity="0.7" />
+</svg>
