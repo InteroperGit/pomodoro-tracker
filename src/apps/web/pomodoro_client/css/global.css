@@ -296,8 +296,8 @@ ul.plan_tasks__list_lst {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    opacity: 0.6;
+    font-size: 1rem;
+    opacity: 0.75;
 }
 
 /* линия посередине по вертикали */
