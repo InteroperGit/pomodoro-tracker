@@ -1,7 +1,7 @@
-import {PlanTasksTitle} from "./PlanTasksTitle.js";
-import {PlanTasksAdd} from "./PlanTasksAdd.js";
-import {PlanTasksList} from "./PlanTasksList.js";
-import {PlanTasksStatistics} from "./PlanTasksStatistics.js";
+import {PlanTasksTitle} from "./PlanTasksTitle";
+import {PlanTasksAdd} from "./PlanTasksAdd";
+import {PlanTasksList} from "./PlanTasksList";
+import {PlanTasksStatistics} from "./PlanTasksStatistics";
 
 /**
  * Компонент `PlanTasks` — основная секция активных (планируемых) задач Pomodoro‑приложения.

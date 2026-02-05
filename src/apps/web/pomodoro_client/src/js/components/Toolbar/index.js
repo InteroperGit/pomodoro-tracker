@@ -1,5 +1,5 @@
-import { Logo } from "./Logo.js";
-import {Navigation} from "./Navigation.js";
+import { Logo } from "./Logo";
+import {Navigation} from "./Navigation";
 
 /**
  * Компонент `Toolbar` — верхняя панель (шапка) Pomodoro‑приложения.

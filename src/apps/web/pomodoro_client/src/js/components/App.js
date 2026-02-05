@@ -1,8 +1,8 @@
-import { Toolbar } from './Toolbar/index.js';
-import { Timer } from './Timer/index.js';
-import { PlanTasks } from "./PlanTasks/index.js";
-import {ArchiveTasks} from "./ArchiveTasks/index.js";
-import {Footer} from "./Footer/index.js";
+import { Toolbar } from './Toolbar';
+import { Timer } from './Timer';
+import { PlanTasks } from "./PlanTasks";
+import {ArchiveTasks} from "./ArchiveTasks";
+import {Footer} from "./Footer";
 
 /**
  * Компонент `App` — корневой компонент приложения Pomodoro‑планировщика.

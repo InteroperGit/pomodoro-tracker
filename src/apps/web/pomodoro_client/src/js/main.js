@@ -1,6 +1,6 @@
-import { render } from "./utils/render.js";
-import { findById } from "./utils/dom.js";
-import { App } from "./components/App.js";
+import { render } from "./utils/render";
+import { findById } from "./utils/dom";
+import { App } from "./components/App";
 
 window.addEventListener('load', () => {
     const root = findById("root");

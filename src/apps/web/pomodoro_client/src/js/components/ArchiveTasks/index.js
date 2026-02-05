@@ -1,6 +1,6 @@
-import {ArchiveTasksTitle} from "./ArchiveTasksTitle.js";
-import {ArchiveTasksList} from "./ArchiveTasksList.js";
-import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.js";
+import {ArchiveTasksTitle} from "./ArchiveTasksTitle";
+import {ArchiveTasksList} from "./ArchiveTasksList";
+import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics";
 
 /**
  * Компонент `ArchiveTasks` — секция приложения Pomodoro‑таймера,
