@@ -183,11 +183,7 @@
 
 .plan_tasks__list {
     margin-top: 0.5rem;
-}
-
-ul.plan_tasks__list_lst {
     list-style: none;
-    margin: 0;
     padding: 0;
 }
 
@@ -340,6 +336,8 @@ ul.plan_tasks__list_lst {
 
 .archive_tasks__list {
     margin-top: 0.5rem;
+    list-style: none;
+    padding: 0;
 }
 
 .archive_task {
