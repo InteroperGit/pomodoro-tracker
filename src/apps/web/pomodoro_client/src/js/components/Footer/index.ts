@@ -20,7 +20,7 @@
  * @returns {string} HTML‑разметка подвала (`<footer>` элемент).
  *
  * @example
- * import { Footer } from './Footer/index.js';
+ * import { Footer } from './Footer/index.ts';
  *
  * // Встраивание подвала на страницу
  * document.querySelector('.app').insertAdjacentHTML('beforeend', Footer());

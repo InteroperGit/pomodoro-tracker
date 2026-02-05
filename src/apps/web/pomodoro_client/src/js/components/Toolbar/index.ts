@@ -34,7 +34,7 @@ import {Navigation} from "./Navigation";
  * @returns {string} HTML‑разметка шапки приложения.
  *
  * @example
- * import { Toolbar } from './Toolbar/index.js';
+ * import { Toolbar } from './Toolbar/index.ts';
  *
  * const toolbarHTML = Toolbar();
  * document.querySelector('.app').insertAdjacentHTML('afterbegin', toolbarHTML);

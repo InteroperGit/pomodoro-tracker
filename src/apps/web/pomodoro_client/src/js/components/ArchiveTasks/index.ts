@@ -1,6 +1,6 @@
-import {ArchiveTasksTitle} from "./ArchiveTasksTitle";
-import {ArchiveTasksList} from "./ArchiveTasksList";
-import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics";
+import {ArchiveTasksTitle} from "./ArchiveTasksTitle.ts";
+import {ArchiveTasksList} from "./ArchiveTasksList.ts";
+import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
 
 /**
  * Компонент `ArchiveTasks` — секция приложения Pomodoro‑таймера,
@@ -34,7 +34,7 @@ import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics";
  * @returns {string} HTML‑разметка блока архива завершённых задач.
  *
  * @example
- * import { ArchiveTasks } from './ArchiveTasks/index.js';
+ * import { ArchiveTasks } from './ArchiveTasks/index.ts';
  *
  * const archiveHTML = ArchiveTasks({
  *   tasksCount: 5,

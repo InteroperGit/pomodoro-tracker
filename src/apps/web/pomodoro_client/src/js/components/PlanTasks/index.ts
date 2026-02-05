@@ -57,7 +57,7 @@ import {PlanTasksStatistics} from "./PlanTasksStatistics";
  * @returns {string} HTML‑разметка блока планируемых задач.
  *
  * @example
- * import { PlanTasks } from './PlanTasks/index.js';
+ * import { PlanTasks } from './PlanTasks/index.ts';
  *
  * const planHTML = PlanTasks({
  *   tasksCount: 5,

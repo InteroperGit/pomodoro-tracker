@@ -33,7 +33,7 @@
  * @returns {string} HTML‑разметка Pomodoro‑таймера.
  *
  * @example
- * import { Timer } from './Timer/index.js';
+ * import { Timer } from './Timer/index.ts';
  *
  * const timerHTML = Timer();
  * document.querySelector('.main').innerHTML += timerHTML;

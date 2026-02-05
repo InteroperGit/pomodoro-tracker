@@ -1,4 +1,4 @@
-import {PlanTask} from "./PlanTask";
+import {PlanTask} from "./PlanTask.ts";
 
 /**
  * Компонент `PlanTasksList` — список активных (планируемых) задач Pomodoro‑приложения.

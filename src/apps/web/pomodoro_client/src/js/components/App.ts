@@ -4,6 +4,8 @@ import { PlanTasks } from "./PlanTasks";
 import {ArchiveTasks} from "./ArchiveTasks";
 import {Footer} from "./Footer";
 
+
+
 /**
  * Компонент `App` — корневой компонент приложения Pomodoro‑планировщика.
  * Отвечает за сборку и отображение основных частей интерфейса:
@@ -47,7 +49,7 @@ import {Footer} from "./Footer";
  * const appHTMLWithProps = App({ userName: "Alex" });
  * document.body.innerHTML = appHTMLWithProps;
  */
-export function App(props = {}) {
+export function App() {
     const planTasksProps = {
         tasksCount: 5,
         tasksTime: "2ч 5мин",

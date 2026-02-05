@@ -1,4 +1,4 @@
-import {ArchiveTask} from "./ArchiveTask.js";
+import {ArchiveTask} from "./ArchiveTask.ts";
 
 /**
  * Компонент `ArchiveTasksList` — список завершённых задач Pomodoro‑приложения.
