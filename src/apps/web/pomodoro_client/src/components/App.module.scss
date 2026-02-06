@@ -1,0 +1,11 @@
+.main {
+  flex: 1;
+}
+
+.app {
+  font-family: "SF Pro Light", "Helvetica Neue", "Open Sans", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--background_color);
+}

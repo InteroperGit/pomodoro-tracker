@@ -1,3 +1,4 @@
+import styles from "./ArchiveTasks.module.scss";
 import {ArchiveTasksTitle} from "./ArchiveTasksTitle.ts";
 import {ArchiveTasksList} from "./ArchiveTasksList.ts";
 import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
@@ -19,14 +20,14 @@ export function ArchiveTasks(props: ArchiveTasksProps) {
     const stat = ArchiveTasksStatistics({ statistics });
 
     return `
-        <div class="archive_tasks">
+        <div class="${styles.archive_tasks}">
             ${title}
             
-            <div class="archive_tasks__header">
-                <span class="archive_tasks__header_category">
+            <div class="${styles.archive_tasks__header}">
+                <span class="${styles.archive_tasks__header_category}">
                     КАТЕГОРИЯ
                 </span>
-                    <span class="archive_tasks__header_description">
+                    <span class="${styles.archive_tasks__header_description}">
                     ОПИСАНИЕ
                 </span>
             </div>

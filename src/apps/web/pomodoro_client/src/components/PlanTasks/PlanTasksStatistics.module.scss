@@ -1,0 +1,53 @@
+.plan_tasks__statistics {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan_tasks__statistics_title {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+/* линия посередине по вертикали */
+.plan_tasks__statistics_title::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #000;      /* или var(--timer_font_color) и т.п. */
+  opacity: 0.1;                /* “полупрозрачная” линия */
+}
+
+/* чтобы элементы внутри были выше линии */
+.plan_tasks__statistics_title > *{
+  position: relative;
+  z-index: 1;
+  background: var(--background_color);  /* фон, чтобы линия не проходила через буквы */
+  padding-inline: 0.5rem;       /* небольшой “разрыв” линии вокруг текста */
+}
+
+.plan_tasks__statistics_title_time {
+  text-decoration: underline;
+}
+
+.plan_tasks__statistics_categories {
+  display: flex;
+  opacity: 0.7;
+}
+
+.plan_tasks__statistics_categories_list {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.plan_tasks__statistics_categories_item {
+  border: 1px solid var(--main-color);
+  padding: 0 0.25rem;
+}

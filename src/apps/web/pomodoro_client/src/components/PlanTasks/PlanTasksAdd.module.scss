@@ -1,0 +1,14 @@
+.plan_tasks__add {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.plan_tasks__add_category {
+  flex: 0;
+  width: 120px;
+}
+
+.plan_tasks__add_description {
+  flex: 1;
+}

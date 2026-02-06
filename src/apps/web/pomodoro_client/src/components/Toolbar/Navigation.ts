@@ -1,3 +1,5 @@
+import styles from "./Navigation.module.scss";
+
 /**
  * Компонент `Navigation` — блок навигации в шапке Pomodoro‑приложения.
  * Отвечает за отображение пользовательского навигационного меню или ссылок разделов.
@@ -33,7 +35,7 @@
  */
 export function Navigation() {
     return `
-        <div class="header__navigation">
+        <div class="${styles.navigation}">
             <div>
                 Профиль
             </div>

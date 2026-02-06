@@ -1,3 +1,6 @@
+import styles from "./Timer.module.scss";
+import globalStyles from "../global.module.scss";
+
 /**
  * Компонент `Timer` — основной Pomodoro‑таймер приложения.
  * Отображает текущее оставшееся время, описание активной задачи и кнопки управления таймером.
@@ -43,20 +46,20 @@
  */
 export function Timer() {
     return `
-        <div class="timer_area">
-            <div class="timer_area__timer">
+        <div class="${styles.timer}">
+            <div class="${styles.timer__countdown}">
                 25:00
             </div>
 
-            <div class="timer_area__description">
+            <div class="${styles.timer__description}">
                 Тестовая задача
             </div>
 
-            <div class="timer_area__buttons">
-                <button class="button timer_button">
+            <div class="${styles.timer__buttons}">
+                <button class="${globalStyles.button} ${styles.timer_button}">
                     СТАРТ
                 </button>
-                <button class="button timer_button">
+                <button class="${globalStyles.button} ${styles.timer_button}">
                     ВЫПОЛНЕНО
                 </button>
             </div>

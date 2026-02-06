@@ -1,9 +1,10 @@
-import {PlanTaskControl} from "./PlanTaskControl.ts";
+import {PlanTask} from "./PlanTask.ts";
 import type {PlanPomodoroTask} from "../../types/task.ts";
+import styles from "./PlanTaskList.module.scss";
 
-export function PlanTaskControlsList({ planTasks }: { planTasks: PlanPomodoroTask[] }) {
+export function PlanTaskList({ planTasks }: { planTasks: PlanPomodoroTask[] }) {
     const taskItems = planTasks.map((planTask) => {
-        const taskItem = PlanTaskControl({ planTask });
+        const taskItem = PlanTask({ planTask });
 
         return `
             <li>
@@ -13,7 +14,7 @@ export function PlanTaskControlsList({ planTasks }: { planTasks: PlanPomodoroTas
     }).join("");
 
     return `
-        <ul class="plan_tasks__list">
+        <ul class="${styles.plan_tasks__list}">
             ${taskItems}
         </ul>
     `;

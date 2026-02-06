@@ -1,0 +1,43 @@
+/* линия посередине по вертикали */
+.archive_tasks__title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  opacity: 0.75;
+}
+
+.archive_tasks__title::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #000;      /* или var(--timer_font_color) и т.п. */
+  opacity: 0.1;                /* “полупрозрачная” линия */
+}
+
+/* чтобы элементы внутри были выше линии */
+.archive_tasks__title > *{
+  position: relative;
+  z-index: 1;
+  background: var(--background_color);  /* фон, чтобы линия не проходила через буквы */
+  padding-inline: 0.5rem;       /* небольшой “разрыв” линии вокруг текста */
+}
+
+.archive_tasks__title_desc {
+
+}
+
+.archive_tasks__title_tasks_count {
+
+}
+
+.archive_tasks__title_tasks_divider {
+  font-size: 0.85rem;
+}
+
+.archive_tasks__title_tasks_time {
+  font-size: 0.825rem;
+}

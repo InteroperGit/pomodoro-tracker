@@ -1,0 +1,14 @@
+.archive_task {
+  display: flex;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+  opacity: 0.75;
+}
+
+.archive_task__category {
+  flex: 0 0 120px;
+}
+
+.archive_task__description {
+  flex: 1;
+}

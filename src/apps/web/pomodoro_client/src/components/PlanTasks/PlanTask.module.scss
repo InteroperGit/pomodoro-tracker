@@ -1,0 +1,32 @@
+.plan_task {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+}
+
+.plan_task__category {
+  width: 120px;
+  opacity: 0.7;
+}
+
+.plan_task__description {
+  flex: 1;
+  opacity: 0.7;
+}
+
+.plan_task__count {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;                /* круг */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  display: inline-flex;             /* центрирование цифры */
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.875rem;
+  line-height: 1;
+  flex: 0 0 2rem;                   /* если это внутри flex-строки, чтобы не сжималось */
+}

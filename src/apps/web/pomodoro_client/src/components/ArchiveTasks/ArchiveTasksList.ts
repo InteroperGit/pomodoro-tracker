@@ -1,5 +1,6 @@
 import {ArchiveTask} from "./ArchiveTask.ts";
 import type {PomodoroTask} from "../../types/task.ts";
+import styles from "./ArchiveTasksList.module.scss";
 
 export type ArchiveTasksListProps = {
     tasks: PomodoroTask[];
@@ -15,7 +16,7 @@ export function ArchiveTasksList({ tasks }: ArchiveTasksListProps) {
     ).join("");
 
     return `
-        <ul class="plan_tasks__list">
+        <ul class="${styles.archive_tasks__list}">
             ${taskItems}
         </ul>
     `;

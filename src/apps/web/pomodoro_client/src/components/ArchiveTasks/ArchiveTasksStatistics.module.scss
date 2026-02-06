@@ -1,0 +1,23 @@
+.archive_tasks__statistics {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive_tasks__statistics_categories {
+  display: flex;
+  opacity: 0.7;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+}
+
+.archive_tasks__statistics_categories_list {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.archive_tasks__statistics_categories_item {
+  border: 1px solid var(--main-color);
+  padding: 0 0.25rem;
+
+}

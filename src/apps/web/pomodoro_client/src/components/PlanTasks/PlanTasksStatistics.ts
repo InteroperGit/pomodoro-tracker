@@ -1,3 +1,4 @@
+import styles from "./PlanTasksStatistics.module.scss";
 import type {PlanPomodoroTasksStatistics} from "../../types/statistics.ts";
 
 export type PlanTasksStatisticsProps = {
@@ -9,27 +10,27 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
 
     const categoriesItems = categories.map(({category, count}) =>
         `
-            <li class="plan_tasks__statistics_categories_item">
+            <li class="${styles.plan_tasks__statistics_categories_item}">
                 ${category.name}-${count}
             </li>
         `
     ).join("");
 
     return `
-        <div class="plan_tasks__statistics">
-            <div class="plan_tasks__statistics_title">
+        <div class="${styles.plan_tasks__statistics}">
+            <div class="${styles.plan_tasks__statistics_title}">
                 <div>Следующий длинный перерыв</div>
-                <div class="plan_tasks__statistics_title_time">${nextLongBreak}</div>
+                <div class="${styles.plan_tasks__statistics_title_time}">${nextLongBreak}</div>
                 <div>Время окончания</div>
-                <div class="plan_tasks__statistics_title_time">${finishTime}</div>
+                <div class="${styles.plan_tasks__statistics_title_time}">${finishTime}</div>
             </div>
             
-            <div class="plan_tasks__statistics_categories">
+            <div class="${styles.plan_tasks__statistics_categories}">
                 <span>
                     Категории
                 </span>
                 
-                <ul class="plan_tasks__statistics_categories_list">
+                <ul class="${styles.plan_tasks__statistics_categories_list}">
                     ${categoriesItems}
                 </ul>
             </div>

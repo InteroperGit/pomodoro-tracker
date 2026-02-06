@@ -1,0 +1,16 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.logo__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.logo__label {
+  display: inline-block;
+  font-weight: normal;
+  font-size: 1.25rem;
+}

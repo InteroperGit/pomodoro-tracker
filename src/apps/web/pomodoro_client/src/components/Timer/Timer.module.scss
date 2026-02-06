@@ -1,0 +1,49 @@
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  background: var(--main-color);
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+  gap: 0.5rem;
+  font-weight: lighter;
+}
+
+.timer__navigation {
+  display: flex;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.timer__countdown {
+  color: var(--timer_font_color);
+  font-size: 5rem;
+  line-height: 0.75;
+}
+
+.timer__description {
+  color: var(--timer_font_color);
+  opacity: 0.8;
+  font-size: 1rem;
+  margin-inline: auto;
+}
+
+.timer__buttons {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin-inline: auto;
+}
+
+.timer_button {
+  width: 200px;
+  background-color: transparent;
+  font-size: 1rem;
+  color: var(--timer_font_color);
+  opacity: 0.8;
+  border: 1px solid var(--timer_font_color);
+  padding: 0.25rem;
+}

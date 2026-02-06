@@ -1,3 +1,4 @@
+import styles from "./Toolbar.module.scss";
 import { Logo } from "./Logo";
 import {Navigation} from "./Navigation";
 
@@ -44,9 +45,8 @@ export function Toolbar() {
     const navigation = Navigation();
 
     return `
-        <header class="header">
+        <header class="${styles.header}">
             ${logo}
-            
             ${navigation}
         </header>
     `;

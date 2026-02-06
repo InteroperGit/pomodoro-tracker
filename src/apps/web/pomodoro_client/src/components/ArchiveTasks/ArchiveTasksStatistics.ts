@@ -1,4 +1,5 @@
 import type {ArchivePomodoroTasksStatistics} from "../../types/statistics.ts";
+import styles from "./ArchiveTasksStatistics.module.scss";
 
 export type ArchiveTasksStatisticsProps = {
     statistics: ArchivePomodoroTasksStatistics
@@ -7,18 +8,18 @@ export type ArchiveTasksStatisticsProps = {
 export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsProps) {
     const stat = statistics.categories.map(({ category, count }) =>
     `
-        <li class="archive_tasks__statistics_categories_item">
+        <li class="${styles.archive_tasks__statistics_categories_item}">
             ${category.name}-${count}
         </li>
-    `)
+    `).join("");
 
     return `
-        <div class="archive_tasks__statistics">
-            <div class="archive_tasks__statistics_categories">
-            <span>
-                Категории
-            </span>
-                <ul class="archive_tasks__statistics_categories_list">
+        <div class="${styles.archive_tasks__statistics}">
+            <div class="${styles.archive_tasks__statistics_categories}">
+                <span>
+                    Категории
+                </span>
+                <ul class="${styles.archive_tasks__statistics_categories_list}">
                     ${stat}
                 </ul>
             </div>

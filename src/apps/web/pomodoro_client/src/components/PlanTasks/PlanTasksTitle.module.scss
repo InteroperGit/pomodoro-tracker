@@ -1,0 +1,42 @@
+.plan_tasks__title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* линия посередине по вертикали */
+.plan_tasks__title::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #000;      /* или var(--timer_font_color) и т.п. */
+  opacity: 0.1;                /* “полупрозрачная” линия */
+}
+
+/* чтобы элементы внутри были выше линии */
+.plan_tasks__title > *{
+  position: relative;
+  z-index: 1;
+  background: var(--background_color);  /* фон, чтобы линия не проходила через буквы */
+  padding-inline: 0.5rem;       /* небольшой “разрыв” линии вокруг текста */
+}
+
+.plan_tasks__title_desc {
+
+}
+
+.plan_tasks__title_tasks_count {
+
+}
+
+.plan_tasks__title_tasks_divider {
+  font-size: 0.85rem;
+}
+
+.plan_tasks__title_tasks_time {
+  font-size: 0.85rem;
+}

@@ -1,3 +1,5 @@
+import styles from "./Logo.module.scss";
+
 /**
  * Компонент `Logo` — визуальный элемент логотипа Pomodoro‑приложения.
  * Отображает иконку и текстовую метку с названием приложения.
@@ -34,9 +36,9 @@
  */
 export function Logo() {
     return `
-        <div class="logo">
-            <img class="logo__icon" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
-            <span class="logo__label">Pomodoro</span>
+        <div class="${styles.logo}">
+            <img class="${styles.logo__icon}" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
+            <span class="${styles.logo__label}">Pomodoro</span>
         </div>
     `;
 }

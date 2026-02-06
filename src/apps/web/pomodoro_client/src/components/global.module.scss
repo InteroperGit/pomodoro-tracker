@@ -1,0 +1,28 @@
+.container {
+  max-width: 950px;
+  margin-inline: auto;
+}
+
+/* чуть больше воздуха на крупных экранах */
+@media (min-width: 768px){
+  .container{
+    padding-inline: 1.5rem;
+  }
+}
+
+.button {
+  cursor: pointer; /* рука */
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  width: 2rem;
+  height: 2rem;
+}
+
+.button:hover {
+  background-color: rgba(0, 0, 0, 0.12); /* лёгкое затемнение */
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+}

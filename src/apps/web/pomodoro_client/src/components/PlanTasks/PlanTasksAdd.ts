@@ -1,3 +1,7 @@
+import globalStyles from "../global.module.scss";
+import commonStyles from "./PlanTasksCommon.module.scss";
+import styles from "./PlanTasksAdd.module.scss";
+
 /**
  * Компонент `PlanTasksAdd` — панель добавления новых задач в разделе планируемых задач Pomodoro‑приложения.
  * Отображает поля для ввода категории и описания задачи, а также кнопку для её добавления.
@@ -39,10 +43,10 @@
  */
 export function  PlanTasksAdd() {
     return `
-         <div class="plan_tasks__add">
-            <input class="plan_tasks__add_category" placeholder="Категория" aria-label="категория">
-            <input class="plan_tasks__add_description" placeholder="Описание" aria-label="описание">
-            <button class="button plan_tasks__button">+</button>
+         <div class="${styles.plan_tasks__add}">
+            <input class="${styles.plan_tasks__add_category}" placeholder="Категория" aria-label="категория">
+            <input class="${styles.plan_tasks__add_description}" placeholder="Описание" aria-label="описание">
+            <button class="${globalStyles.button} ${commonStyles.plan_task__button}">+</button>
          </div>
     `;
 }

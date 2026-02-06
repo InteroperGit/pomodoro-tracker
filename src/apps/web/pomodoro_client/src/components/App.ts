@@ -1,3 +1,5 @@
+import globalStyles from "./global.module.scss";
+import styles from "./App.module.scss";
 import { Toolbar } from './Toolbar';
 import { Timer } from './Timer';
 import {PlanTasks, type PlanTasksProps} from "./PlanTasks";
@@ -66,11 +68,11 @@ export function App() {
     const footer = Footer();
 
     return `
-        <div class="app">
+        <div class="${styles.app}">
             ${toolbar}
             
-            <main class="main">
-                <div class="container">
+            <main class="${styles.main}">
+                <div class="${globalStyles.container}">
                     ${timer}
                     ${planTasks}
                     ${archiveTasks}

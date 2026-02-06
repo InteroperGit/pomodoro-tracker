@@ -1,3 +1,5 @@
+import styles from "./Footer.module.scss";
+
 /**
  * Компонент `Footer` — нижний элемент интерфейса приложения Pomodoro‑таймера.
  * Отображает подвал страницы, содержащий название или краткую информацию о приложении.
@@ -27,7 +29,7 @@
  */
 export function Footer() {
     return  `
-        <footer class="footer">
+        <footer class="${styles.footer}">
             Pomodoro timer
         </footer>
     `;
