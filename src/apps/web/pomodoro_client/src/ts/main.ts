@@ -6,6 +6,7 @@ window.addEventListener('load', () => {
     const root = findById("root");
     if (!root) {
         alert("Элемент с идентификатором root не найден");
+        return;
     }
 
     render(root, App);
