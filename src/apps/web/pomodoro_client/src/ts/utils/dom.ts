@@ -4,7 +4,7 @@
  * @returns {Element|null}
  */
 export function findById(id: string): HTMLElement | null {
-    if (typeof id !== 'string' || id.length === 0) {
+    if (!id || id.length === 0) {
         return null;
     }
 
