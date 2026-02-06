@@ -4,8 +4,8 @@ import {PlanTasks, type PlanTasksProps} from "./PlanTasks";
 import {ArchiveTasks, type ArchiveTasksProps} from "./ArchiveTasks";
 import {Footer} from "./Footer";
 
-export function App() {
-    const planTasksProps: PlanTasksProps = {
+const getPlanTasks = () => {
+    return {
         tasksCount: 5,
         tasksTime: "2ч 5мин",
         planTasks: [{
@@ -36,8 +36,10 @@ export function App() {
             ],
         }
     };
+}
 
-    const archiveTasksProps: ArchiveTasksProps = {
+const getArchiveTasks = () => {
+    return {
         tasksCount: 5,
         tasksTime: "3ч 15мин",
         tasks: [
@@ -51,6 +53,11 @@ export function App() {
             ]
         }
     }
+}
+
+export function App() {
+    const planTasksProps: PlanTasksProps = getPlanTasks();
+    const archiveTasksProps: ArchiveTasksProps = getArchiveTasks();
 
     const toolbar = Toolbar();
     const timer = Timer();
