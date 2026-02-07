@@ -3,18 +3,14 @@ import {PlanTasksTitle} from "./PlanTasksTitle";
 import {PlanTasksAdd} from "./PlanTasksAdd";
 import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
-import type {PlanPomodoroTasksStatistics} from "../../types/statistics.ts";
-import type {PlanPomodoroTask} from "../../types/task.ts";
+import type {PlanTasksState} from "../../types/context.ts";
 
 export type PlanTasksProps = {
-    tasksCount: number;
-    tasksTime: string;
-    planTasks: PlanPomodoroTask[];
-    statistics: PlanPomodoroTasksStatistics;
+    data: PlanTasksState;
 }
 
-export function PlanTasks(props: PlanTasksProps) {
-    const { tasksCount, tasksTime, planTasks, statistics } = props;
+export function PlanTasks({ data }: PlanTasksProps) {
+    const { tasksCount, tasksTime, planTasks, statistics } = data;
 
     const title = PlanTasksTitle({ tasksCount, tasksTime });
     const add = PlanTasksAdd();

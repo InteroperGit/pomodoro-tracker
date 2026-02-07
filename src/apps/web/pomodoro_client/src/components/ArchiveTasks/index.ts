@@ -2,18 +2,14 @@ import styles from "./ArchiveTasks.module.scss";
 import {ArchiveTasksTitle} from "./ArchiveTasksTitle.ts";
 import {ArchiveTasksList} from "./ArchiveTasksList.ts";
 import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
-import type {PomodoroTask} from "../../types/task.ts";
-import type {ArchivePomodoroTasksStatistics} from "../../types/statistics.ts";
+import type {ArchiveTasksState} from "../../types/context.ts";
 
 export type ArchiveTasksProps = {
-    tasksCount: number;
-    tasksTime: string;
-    tasks: PomodoroTask[];
-    statistics: ArchivePomodoroTasksStatistics;
+    data: ArchiveTasksState;
 }
 
-export function ArchiveTasks(props: ArchiveTasksProps) {
-    const { tasksCount, tasksTime, tasks, statistics } = props;
+export function ArchiveTasks({ data }: ArchiveTasksProps) {
+    const { tasksCount, tasksTime, tasks, statistics } = data;
 
     const title = ArchiveTasksTitle({ tasksCount, tasksTime });
     const list = ArchiveTasksList({ tasks });
