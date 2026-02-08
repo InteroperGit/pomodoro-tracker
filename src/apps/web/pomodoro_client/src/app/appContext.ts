@@ -56,4 +56,12 @@ export function useContext() {
     return context;
 }
 
+export function useAddTask(task: PomodoroTask) {
+    if (!task) {
+        throw new Error("Failed to add task. Task is not initialized");
+    }
+
+    context.actions.addTask(task);
+}
+
 export type AppContext = ReturnType<typeof createContext>;

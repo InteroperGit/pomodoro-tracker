@@ -1,7 +1,8 @@
 import { findById } from "../utils/dom";
 import { App } from "./App";
 import type {AppState, ArchiveTasksState, PlanTasksState} from "../types/context.ts";
-import {type AppContext, createContext, registerContext} from "./appContext.ts";
+import {createContext, registerContext} from "./appContext.ts";
+import {render} from "../utils/render.ts";
 
 const getPlanTasks = (): PlanTasksState => {
     return {
@@ -69,10 +70,6 @@ const getArchiveTasks = (): ArchiveTasksState => {
         }
     }
 }
-
-const render = (root: HTMLElement, app: (ctx: AppContext) => string, ctx: AppContext) => {
-    root.innerHTML = app(ctx);
-};
 
 window.addEventListener('load', () => {
     const root = findById("root");

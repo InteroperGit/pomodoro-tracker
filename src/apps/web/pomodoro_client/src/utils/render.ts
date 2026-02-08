@@ -1,5 +1,18 @@
-import type {Component, Props} from "../types/component.ts";
+declare global {
+    var componentMountQueue: Array<() => void>;
+}
 
-export function render(root: HTMLElement, Component: Component, props?: Props) {
-    root.innerHTML = Component(props);
+if (!globalThis.componentMountQueue) {
+    globalThis.componentMountQueue = [];
+}
+
+export function render<Context>(root: HTMLElement, app: (ctx: Context) => string, ctx: Context) {
+    root.innerHTML = app(ctx);
+    globalThis.componentMountQueue.forEach((effect) => {
+        effect();
+    })
+}
+
+export function useEffect(effect: () => void) {
+    globalThis.componentMountQueue.push(effect);
 }

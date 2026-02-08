@@ -1,6 +1,10 @@
 import globalStyles from "../global.module.scss";
 import commonStyles from "./PlanTasksCommon.module.scss";
 import styles from "./PlanTasksAdd.module.scss";
+import {useEffect} from "../../utils/render.ts";
+import type {PomodoroTask} from "../../types/task.ts";
+import {generateId} from "../../utils/idGenerator.ts";
+import {useAddTask} from "../../app/appContext.ts";
 
 /**
  * Компонент `PlanTasksAdd` — панель добавления новых задач в разделе планируемых задач Pomodoro‑приложения.
@@ -41,12 +45,63 @@ import styles from "./PlanTasksAdd.module.scss";
  * // Позднее можно добавить обработчик:
  * // document.querySelector('.plan_tasks__button').addEventListener('click', handleAddTask);
  */
-export function  PlanTasksAdd() {
+export function  PlanTasksAdd(): string {
+    const buttonId = generateId();
+    const categoryInputId = generateId();
+    const descriptionInputId = generateId();
+
+    useEffect(() => {
+        const button = document.getElementById(buttonId);
+        const categoryInput: HTMLInputElement | null = document.getElementById(categoryInputId) as HTMLInputElement | null;
+        const descriptionInput: HTMLInputElement | null = document.getElementById(descriptionInputId) as HTMLInputElement | null;
+
+        if (!button) {
+            return;
+        }
+
+        if (!categoryInput) {
+            return;
+        }
+
+        if (!descriptionInput) {
+            return;
+        }
+
+        button.addEventListener("click", () => {
+            const task: PomodoroTask = {
+                id: generateId(),
+                category: {
+                    name: categoryInput.value
+                },
+                description: descriptionInput.value,
+            }
+
+            useAddTask(task);
+        });
+    });
+
     return `
          <div class="${styles.plan_tasks__add}">
-            <input class="${styles.plan_tasks__add_category}" placeholder="Категория" aria-label="категория">
-            <input class="${styles.plan_tasks__add_description}" placeholder="Описание" aria-label="описание">
-            <button class="${globalStyles.button} ${commonStyles.plan_task__button}">+</button>
+            <input 
+                id="${categoryInputId}"
+                class="${styles.plan_tasks__add_category}" 
+                placeholder="Категория" 
+                aria-label="категория" 
+            />
+            
+            <input 
+                id="${descriptionInputId}"
+                class="${styles.plan_tasks__add_description}" 
+                placeholder="Описание" 
+                aria-label="описание" 
+            />
+            
+            <button 
+                id="${buttonId}"
+                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+            >
+                +
+            </button>
          </div>
     `;
 }
