@@ -9,6 +9,7 @@ export function createContext(initialState: AppState) {
 
     const actions: AppActions = {
         addTask(task: PomodoroTask) {
+            console.log("add task");
             const s = store.getState();
             store.setState(
                 {
@@ -28,6 +29,12 @@ export function createContext(initialState: AppState) {
                 });
         },
         incTask(id: string) {
+            console.log("inc task");
+
+            if (!id) {
+                throw new Error("Failed to inc task. Id is not initialized");
+            }
+
             const s = store.getState();
             const planTasks = s.planTasksState.planTasks;
             const planTask = planTasks.find(pt => pt.task.id === id);
@@ -55,6 +62,12 @@ export function createContext(initialState: AppState) {
         },
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         decTask(id: string) {
+            console.log("dec task");
+
+            if (!id) {
+                throw new Error("Failed to dec task. Id is not initialized");
+            }
+
             const s = store.getState();
             const planTasks = s.planTasksState.planTasks;
             const planTask = planTasks.find(pt => pt.task.id === id);
@@ -85,6 +98,52 @@ export function createContext(initialState: AppState) {
         },
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         archiveTask(id: string) {
+        },
+        startEditTask(id: string) {
+            console.log("start edit task");
+
+            if (!id) {
+                throw new Error("Failed to edit task. Id is not initialized");
+            }
+
+            const s = store.getState();
+            store.setState({
+                ...s,
+                editingTaskId: id
+            });
+        },
+        completeEditTask(task: PomodoroTask) {
+            console.log("complete edit task");
+
+            if (!task) {
+                throw new Error("Failed to edit task. Task is not initialized");
+            }
+
+            const s = store.getState();
+            const planTasks = s.planTasksState.planTasks;
+            const index = planTasks.findIndex(pt => pt.task.id === task.id);
+            const updatedTasks = planTasks.map((pt, ptIndex) => {
+                return ptIndex === index
+                    ? { ...pt, task: task }
+                    : pt
+            });
+
+            store.setState({
+                ...s,
+                editingTaskId: null,
+                planTasksState: {
+                    ...s.planTasksState,
+                    planTasks: updatedTasks
+                }
+            });
+        },
+        cancelEditTask() {
+            console.log("cancel edit task");
+            const s = store.getState();
+            store.setState({
+                ...s,
+                editingTaskId: null,
+            });
         }
     }
 
@@ -129,6 +188,30 @@ export function useDecTask(id: string) {
     }
 
     context.actions.decTask(id);
+}
+
+export function useEditTask(id: string) {
+    if (!id) {
+        throw new Error("Failed to edit task. Id is not initialized");
+    }
+
+    context.actions.startEditTask(id);
+}
+
+export function useCompleteEditTask(task: PomodoroTask) {
+    if (!task) {
+        throw new Error("Failed to complete task. Task is not initialized");
+    }
+
+    context.actions.completeEditTask(task);
+}
+
+export function useCancelEditTask() {
+    context.actions.cancelEditTask();
+}
+
+export function useGetEditingTaskId(): string | null | undefined {
+    return context.store.getState().editingTaskId;
 }
 
 export type AppContext = ReturnType<typeof createContext>;

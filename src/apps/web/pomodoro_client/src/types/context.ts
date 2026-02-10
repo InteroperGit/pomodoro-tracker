@@ -17,6 +17,7 @@ export type ArchiveTasksState = {
 
 export type AppState = {
     activeTaskId?: string | null;
+    editingTaskId?: string | null;
     planTasksState: PlanTasksState;
     archiveState: ArchiveTasksState;
 }
@@ -26,4 +27,7 @@ export type AppActions = {
     incTask(id: string): void;
     decTask(id: string): void;
     archiveTask(id: string): void;
+    startEditTask(id: string): void;
+    completeEditTask(task: PomodoroTask): void;
+    cancelEditTask(): void;
 }

@@ -51,7 +51,7 @@ export function  PlanTasksAdd(): string {
     const descriptionInputId = generateId();
 
     useEffect(() => {
-        const button = document.getElementById(buttonId);
+        const button: HTMLButtonElement | null = document.getElementById(buttonId) as HTMLButtonElement | null;
         const categoryInput: HTMLInputElement | null = document.getElementById(categoryInputId) as HTMLInputElement | null;
         const descriptionInput: HTMLInputElement | null = document.getElementById(descriptionInputId) as HTMLInputElement | null;
 
