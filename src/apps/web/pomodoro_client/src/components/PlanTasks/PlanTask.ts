@@ -94,6 +94,7 @@ export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
         ? `
               <div 
                 id="${planTaskDivId}"
+                data-planTaskId="${task.id}"
                 class="${styles.plan_task}">
                   <div class="${styles.plan_task__category}">
                       <input 

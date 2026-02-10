@@ -138,7 +138,6 @@ export function createContext(initialState: AppState) {
             });
         },
         cancelEditTask() {
-            console.log("cancel edit task");
             const s = store.getState();
             store.setState({
                 ...s,
