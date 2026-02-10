@@ -8,7 +8,7 @@ import {
     useCancelEditTask,
     useCompleteEditTask,
     useDecTask,
-    useEditTask,
+    useStartEditTask,
     useGetEditingTaskId,
     useIncTask
 } from "../../app/appContext.ts";
@@ -40,11 +40,16 @@ export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
             return;
         }
 
-        planTaskDiv.addEventListener("click", () => {
+        planTaskDiv.addEventListener("click", (e) => {
             if (task.id === editingTaskId) {
                 return;
             }
-            useEditTask(task.id);
+
+            if (incButton.contains(e.target as Node) || decButton.contains(e.target as Node)) {
+                return;
+            }
+
+            useStartEditTask(task.id);
         });
 
         incButton.addEventListener("click", () => {

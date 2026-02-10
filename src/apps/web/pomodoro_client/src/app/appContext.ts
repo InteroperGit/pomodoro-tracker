@@ -9,7 +9,6 @@ export function createContext(initialState: AppState) {
 
     const actions: AppActions = {
         addTask(task: PomodoroTask) {
-            console.log("add task");
             const s = store.getState();
             store.setState(
                 {
@@ -29,8 +28,6 @@ export function createContext(initialState: AppState) {
                 });
         },
         incTask(id: string) {
-            console.log("inc task");
-
             if (!id) {
                 throw new Error("Failed to inc task. Id is not initialized");
             }
@@ -62,8 +59,6 @@ export function createContext(initialState: AppState) {
         },
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         decTask(id: string) {
-            console.log("dec task");
-
             if (!id) {
                 throw new Error("Failed to dec task. Id is not initialized");
             }
@@ -100,8 +95,6 @@ export function createContext(initialState: AppState) {
         archiveTask(id: string) {
         },
         startEditTask(id: string) {
-            console.log("start edit task");
-
             if (!id) {
                 throw new Error("Failed to edit task. Id is not initialized");
             }
@@ -113,8 +106,6 @@ export function createContext(initialState: AppState) {
             });
         },
         completeEditTask(task: PomodoroTask) {
-            console.log("complete edit task");
-
             if (!task) {
                 throw new Error("Failed to edit task. Task is not initialized");
             }
@@ -189,7 +180,7 @@ export function useDecTask(id: string) {
     context.actions.decTask(id);
 }
 
-export function useEditTask(id: string) {
+export function useStartEditTask(id: string) {
     if (!id) {
         throw new Error("Failed to edit task. Id is not initialized");
     }
