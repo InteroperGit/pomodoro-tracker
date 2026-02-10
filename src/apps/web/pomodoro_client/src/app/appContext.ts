@@ -16,6 +16,7 @@ export function createContext(initialState: AppState) {
                     planTasksState:
                     {
                         ...s.planTasksState,
+                        tasksCount: s.planTasksState.tasksCount + 1,
                         planTasks: [
                             ...s.planTasksState.planTasks,
                             {
@@ -26,11 +27,61 @@ export function createContext(initialState: AppState) {
                     }
                 });
         },
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         incTask(id: string) {
+            const s = store.getState();
+            const planTasks = s.planTasksState.planTasks;
+            const planTask = planTasks.find(pt => pt.task.id === id);
+            if (!planTask) {
+                return;
+            }
+
+            const index = planTasks.findIndex(pt => pt.task.id === id);
+            const updatedTasks = planTasks.map((pt, ptIndex) => {
+                return ptIndex === index
+                    ? { ...pt, count: pt.count + 1 }
+                    : pt
+            });
+
+            store.setState({
+                ...s,
+                planTasksState: {
+                    ...s.planTasksState,
+                    tasksCount: s.planTasksState.tasksCount + 1,
+                    planTasks: [
+                        ...updatedTasks,
+                    ]
+                }
+            })
         },
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         decTask(id: string) {
+            const s = store.getState();
+            const planTasks = s.planTasksState.planTasks;
+            const planTask = planTasks.find(pt => pt.task.id === id);
+            if (!planTask) {
+                return;
+            }
+
+            const index = planTasks.findIndex(pt => pt.task.id === id);
+            const updatedTasks =
+                planTask.count > 1
+                    ? planTasks.map((pt, ptIndex) => {
+                            return ptIndex === index
+                                ? { ...pt, count: pt.count - 1 }
+                                : pt
+                        })
+                    : planTasks.filter(pt => pt.task.id !== id);
+
+            store.setState({
+                ...s,
+                planTasksState: {
+                    ...s.planTasksState,
+                    tasksCount: s.planTasksState.tasksCount - 1,
+                    planTasks: [
+                        ...updatedTasks,
+                    ]
+                }
+            })
         },
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         archiveTask(id: string) {
@@ -62,6 +113,22 @@ export function useAddTask(task: PomodoroTask) {
     }
 
     context.actions.addTask(task);
+}
+
+export function useIncTask(id: string) {
+    if (!id) {
+        throw new Error("Failed to inc task. Id is not initialized");
+    }
+
+    context.actions.incTask(id);
+}
+
+export function useDecTask(id: string) {
+    if (!id) {
+        throw new Error("Failed to dec task. Id is not initialized");
+    }
+
+    context.actions.decTask(id);
 }
 
 export type AppContext = ReturnType<typeof createContext>;
