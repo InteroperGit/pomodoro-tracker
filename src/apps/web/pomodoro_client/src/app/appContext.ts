@@ -130,6 +130,11 @@ export function createContext(initialState: AppState) {
         },
         cancelEditTask() {
             const s = store.getState();
+
+            if (!s.editingTaskId) {
+                return;
+            }
+
             store.setState({
                 ...s,
                 editingTaskId: null,
