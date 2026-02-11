@@ -4,7 +4,13 @@ import {PlanTasksAdd} from "./PlanTasksAdd";
 import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
 import type {PlanTasksState} from "../../types/context.ts";
-import {useReorderTasks} from "../../app/appContext.ts";
+import {
+    useCancelEditTask,
+    useCompleteEditTask, useDecTask,
+    useGetEditingTaskId, useIncTask,
+    useReorderTasks,
+    useStartEditTask
+} from "../../app/appContext.ts";
 
 export type PlanTasksProps = {
     data: PlanTasksState;
@@ -15,7 +21,20 @@ export function PlanTasks({ data }: PlanTasksProps) {
 
     const title = PlanTasksTitle({ tasksCount, tasksTime });
     const add = PlanTasksAdd();
-    const list = PlanTaskList({ planTasks, onReorder: useReorderTasks });
+    const list = PlanTaskList(
+        {
+            planTasks,
+            actions: {
+                getEditingTaskId: useGetEditingTaskId,
+                startEditTask: useStartEditTask,
+                completeEditTask: useCompleteEditTask,
+                cancelEditTask: useCancelEditTask,
+                incTask: useIncTask,
+                decTask: useDecTask,
+                reorderTasks: useReorderTasks
+            }
+
+        });
     const stats = PlanTasksStatistics({ statistics });
 
     return `

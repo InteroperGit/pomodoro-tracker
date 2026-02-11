@@ -4,16 +4,20 @@ import commonStyles from "./PlanTasksCommon.module.scss";
 import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
-import {
-    useCancelEditTask,
-    useCompleteEditTask,
-    useDecTask,
-    useStartEditTask,
-    useGetEditingTaskId,
-    useIncTask
-} from "../../app/appContext.ts";
 
-export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
+export type PlanTaskProps = {
+    planTask: PlanPomodoroTask;
+    actions: {
+        getEditingTaskId: () => string | null | undefined;
+        startEditTask: (id: string) => void;
+        completeEditTask: (task: PomodoroTask) => void;
+        cancelEditTask: () => void;
+        incTask: (id: string) => void;
+        decTask: (id: string) => void;
+    }
+}
+
+export function PlanTask({ planTask, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
     const incButtonId = generateId();
@@ -21,7 +25,7 @@ export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
     const categoryInputId = generateId();
     const descriptionInputId = generateId();
 
-    const editingTaskId = useGetEditingTaskId();
+    const editingTaskId = actions.getEditingTaskId();
 
     useEffect(() => {
         const planTaskDiv: HTMLDivElement | null = document.getElementById(planTaskDivId) as HTMLDivElement | null;
@@ -49,15 +53,15 @@ export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
                 return;
             }
 
-            useStartEditTask(task.id);
+            actions.startEditTask(task.id);
         });
 
         incButton.addEventListener("click", () => {
-            useIncTask(task.id);
+            actions.incTask(task.id);
         });
 
         decButton.addEventListener("click", () => {
-            useDecTask(task.id);
+            actions.decTask(task.id);
         });
     });
 
@@ -84,10 +88,10 @@ export function PlanTask({ planTask } : { planTask: PlanPomodoroTask }) {
                     description: descriptionInput.value
                 }
 
-                useCompleteEditTask(editingTask);
+                actions.completeEditTask(editingTask);
             }
             else if (e.key === 'Escape' || e.code === 'Escape') {
-                useCancelEditTask();
+                actions.cancelEditTask();
             }
         }
 

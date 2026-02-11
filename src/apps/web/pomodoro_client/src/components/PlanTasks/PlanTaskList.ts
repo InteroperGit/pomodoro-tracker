@@ -1,5 +1,5 @@
 import {PlanTask} from "./PlanTask.ts";
-import type {PlanPomodoroTask} from "../../types/task.ts";
+import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import styles from "./PlanTaskList.module.scss";
 import taskStyles from "./PlanTask.module.scss";
 import {generateId} from "../../utils/idGenerator.ts";
@@ -7,10 +7,18 @@ import {useEffect} from "../../utils/render.ts";
 
 export type PlanTasksListProps = {
     planTasks: PlanPomodoroTask[];
-    onReorder: (fromIndex: number, toIndex: number) => void;
+    actions: {
+        getEditingTaskId: () => string | null | undefined;
+        startEditTask: (id: string) => void;
+        completeEditTask: (task: PomodoroTask) => void;
+        cancelEditTask: () => void;
+        incTask: (id: string) => void;
+        decTask: (id: string) => void;
+        reorderTasks: (fromIndex: number, toIndex: number) => void;
+    }
 };
 
-export function PlanTaskList({ planTasks, onReorder }: PlanTasksListProps) {
+export function PlanTaskList({ planTasks, actions }: PlanTasksListProps) {
     const ulId = generateId();
 
     useEffect(() => {
@@ -58,7 +66,7 @@ export function PlanTaskList({ planTasks, onReorder }: PlanTasksListProps) {
                 const fromIndex = dragFromIndex ?? Number(e.dataTransfer?.getData("text/plain"));
 
                 if (!Number.isNaN(fromIndex) && !Number.isNaN(toIndex) && fromIndex !== toIndex) {
-                    onReorder(fromIndex, toIndex);
+                    actions.reorderTasks(fromIndex, toIndex);
                 }
 
                 if (draggedElement) {
@@ -81,7 +89,7 @@ export function PlanTaskList({ planTasks, onReorder }: PlanTasksListProps) {
     });
 
     const taskItems = planTasks.map((planTask, index) => {
-        const taskItem = PlanTask({ planTask });
+        const taskItem = PlanTask({ planTask, actions });
 
         return `
             <li data-index="${index}">
