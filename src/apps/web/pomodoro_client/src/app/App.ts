@@ -8,6 +8,7 @@ import {Footer} from "../components/Footer";
 import {type AppContext, useCancelEditTask, useGetEditingTaskId} from "./appContext.ts";
 import {generateId} from "../utils/idGenerator.ts";
 import {useEffect} from "../utils/render.ts";
+import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
 
 export function App(ctx: AppContext) {
     const appDivId = generateId();
@@ -32,16 +33,15 @@ export function App(ctx: AppContext) {
             return;
         }
 
-        const planTaskDiv: HTMLDivElement | null = document.querySelector(`[data-planTaskId="${editingTaskId}"]`) as HTMLDivElement | null;
-
-        if (!planTaskDiv) {
-            return;
-        }
-
         appDiv.addEventListener("click", (e) => {
-           if (!planTaskDiv.contains(e.target as Node)) {
-               useCancelEditTask();
-           }
+            const target = e.target as HTMLElement;
+            const selector = useGetPlanTaskControlSelector();
+
+            if (target.closest(selector)) {
+                return;
+            }
+
+            useCancelEditTask();
         });
     });
 
