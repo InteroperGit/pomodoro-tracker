@@ -4,7 +4,7 @@
   gap: 0.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0.5rem 0.5rem 0;
-  cursor: pointer;
+  cursor: grab;
 
   // Плавный hover
   transition: background-color 0.2s ease;
@@ -13,6 +13,18 @@
     background-color: rgba(0, 0, 0, 0.05);  // лёгкий серый
   }
 
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.plan_task__dragging {
+  opacity: 0.5;
+}
+
+.plan_task__drag_over {
+  border-top: 1px solid rgba(200, 0, 0, 0.6);
+  background: rgba(0, 123, 255, 0.1);
 }
 
 .plan_task__category {

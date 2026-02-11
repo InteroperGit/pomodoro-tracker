@@ -30,4 +30,5 @@ export type AppActions = {
     startEditTask(id: string): void;
     completeEditTask(task: PomodoroTask): void;
     cancelEditTask(): void;
+    reorderTasks(fromIndex: number, toIndex: number): void;
 }

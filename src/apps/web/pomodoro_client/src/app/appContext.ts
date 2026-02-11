@@ -134,6 +134,28 @@ export function createContext(initialState: AppState) {
                 ...s,
                 editingTaskId: null,
             });
+        },
+        reorderTasks(fromIndex: number, toIndex: number): void {
+            if (Number.isNaN(fromIndex)) {
+                throw new Error("FromIndex is not a number");
+            }
+
+            if (Number.isNaN(toIndex)) {
+                throw new Error("ToIndex is not a number");
+            }
+
+            const s = store.getState();
+            const reorderedTasks = [...s.planTasksState.planTasks];
+            const [grabbingTask] = reorderedTasks.splice(fromIndex, 1);
+            reorderedTasks.splice(toIndex, 0, grabbingTask);
+
+            store.setState({
+               ...s,
+               planTasksState: {
+                   ...s.planTasksState,
+                   planTasks: reorderedTasks
+               }
+            });
         }
     }
 
@@ -202,6 +224,10 @@ export function useCancelEditTask() {
 
 export function useGetEditingTaskId(): string | null | undefined {
     return context.store.getState().editingTaskId;
+}
+
+export function useReorderTasks(fromIndex: number, toIndex: number) {
+    return context.actions.reorderTasks(fromIndex, toIndex);
 }
 
 export type AppContext = ReturnType<typeof createContext>;
