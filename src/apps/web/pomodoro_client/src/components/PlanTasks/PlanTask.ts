@@ -24,6 +24,7 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
     const decButtonId = generateId();
     const categoryInputId = generateId();
     const descriptionInputId = generateId();
+    const addTaskButtonId = generateId();
 
     const editingTaskId = actions.getEditingTaskId();
 
@@ -72,8 +73,9 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
 
         const categoryInput: HTMLInputElement | null = document.getElementById(categoryInputId) as HTMLInputElement | null;
         const descriptionInput: HTMLInputElement | null = document.getElementById(descriptionInputId) as HTMLInputElement | null;
+        const addTaskButton = document.getElementById(addTaskButtonId);
 
-        if (!categoryInput || !descriptionInput) {
+        if (!categoryInput || !descriptionInput || !addTaskButton) {
             return;
         }
 
@@ -91,12 +93,28 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                 actions.completeEditTask(editingTask);
             }
             else if (e.key === 'Escape' || e.code === 'Escape') {
+                e.preventDefault();
                 actions.cancelEditTask();
             }
         }
 
+        const addTaskButtonClickHandler = (e: PointerEvent) => {
+            e.preventDefault();
+
+            const editingTask: PomodoroTask = {
+                id: task.id,
+                category: {
+                    name: categoryInput.value,
+                },
+                description: descriptionInput.value
+            }
+
+            actions.completeEditTask(editingTask);
+        }
+
         categoryInput.addEventListener('keydown', inputKeyDownHandler);
         descriptionInput.addEventListener('keydown', inputKeyDownHandler);
+        addTaskButton.addEventListener('click', addTaskButtonClickHandler);
     });
 
     return editingTaskId != null && task.id === editingTaskId
@@ -119,6 +137,11 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                         value="${task.description}" 
                       />
                   </div>
+                  <button 
+                    id="${addTaskButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                    S
+                  </button>
               </div>
           `
         :

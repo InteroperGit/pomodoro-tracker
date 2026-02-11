@@ -41,9 +41,9 @@
 
 .plan_task_input {
   width: 100%;                    // ✅ Занимает всю ширину родителя
-  height: 35px;
   box-sizing: border-box;         // ✅ Включает padding/border в ширину
   font-size: inherit;             // Наследует размер шрифта
+  line-height: 1.7;
 }
 
 .plan_task__count {

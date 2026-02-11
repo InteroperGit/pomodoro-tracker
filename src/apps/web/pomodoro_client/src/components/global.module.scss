@@ -15,10 +15,11 @@
   transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
   width: 2rem;
   height: 2rem;
-}
+  font-size: inherit;
 
-.button:hover {
-  background-color: rgba(0, 0, 0, 0.12); /* лёгкое затемнение */
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.12); /* лёгкое затемнение */
+  }
 }
 
 h1 {
