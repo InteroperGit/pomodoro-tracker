@@ -4,7 +4,12 @@ import styles from "./PlanTasksAdd.module.scss";
 import {useEffect} from "../../utils/render.ts";
 import type {PomodoroTask} from "../../types/task.ts";
 import {generateId} from "../../utils/idGenerator.ts";
-import {useAddTask} from "../../app/appContext.ts";
+
+export type PlanTaskAddProps = {
+    actions: {
+        addTask: (task: PomodoroTask) => void;
+    }
+}
 
 /**
  * Компонент `PlanTasksAdd` — панель добавления новых задач в разделе планируемых задач Pomodoro‑приложения.
@@ -45,7 +50,8 @@ import {useAddTask} from "../../app/appContext.ts";
  * // Позднее можно добавить обработчик:
  * // document.querySelector('.plan_tasks__button').addEventListener('click', handleAddTask);
  */
-export function  PlanTasksAdd(): string {
+export function  PlanTasksAdd(props: PlanTaskAddProps): string {
+    const { actions } = props;
     const buttonId = generateId();
     const categoryInputId = generateId();
     const descriptionInputId = generateId();
@@ -67,17 +73,29 @@ export function  PlanTasksAdd(): string {
             return;
         }
 
-        button.addEventListener("click", () => {
-            const task: PomodoroTask = {
+        const createTask = () => {
+            return {
                 id: generateId(),
                 category: {
                     name: categoryInput.value
                 },
                 description: descriptionInput.value,
-            }
+            } as PomodoroTask;
+        }
 
-            useAddTask(task);
+        const inputKeyDownHandler = (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.code === 'Enter') {
+                e.preventDefault();
+                actions.addTask(createTask())
+            }
+        }
+
+        button.addEventListener("click", () => {
+            actions.addTask(createTask());
         });
+
+        categoryInput.addEventListener("keydown", inputKeyDownHandler);
+        descriptionInput.addEventListener("keydown", inputKeyDownHandler);
     });
 
     return `

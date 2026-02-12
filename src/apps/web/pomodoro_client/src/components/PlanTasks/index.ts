@@ -5,6 +5,7 @@ import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
 import type {PlanTasksState} from "../../types/context.ts";
 import {
+    useAddTask,
     useCancelEditTask,
     useCompleteEditTask, useDecTask,
     useGetEditingTaskId, useIncTask,
@@ -20,7 +21,11 @@ export function PlanTasks({ data }: PlanTasksProps) {
     const { tasksCount, tasksTime, planTasks, statistics } = data;
 
     const title = PlanTasksTitle({ tasksCount, tasksTime });
-    const add = PlanTasksAdd();
+    const add = PlanTasksAdd({
+        actions: {
+            addTask: useAddTask,
+        }
+    });
     const list = PlanTaskList(
         {
             planTasks,
