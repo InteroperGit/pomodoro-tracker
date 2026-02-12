@@ -9,7 +9,8 @@ export type ArchiveTasksProps = {
 }
 
 export function ArchiveTasks({ data }: ArchiveTasksProps) {
-    const { tasksCount, tasksTime, tasks, statistics } = data;
+    const { tasks, statistics } = data;
+    const { tasksCount, tasksTime } = statistics;
 
     const title = ArchiveTasksTitle({ tasksCount, tasksTime });
     const list = ArchiveTasksList({ tasks });

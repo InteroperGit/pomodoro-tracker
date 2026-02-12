@@ -13,12 +13,11 @@ export function createContext(initialState: AppState) {
             store.setState(
                 {
                     ...s,
-                    planTasksState:
+                    planTasks:
                     {
-                        ...s.planTasksState,
-                        tasksCount: s.planTasksState.tasksCount + 1,
-                        planTasks: [
-                            ...s.planTasksState.planTasks,
+                        ...s.planTasks,
+                        tasks: [
+                            ...s.planTasks.tasks,
                             {
                                 task,
                                 count: 1
@@ -33,7 +32,7 @@ export function createContext(initialState: AppState) {
             }
 
             const s = store.getState();
-            const planTasks = s.planTasksState.planTasks;
+            const planTasks = s.planTasks.tasks;
             const planTask = planTasks.find(pt => pt.task.id === id);
             if (!planTask) {
                 return;
@@ -48,10 +47,9 @@ export function createContext(initialState: AppState) {
 
             store.setState({
                 ...s,
-                planTasksState: {
-                    ...s.planTasksState,
-                    tasksCount: s.planTasksState.tasksCount + 1,
-                    planTasks: [
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: [
                         ...updatedTasks,
                     ]
                 }
@@ -64,7 +62,7 @@ export function createContext(initialState: AppState) {
             }
 
             const s = store.getState();
-            const planTasks = s.planTasksState.planTasks;
+            const planTasks = s.planTasks.tasks;
             const planTask = planTasks.find(pt => pt.task.id === id);
             if (!planTask) {
                 return;
@@ -82,10 +80,9 @@ export function createContext(initialState: AppState) {
 
             store.setState({
                 ...s,
-                planTasksState: {
-                    ...s.planTasksState,
-                    tasksCount: s.planTasksState.tasksCount - 1,
-                    planTasks: [
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: [
                         ...updatedTasks,
                     ]
                 }
@@ -111,7 +108,7 @@ export function createContext(initialState: AppState) {
             }
 
             const s = store.getState();
-            const planTasks = s.planTasksState.planTasks;
+            const planTasks = s.planTasks.tasks;
             const index = planTasks.findIndex(pt => pt.task.id === task.id);
             const updatedTasks = planTasks.map((pt, ptIndex) => {
                 return ptIndex === index
@@ -122,9 +119,9 @@ export function createContext(initialState: AppState) {
             store.setState({
                 ...s,
                 editingTaskId: null,
-                planTasksState: {
-                    ...s.planTasksState,
-                    planTasks: updatedTasks
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: updatedTasks
                 }
             });
         },
@@ -150,15 +147,15 @@ export function createContext(initialState: AppState) {
             }
 
             const s = store.getState();
-            const reorderedTasks = [...s.planTasksState.planTasks];
+            const reorderedTasks = [...s.planTasks.tasks];
             const [grabbingTask] = reorderedTasks.splice(fromIndex, 1);
             reorderedTasks.splice(toIndex, 0, grabbingTask);
 
             store.setState({
                ...s,
-               planTasksState: {
-                   ...s.planTasksState,
-                   planTasks: reorderedTasks
+               planTasks: {
+                   ...s.planTasks,
+                   tasks: reorderedTasks
                }
             });
         }

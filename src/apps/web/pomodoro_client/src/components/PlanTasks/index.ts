@@ -18,7 +18,8 @@ export type PlanTasksProps = {
 }
 
 export function PlanTasks({ data }: PlanTasksProps) {
-    const { tasksCount, tasksTime, planTasks, statistics } = data;
+    const { tasks, statistics } = data;
+    const { tasksCount, tasksTime } = statistics;
 
     const title = PlanTasksTitle({ tasksCount, tasksTime });
     const add = PlanTasksAdd({
@@ -28,7 +29,7 @@ export function PlanTasks({ data }: PlanTasksProps) {
     });
     const list = PlanTaskList(
         {
-            planTasks,
+            tasks,
             actions: {
                 getEditingTaskId: useGetEditingTaskId,
                 startEditTask: useStartEditTask,

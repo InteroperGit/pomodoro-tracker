@@ -7,6 +7,10 @@ export type PomodoroTaskCategoryStatistics = {
 }
 
 export type PlanPomodoroTasksStatistics = {
+    tasksCount: number;
+
+    tasksTime: string;
+
     nextLongBreak: string;
 
     finishTime: string;
@@ -15,5 +19,9 @@ export type PlanPomodoroTasksStatistics = {
 }
 
 export type ArchivePomodoroTasksStatistics = {
+    tasksCount: number;
+
+    tasksTime: string;
+
     categories: PomodoroTaskCategoryStatistics[];
 }

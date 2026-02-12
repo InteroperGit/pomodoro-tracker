@@ -6,9 +6,7 @@ import {render} from "../utils/render.ts";
 
 const getPlanTasks = (): PlanTasksState => {
     return {
-        tasksCount: 5,
-        tasksTime: "2ч 5мин",
-        planTasks: [{
+        tasks: [{
             task: {
                 id: "1",
                 category: { name: "test" },
@@ -24,6 +22,8 @@ const getPlanTasks = (): PlanTasksState => {
             count: 1
         }],
         statistics: {
+            tasksCount: 5,
+            tasksTime: "2ч 5мин",
             nextLongBreak: "12:00",
             finishTime: "18:00",
             categories: [
@@ -42,8 +42,6 @@ const getPlanTasks = (): PlanTasksState => {
 
 const getArchiveTasks = (): ArchiveTasksState => {
     return {
-        tasksCount: 5,
-        tasksTime: "3ч 15мин",
         tasks: [
             {
                 id: "3",
@@ -57,6 +55,8 @@ const getArchiveTasks = (): ArchiveTasksState => {
             },
         ],
         statistics: {
+            tasksCount: 5,
+            tasksTime: "3ч 15мин",
             categories: [
                 {
                     category: { name: "test" },
@@ -83,8 +83,9 @@ window.addEventListener('load', () => {
 
     const initialState: AppState = {
         activeTaskId: null,
-        planTasksState: planTasksData,
-        archiveState: archiveTasksData,
+        editingTaskId: null,
+        planTasks: planTasksData,
+        archiveTasks: archiveTasksData,
     }
 
     const ctx = createContext(initialState);

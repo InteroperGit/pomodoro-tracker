@@ -17,8 +17,8 @@ export function App(ctx: AppContext) {
 
     const toolbar = Toolbar();
     const timer = Timer();
-    const planTasks = PlanTasks({ data: state.planTasksState });
-    const archiveTasks = ArchiveTasks({ data: state.archiveState });
+    const planTasks = PlanTasks({ data: state.planTasks });
+    const archiveTasks = ArchiveTasks({ data: state.archiveTasks });
     const footer = Footer();
 
     //Cancel edit task, if click out of PlanTask control

@@ -2,15 +2,11 @@ import type {PlanPomodoroTask, PomodoroTask} from "./task.ts";
 import type {ArchivePomodoroTasksStatistics, PlanPomodoroTasksStatistics} from "./statistics.ts";
 
 export type PlanTasksState = {
-    tasksCount: number;
-    tasksTime: string;
-    planTasks: PlanPomodoroTask[];
+    tasks: PlanPomodoroTask[];
     statistics: PlanPomodoroTasksStatistics;
 }
 
 export type ArchiveTasksState = {
-    tasksCount: number;
-    tasksTime: string;
     tasks: PomodoroTask[];
     statistics: ArchivePomodoroTasksStatistics;
 }
@@ -18,8 +14,8 @@ export type ArchiveTasksState = {
 export type AppState = {
     activeTaskId?: string | null;
     editingTaskId?: string | null;
-    planTasksState: PlanTasksState;
-    archiveState: ArchiveTasksState;
+    planTasks: PlanTasksState;
+    archiveTasks: ArchiveTasksState;
 }
 
 export type AppActions = {

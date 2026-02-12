@@ -6,7 +6,7 @@ import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
 
 export type PlanTasksListProps = {
-    planTasks: PlanPomodoroTask[];
+    tasks: PlanPomodoroTask[];
     actions: {
         getEditingTaskId: () => string | null | undefined;
         startEditTask: (id: string) => void;
@@ -18,7 +18,7 @@ export type PlanTasksListProps = {
     }
 };
 
-export function PlanTaskList({ planTasks, actions }: PlanTasksListProps) {
+export function PlanTaskList({ tasks, actions }: PlanTasksListProps) {
     const ulId = generateId();
 
     useEffect(() => {
@@ -99,7 +99,7 @@ export function PlanTaskList({ planTasks, actions }: PlanTasksListProps) {
         });
     });
 
-    const taskItems = planTasks.map((planTask, index) => {
+    const taskItems = tasks.map((planTask, index) => {
         const taskItem = PlanTask({ planTask, actions });
 
         return `
