@@ -20,6 +20,7 @@ export type PlanTaskProps = {
 export function PlanTask({ planTask, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
+    const taskCountId = generateId();
     const incButtonId = generateId();
     const decButtonId = generateId();
     const categoryInputId = generateId();
@@ -30,10 +31,15 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
 
     useEffect(() => {
         const planTaskDiv: HTMLDivElement | null = document.getElementById(planTaskDivId) as HTMLDivElement | null;
+        const taskCountDiv: HTMLDivElement | null = document.getElementById(taskCountId) as HTMLDivElement | null;
         const incButton: HTMLButtonElement | null = document.getElementById(incButtonId) as HTMLButtonElement | null;
         const decButton: HTMLButtonElement | null = document.getElementById(decButtonId) as HTMLButtonElement | null;
 
         if (!planTaskDiv) {
+            return;
+        }
+
+        if (!taskCountDiv) {
             return;
         }
 
@@ -50,11 +56,19 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                 return;
             }
 
-            if (incButton.contains(e.target as Node) || decButton.contains(e.target as Node)) {
+            const node = e.target as Node;
+
+            if (taskCountDiv.contains(node)
+                || incButton.contains(node)
+                || decButton.contains(node)) {
                 return;
             }
 
             actions.startEditTask(task.id);
+        });
+
+        taskCountDiv.addEventListener("click", () => {
+            actions.incTask(task.id);
         });
 
         incButton.addEventListener("click", () => {
@@ -156,7 +170,9 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                   <div class="${styles.plan_task__description}">
                       ${task.description}
                   </div>
-                  <div class="${styles.plan_task__count}">
+                  <div 
+                    id="${taskCountId}"
+                    class="${styles.plan_task__count}">
                       ${count}
                   </div>
                   <button

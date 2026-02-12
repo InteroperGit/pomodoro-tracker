@@ -59,4 +59,13 @@
   font-size: 0.875rem;
   line-height: 1;
   flex: 0 0 2rem;                   /* если это внутри flex-строки, чтобы не сжималось */
+
+  transition: all 0.25s ease-out;
+
+  &:hover {
+    background: linear-gradient(135deg,
+            rgba(0, 0, 0, 0.06) 0%,
+            rgba(0, 0, 0, 0.12) 100%);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15)
+  }
 }
