@@ -30,6 +30,7 @@ export function PlanTaskList({ planTasks, actions }: PlanTasksListProps) {
 
         let dragFromIndex: number | null = null;
         let draggedElement: HTMLLIElement | null = null;
+        const overCount = new Map<HTMLLIElement, number>();
 
         ul.querySelectorAll("li[data-index]").forEach((li: Element) => {
             const listItem = li as HTMLLIElement;
@@ -49,12 +50,22 @@ export function PlanTaskList({ planTasks, actions }: PlanTasksListProps) {
                 e.dataTransfer!.dropEffect = "move";
             });
             listItem.addEventListener("dragenter", (e) => {
-                const li = e.currentTarget as HTMLLIElement;
-                li.classList.add(taskStyles.plan_task__drag_over);
+                e.preventDefault();
+                const count = (overCount.get(listItem) ?? 0) + 1;
+                overCount.set(listItem, count);
+
+                if (count === 1) { // ← добавляем класс ТОЛЬКО при первом входе
+                    listItem.classList.add(taskStyles.plan_task__drag_over);
+                }
             });
             listItem.addEventListener("dragleave", (e) => {
-                const li = e.currentTarget as HTMLLIElement;
-                li.classList.remove(taskStyles.plan_task__drag_over);
+                e.preventDefault();
+                const count = (overCount.get(listItem) ?? 0) - 1;
+                overCount.set(listItem, count);
+
+                if (count === 0) { // ← убираем класс ТОЛЬКО при полном выходе
+                    listItem.classList.remove(taskStyles.plan_task__drag_over);
+                }
             });
             listItem.addEventListener("drop", (e) => {
                 e.preventDefault();
