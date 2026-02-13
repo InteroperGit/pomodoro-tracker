@@ -1,11 +1,17 @@
-import type {AppActions, AppState} from "../types/context.ts";
+import {type AppActions, type AppState} from "../types/context.ts";
 import {createStore} from "../utils/store.ts";
-import type {ArchivePomodoroTask, PlanPomodoroTask, PomodoroTask} from "../types/task.ts";
+import {
+    ActivePomodoroTaskStatus,
+    ActivePomodoroTaskType,
+    type ArchivePomodoroTask,
+    type PlanPomodoroTask,
+    type PomodoroTask
+} from "../types/task.ts";
 import type {PlanPomodoroTasksStatistics} from "../types/statistics.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
 
-//const LONG_BREAK_AFTER = 4;
+const LONG_BREAK_AFTER = 4;
 
 let context: AppContext;
 
@@ -63,6 +69,18 @@ export function createContext(initialState: AppState) {
             store.setState(
                 {
                     ...s,
+                    activeTask: s.activeTask
+                        ? {
+                            ...s.activeTask,
+                            task,
+                        }
+                        : {
+                            type: ActivePomodoroTaskType.Task,
+                            status: ActivePomodoroTaskStatus.Pending,
+                            task,
+                            shortBreakCount: LONG_BREAK_AFTER,
+                            restTime: POMODORO_TASK_TIME,
+                        },
                     planTasks:
                     {
                         ...s.planTasks,

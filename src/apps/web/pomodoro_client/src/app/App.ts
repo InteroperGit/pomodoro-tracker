@@ -16,7 +16,9 @@ export function App(ctx: AppContext) {
     const state = ctx.store.getState();
 
     const toolbar = Toolbar();
-    const timer = Timer();
+    const timer = Timer({
+        activeTask: state.activeTask
+    });
     const planTasks = PlanTasks({ data: state.planTasks });
     const archiveTasks = ArchiveTasks({ data: state.archiveTasks });
     const footer = Footer();

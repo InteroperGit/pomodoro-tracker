@@ -16,3 +16,30 @@ export type ArchivePomodoroTask = {
     taskTime: number;
     completedAt: number;
 }
+
+export const ActivePomodoroTaskType = {
+    Undefined: 0,
+    Task: 1,
+    ShortBreak: 2,
+    LongBreak: 3,
+} as const;
+
+export type ActivePomodoroTaskType = typeof ActivePomodoroTaskType[keyof typeof ActivePomodoroTaskType];
+
+export const ActivePomodoroTaskStatus = {
+    Undefined: 0,
+    Pending: 1,
+    Active: 2,
+    Paused: 3,
+    Completed: 4,
+} as const;
+
+export type ActivePomodoroTaskStatus = typeof ActivePomodoroTaskStatus[keyof typeof ActivePomodoroTaskStatus];
+
+export type ActivePomodoroTask = {
+    type: ActivePomodoroTaskType;
+    task: PomodoroTask;
+    restTime: number;
+    status: ActivePomodoroTaskStatus;
+    shortBreakCount: number;
+}
