@@ -51,19 +51,23 @@ export function createContext(initialState: AppState) {
     const actions: AppActions = {
         addTask(task: PomodoroTask) {
             const s = store.getState();
+            const updatedPlanTasks = [
+                ...s.planTasks.tasks,
+                {
+                    task,
+                    count: 1
+                }
+            ];
+            const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks);
+
             store.setState(
                 {
                     ...s,
                     planTasks:
                     {
                         ...s.planTasks,
-                        tasks: [
-                            ...s.planTasks.tasks,
-                            {
-                                task,
-                                count: 1
-                            }
-                        ]
+                        tasks: updatedPlanTasks,
+                        statistics: updatedStatistics
                     }
                 });
         },
@@ -85,12 +89,14 @@ export function createContext(initialState: AppState) {
                     ? { ...pt, count: pt.count + 1 }
                     : pt
             });
+            const updatedStatistics = getPlanTasksStatistics(updatedTasks);
 
             store.setState({
                 ...s,
                 planTasks: {
                     ...s.planTasks,
-                    tasks: updatedTasks
+                    tasks: updatedTasks,
+                    statistics: updatedStatistics
                 }
             })
         },
@@ -115,12 +121,14 @@ export function createContext(initialState: AppState) {
                                 : pt
                         })
                     : planTasks.filter(pt => pt.task.id !== id);
+            const updatedStatistics = getPlanTasksStatistics(updatedTasks);
 
             store.setState({
                 ...s,
                 planTasks: {
                     ...s.planTasks,
-                    tasks: updatedTasks
+                    tasks: updatedTasks,
+                    statistics: updatedStatistics
                 }
             })
         },
