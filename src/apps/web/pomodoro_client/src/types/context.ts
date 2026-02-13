@@ -1,4 +1,4 @@
-import type {PlanPomodoroTask, PomodoroTask} from "./task.ts";
+import type {ArchivePomodoroTask, PlanPomodoroTask, PomodoroTask} from "./task.ts";
 import type {ArchivePomodoroTasksStatistics, PlanPomodoroTasksStatistics} from "./statistics.ts";
 
 export const ActivePomodoroTaskType = {
@@ -34,7 +34,7 @@ export type PlanPomodoroTasksState = {
 }
 
 export type ArchivePomodoroTasksState = {
-    tasks: PomodoroTask[];
+    tasks: ArchivePomodoroTask[];
     statistics: ArchivePomodoroTasksStatistics;
 }
 

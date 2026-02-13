@@ -5,7 +5,7 @@ import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
 import type {PlanPomodoroTasksState} from "../../types/context.ts";
 import {
-    useAddTask,
+    useAddTask, useArchiveTask,
     useCancelEditTask,
     useCompleteEditTask,
     useDecTask,
@@ -39,6 +39,7 @@ export function PlanTasks({ data }: PlanTasksProps) {
                 cancelEditTask: useCancelEditTask,
                 incTask: useIncTask,
                 decTask: useDecTask,
+                archiveTask: useArchiveTask,
                 reorderTasks: useReorderTasks
             }
 

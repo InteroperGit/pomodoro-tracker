@@ -1,12 +1,21 @@
-import type {PomodoroTask} from "../../types/task";
+import type {ArchivePomodoroTask} from "../../types/task";
 import styles from "./ArchiveTask.module.scss"
+import {toHumanHourMinTime} from "../../utils/time.ts";
 
 export type ArchiveTaskProps = {
-    archiveTask: PomodoroTask;
+    archiveTask: ArchivePomodoroTask;
 }
 
 export function ArchiveTask({ archiveTask }: ArchiveTaskProps) {
-    const { category, description } = archiveTask;
+    const { task, taskTime, completedAt } = archiveTask;
+    const { category, description } = task;
+
+    const humanTaskTime = toHumanHourMinTime(taskTime);
+    const completeTaskTime = new Date(completedAt)
+        .toLocaleTimeString('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
     return `
         <div class="${styles.archive_task}">
@@ -15,6 +24,15 @@ export function ArchiveTask({ archiveTask }: ArchiveTaskProps) {
             </div>
             <div class="${styles.archive_task__description}">
                 ${description}
+            </div>
+            <div class="${styles.archive_task__task_time}">
+                ${humanTaskTime }
+            </div>
+            <div class="${styles.archive_task__divider}">
+                /
+            </div>
+            <div class="${styles.archive_task__task_time}">
+                ${completeTaskTime}
             </div>
         </div>
     `;

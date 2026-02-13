@@ -14,6 +14,7 @@ export type PlanTaskProps = {
         cancelEditTask: () => void;
         incTask: (id: string) => void;
         decTask: (id: string) => void;
+        archiveTask: (id: string) => void;
     }
 }
 
@@ -23,6 +24,7 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
     const taskCountId = generateId();
     const incButtonId = generateId();
     const decButtonId = generateId();
+    const archiveTaskButtonId = generateId();
     const categoryInputId = generateId();
     const descriptionInputId = generateId();
     const addTaskButtonId = generateId();
@@ -34,6 +36,7 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
         const taskCountDiv: HTMLDivElement | null = document.getElementById(taskCountId) as HTMLDivElement | null;
         const incButton: HTMLButtonElement | null = document.getElementById(incButtonId) as HTMLButtonElement | null;
         const decButton: HTMLButtonElement | null = document.getElementById(decButtonId) as HTMLButtonElement | null;
+        const archiveTaskButton: HTMLButtonElement | null = document.getElementById(archiveTaskButtonId) as HTMLButtonElement | null;
 
         if (!planTaskDiv) {
             return;
@@ -51,6 +54,10 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
             return;
         }
 
+        if (!archiveTaskButton) {
+            return;
+        }
+
         planTaskDiv.addEventListener("click", (e) => {
             if (task.id === editingTaskId) {
                 return;
@@ -60,7 +67,8 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
 
             if (taskCountDiv.contains(node)
                 || incButton.contains(node)
-                || decButton.contains(node)) {
+                || decButton.contains(node)
+                || archiveTaskButton.contains(node)) {
                 return;
             }
 
@@ -78,6 +86,10 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
         decButton.addEventListener("click", () => {
             actions.decTask(task.id);
         });
+
+        archiveTaskButton.addEventListener("click", () => {
+            actions.archiveTask(task.id);
+        })
     });
 
     useEffect(() => {
@@ -184,6 +196,11 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                     id="${decButtonId}"
                     class="${globalStyles.button} ${commonStyles.plan_task__button}">
                         -
+                  </button>
+                  <button 
+                    id="${archiveTaskButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                        C
                   </button>
               </div>
           `;

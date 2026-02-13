@@ -14,6 +14,7 @@ export type PlanTasksListProps = {
         cancelEditTask: () => void;
         incTask: (id: string) => void;
         decTask: (id: string) => void;
+        archiveTask: (id: string) => void;
         reorderTasks: (fromIndex: number, toIndex: number) => void;
     }
 };

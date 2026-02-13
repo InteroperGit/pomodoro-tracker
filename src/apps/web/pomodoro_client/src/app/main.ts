@@ -48,15 +48,24 @@ const getArchiveTasks = (): ArchivePomodoroTasksState => {
     return {
         tasks: [
             {
-                id: "3",
-                category: { name: 'test' },
-                description: "Test task 1"
+                task: {
+                    id: "3",
+                    category: { name: 'test' },
+                    description: "Test task 1"
+                },
+                taskTime: 25 * 60 * 1000,
+                completedAt: new Date().getTime(),
+
             },
             {
-                id: "4",
-                category: { name: "test" },
-                description: "Test task 2"
-            },
+                task: {
+                    id: "4",
+                    category: { name: "test" },
+                    description: "Test task 2"
+                },
+                taskTime: 25 * 60 * 1000,
+                completedAt: new Date().getTime(),
+            }
         ],
         statistics: {
             tasksCount: 2,

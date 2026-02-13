@@ -1,7 +1,7 @@
 import type {AppActions, AppState} from "../types/context.ts";
 import {createStore} from "../utils/store.ts";
-import type {PlanPomodoroTask, PomodoroTask} from "../types/task.ts";
-import type {PlanPomodoroTasksStatistics, PomodoroTaskCategoryStatistics} from "../types/statistics.ts";
+import type {ArchivePomodoroTask, PlanPomodoroTask, PomodoroTask} from "../types/task.ts";
+import type {PlanPomodoroTasksStatistics} from "../types/statistics.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
 
@@ -12,23 +12,15 @@ let context: AppContext;
 const getCategories = (tasks: PlanPomodoroTask[]) => {
     const map = new Map<string, number>();
 
-    tasks.forEach(task => {
-        const key = task.task.category.name;
-        map.set(key, (map.get(key) ?? 0) + 1)
+    tasks.forEach(({task, count}) => {
+        const key = task.category.name;
+        map.set(key, (map.get(key) ?? 0) + count)
     });
 
-    const result: PomodoroTaskCategoryStatistics[] = [];
-
-    map.forEach((count, name) => {
-       result.push({
-           category: {
-               name
-           },
-           count
-       })
-    });
-
-    return result;
+    return Array.from(map.entries(), ([name, count]) => ({
+        category: { name },
+        count
+    }));
 }
 
 const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksStatistics => {
@@ -98,13 +90,10 @@ export function createContext(initialState: AppState) {
                 ...s,
                 planTasks: {
                     ...s.planTasks,
-                    tasks: [
-                        ...updatedTasks,
-                    ]
+                    tasks: updatedTasks
                 }
             })
         },
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         decTask(id: string) {
             if (!id) {
                 throw new Error("Failed to dec task. Id is not initialized");
@@ -131,14 +120,51 @@ export function createContext(initialState: AppState) {
                 ...s,
                 planTasks: {
                     ...s.planTasks,
-                    tasks: [
-                        ...updatedTasks,
-                    ]
+                    tasks: updatedTasks
                 }
             })
         },
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         archiveTask(id: string) {
+            if (!id) {
+                throw new Error("Failed to dec task. Id is not initialized");
+            }
+
+            const s = store.getState();
+            const planTasks = s.planTasks.tasks;
+            const planTask = planTasks.find(pt => pt.task.id === id);
+            const planTaskIndex = planTasks.findIndex(pt => pt.task.id === id);
+
+            if (!planTask) {
+                throw new Error(`Failed to archive task. Plan task with id [${id}] is not found`);
+            }
+
+            const updatedPlanTasks: PlanPomodoroTask[] = planTask.count > 1
+                ? [
+                    ...planTasks.filter((_, index) => index < planTaskIndex),
+                    { task: planTask.task, count: planTask.count - 1},
+                    ...planTasks.filter((_, index) => index > planTaskIndex),
+                  ]
+                : planTasks.filter(pt => pt.task.id !== id);
+
+            const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks);
+
+            const updatedArchiveTasks: ArchivePomodoroTask[] = [
+                { task: planTask.task, completedAt: new Date().getTime(), taskTime: POMODORO_TASK_TIME },
+                ...s.archiveTasks.tasks,
+            ];
+
+            store.setState({
+                ...s,
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: updatedPlanTasks,
+                    statistics: updatePlanTasksStatistics
+                },
+                archiveTasks: {
+                    ...s.archiveTasks,
+                    tasks: updatedArchiveTasks
+                }
+            });
         },
         startEditTask(id: string) {
             if (!id) {
@@ -279,6 +305,10 @@ export function useGetEditingTaskId(): string | null | undefined {
 
 export function useReorderTasks(fromIndex: number, toIndex: number) {
     return context.actions.reorderTasks(fromIndex, toIndex);
+}
+
+export function useArchiveTask(id: string) {
+    return context.actions.archiveTask(id);
 }
 
 export type AppContext = ReturnType<typeof createContext>;

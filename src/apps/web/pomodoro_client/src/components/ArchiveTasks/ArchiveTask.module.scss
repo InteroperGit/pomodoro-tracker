@@ -1,5 +1,7 @@
 .archive_task {
   display: flex;
+  gap: 0.25rem;
+  align-items: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0;
   opacity: 0.75;
@@ -11,4 +13,13 @@
 
 .archive_task__description {
   flex: 1;
+}
+
+.archive_task__task_time {
+  font-weight: lighter;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.archive_task__divider {
 }
