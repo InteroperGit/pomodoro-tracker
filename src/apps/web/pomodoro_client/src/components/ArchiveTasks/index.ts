@@ -2,10 +2,10 @@ import styles from "./ArchiveTasks.module.scss";
 import {ArchiveTasksTitle} from "./ArchiveTasksTitle.ts";
 import {ArchiveTasksList} from "./ArchiveTasksList.ts";
 import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
-import type {ArchiveTasksState} from "../../types/context.ts";
+import type {ArchivePomodoroTasksState} from "../../types/context.ts";
 
 export type ArchiveTasksProps = {
-    data: ArchiveTasksState;
+    data: ArchivePomodoroTasksState;
 }
 
 export function ArchiveTasks({ data }: ArchiveTasksProps) {

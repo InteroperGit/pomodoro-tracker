@@ -1,10 +1,14 @@
 import { findById } from "../utils/dom";
 import { App } from "./App";
-import type {AppState, ArchiveTasksState, PlanTasksState} from "../types/context.ts";
+import {
+    type AppState,
+    type ArchivePomodoroTasksState,
+    type PlanPomodoroTasksState
+} from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
 
-const getPlanTasks = (): PlanTasksState => {
+const getPlanTasks = (): PlanPomodoroTasksState => {
     return {
         tasks: [{
             task: {
@@ -22,10 +26,10 @@ const getPlanTasks = (): PlanTasksState => {
             count: 1
         }],
         statistics: {
-            tasksCount: 5,
-            tasksTime: "2ч 5мин",
-            nextLongBreak: "12:00",
-            finishTime: "18:00",
+            tasksCount: 2,
+            tasksTime: 50 * 60 * 1000,
+            nextLongBreak: 0,
+            finishTime: 0,
             categories: [
                 {
                     category: { name: "test" },
@@ -40,7 +44,7 @@ const getPlanTasks = (): PlanTasksState => {
     };
 }
 
-const getArchiveTasks = (): ArchiveTasksState => {
+const getArchiveTasks = (): ArchivePomodoroTasksState => {
     return {
         tasks: [
             {
@@ -55,8 +59,8 @@ const getArchiveTasks = (): ArchiveTasksState => {
             },
         ],
         statistics: {
-            tasksCount: 5,
-            tasksTime: "3ч 15мин",
+            tasksCount: 2,
+            tasksTime: 50 * 60 * 1000,
             categories: [
                 {
                     category: { name: "test" },
@@ -78,11 +82,10 @@ window.addEventListener('load', () => {
         return;
     }
 
-    const planTasksData: PlanTasksState = getPlanTasks();
-    const archiveTasksData: ArchiveTasksState = getArchiveTasks();
+    const planTasksData: PlanPomodoroTasksState = getPlanTasks();
+    const archiveTasksData: ArchivePomodoroTasksState = getArchiveTasks();
 
     const initialState: AppState = {
-        activeTaskId: null,
         editingTaskId: null,
         planTasks: planTasksData,
         archiveTasks: archiveTasksData,

@@ -1,11 +1,14 @@
 import styles from "./PlanTasksTitle.module.scss";
+import {toHumanHourMinTime} from "../../utils/time.ts";
 
 export type PlanTasksTitleProps = {
     tasksCount: number;
-    tasksTime: string
+    tasksTime: number;
 }
 
 export function PlanTasksTitle({ tasksCount, tasksTime }: PlanTasksTitleProps) {
+    const humanTime = toHumanHourMinTime(tasksTime);
+
     return `
         <div class="${styles.plan_tasks__title}">
             <div class="${styles.plan_tasks__title_desc}">
@@ -21,7 +24,7 @@ export function PlanTasksTitle({ tasksCount, tasksTime }: PlanTasksTitleProps) {
             </div>
         
             <div class="${styles.plan_tasks__title_tasks_time}">
-                ${tasksTime ? tasksTime : '-'}
+                ${humanTime}
             </div>
         </div>
     `;

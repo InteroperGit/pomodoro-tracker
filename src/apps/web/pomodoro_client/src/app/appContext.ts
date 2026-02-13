@@ -1,11 +1,60 @@
 import type {AppActions, AppState} from "../types/context.ts";
 import {createStore} from "../utils/store.ts";
-import type {PomodoroTask} from "../types/task.ts";
+import type {PlanPomodoroTask, PomodoroTask} from "../types/task.ts";
+import type {PlanPomodoroTasksStatistics, PomodoroTaskCategoryStatistics} from "../types/statistics.ts";
+
+const POMODORO_TASK_TIME = 25 * 60 * 1000;
+
+//const LONG_BREAK_AFTER = 4;
 
 let context: AppContext;
 
+const getCategories = (tasks: PlanPomodoroTask[]) => {
+    const map = new Map<string, number>();
+
+    tasks.forEach(task => {
+        const key = task.task.category.name;
+        map.set(key, (map.get(key) ?? 0) + 1)
+    });
+
+    const result: PomodoroTaskCategoryStatistics[] = [];
+
+    map.forEach((count, name) => {
+       result.push({
+           category: {
+               name
+           },
+           count
+       })
+    });
+
+    return result;
+}
+
+const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksStatistics => {
+    const tasksCount = tasks.reduce((sum,  task) => sum + task.count, 0);
+
+    return {
+        tasksCount,
+        tasksTime: tasksCount * POMODORO_TASK_TIME,
+        nextLongBreak: 0,
+        finishTime: 0,
+        categories: getCategories(tasks)
+    }
+}
+
 export function createContext(initialState: AppState) {
     const store = createStore<AppState>(initialState);
+
+    const s = store.getState();
+
+    store.setState({
+        ...s,
+        planTasks: {
+            ...s.planTasks,
+            statistics: getPlanTasksStatistics(s.planTasks.tasks)
+        }
+    });
 
     const actions: AppActions = {
         addTask(task: PomodoroTask) {

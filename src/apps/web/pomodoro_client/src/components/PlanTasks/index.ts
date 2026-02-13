@@ -3,18 +3,20 @@ import {PlanTasksTitle} from "./PlanTasksTitle";
 import {PlanTasksAdd} from "./PlanTasksAdd";
 import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
-import type {PlanTasksState} from "../../types/context.ts";
+import type {PlanPomodoroTasksState} from "../../types/context.ts";
 import {
     useAddTask,
     useCancelEditTask,
-    useCompleteEditTask, useDecTask,
-    useGetEditingTaskId, useIncTask,
+    useCompleteEditTask,
+    useDecTask,
+    useGetEditingTaskId,
+    useIncTask,
     useReorderTasks,
     useStartEditTask
 } from "../../app/appContext.ts";
 
 export type PlanTasksProps = {
-    data: PlanTasksState;
+    data: PlanPomodoroTasksState;
 }
 
 export function PlanTasks({ data }: PlanTasksProps) {
