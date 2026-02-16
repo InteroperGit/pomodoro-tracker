@@ -71,7 +71,7 @@ export function createContext(initialState: AppState) {
         }
 
         if (s.activeTask.type === ActivePomodoroTaskType.Task && s.activeTask.task) {
-            actions.archiveTask(s.activeTask.task.id);
+            actions.archiveTask(s.activeTask.task.id, s.activeTask.restTime);
         }
 
         if (s.planTasks.tasks.length <= 0) {
@@ -186,7 +186,7 @@ export function createContext(initialState: AppState) {
                 }
             })
         },
-        archiveTask(id: string): void {
+        archiveTask(id: string, restTime?: number): void {
             if (!id) {
                 throw new Error("Failed to dec task. Id is not initialized");
             }
@@ -212,7 +212,11 @@ export function createContext(initialState: AppState) {
             const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks);
 
             const updatedArchiveTasks: ArchivePomodoroTask[] = [
-                { task: pomodoroTask, completedAt: new Date().getTime(), taskTime: POMODORO_TASK_TIME },
+                {
+                    task: pomodoroTask,
+                    completedAt: new Date().getTime(),
+                    taskTime: restTime ? POMODORO_TASK_TIME - restTime : POMODORO_TASK_TIME,
+                },
                 ...s.archiveTasks.tasks,
             ];
 

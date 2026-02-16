@@ -1,5 +1,5 @@
 import styles from "./PlanTasksTitle.module.scss";
-import {toHumanHourMinTime} from "../../utils/time.ts";
+import {toHumanHourMinutesTime} from "../../utils/time.ts";
 
 export type PlanTasksTitleProps = {
     tasksCount: number;
@@ -7,7 +7,7 @@ export type PlanTasksTitleProps = {
 }
 
 export function PlanTasksTitle({ tasksCount, tasksTime }: PlanTasksTitleProps) {
-    const humanTime = toHumanHourMinTime(tasksTime);
+    const humanTime = toHumanHourMinutesTime(tasksTime);
 
     return `
         <div class="${styles.plan_tasks__title}">

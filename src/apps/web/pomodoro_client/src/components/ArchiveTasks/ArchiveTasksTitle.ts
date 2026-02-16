@@ -1,5 +1,5 @@
 import styles from "./ArchiveTasksTitle.module.scss";
-import {toHumanHourMinTime} from "../../utils/time.ts";
+import {toHumanHourMinutesTime} from "../../utils/time.ts";
 
 export type ArchiveTasksTitleProps = {
     tasksCount: number;
@@ -7,7 +7,7 @@ export type ArchiveTasksTitleProps = {
 }
 
 export function ArchiveTasksTitle({ tasksCount, tasksTime }: ArchiveTasksTitleProps) {
-    const humanTime = toHumanHourMinTime(tasksTime);
+    const humanTime = toHumanHourMinutesTime(tasksTime);
 
     return `
         <div class="${styles.archive_tasks__title}">

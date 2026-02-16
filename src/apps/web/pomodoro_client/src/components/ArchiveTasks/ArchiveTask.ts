@@ -1,6 +1,6 @@
 import type {ArchivePomodoroTask} from "../../types/task";
 import styles from "./ArchiveTask.module.scss"
-import {toHumanHourMinTime} from "../../utils/time.ts";
+import {toHumanMinutesSecondsTime} from "../../utils/time.ts";
 
 export type ArchiveTaskProps = {
     archiveTask: ArchivePomodoroTask;
@@ -10,7 +10,7 @@ export function ArchiveTask({ archiveTask }: ArchiveTaskProps) {
     const { task, taskTime, completedAt } = archiveTask;
     const { category, description } = task;
 
-    const humanTaskTime = toHumanHourMinTime(taskTime);
+    const humanTaskTime = toHumanMinutesSecondsTime(taskTime);
     const completeTaskTime = new Date(completedAt)
         .toLocaleTimeString('ru-RU', {
             hour: '2-digit',
