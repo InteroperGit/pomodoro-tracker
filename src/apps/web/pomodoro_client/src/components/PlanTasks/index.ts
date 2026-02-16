@@ -44,7 +44,7 @@ export function PlanTasks({ data }: PlanTasksProps) {
             }
 
         });
-    const stats = PlanTasksStatistics({ statistics });
+    const stats = tasks.length > 0 ? PlanTasksStatistics({ statistics }) : "";
 
     return `
         <div class="${styles.plan_tasks}">

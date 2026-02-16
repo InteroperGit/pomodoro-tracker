@@ -3,3 +3,19 @@
   list-style: none;
   padding: 0;
 }
+
+.plan_tasks__empty {
+  margin-top: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary, #666);
+  border: 1px solid var(--text-secondary, #666);
+  font-style: italic;
+
+  &:before {
+    content: "📝";
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+}

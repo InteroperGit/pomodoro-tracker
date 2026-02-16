@@ -100,6 +100,14 @@ export function PlanTaskList({ tasks, actions }: PlanTasksListProps) {
         });
     });
 
+    if (tasks.length === 0) {
+        return `
+            <div class="${styles.plan_tasks__empty}">
+                Список задач пуст
+            </div>
+        `;
+    }
+
     const taskItems = tasks.map((planTask, index) => {
         const taskItem = PlanTask({ planTask, actions });
 
