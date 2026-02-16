@@ -188,7 +188,7 @@ export function createContext(initialState: AppState) {
         },
         archiveTask(id: string, restTime?: number): void {
             if (!id) {
-                throw new Error("Failed to dec task. Id is not initialized");
+                throw new Error("Failed to archive task. Id is not initialized");
             }
 
             const s = store.getState();

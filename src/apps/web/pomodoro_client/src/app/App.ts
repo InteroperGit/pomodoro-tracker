@@ -24,6 +24,7 @@ export function App(ctx: AppContext) {
     const toolbar = Toolbar();
     const timer = Timer({
         activeTask: state.activeTask,
+        planTasks: state.planTasks.tasks,
         actions: {
             startTask: useStartTask,
             stopTask: useStopTask,

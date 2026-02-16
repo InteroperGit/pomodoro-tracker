@@ -1,11 +1,17 @@
 import styles from "./Timer.module.scss";
 import globalStyles from "../global.module.scss";
-import {type ActivePomodoroTask, ActivePomodoroTaskStatus, ActivePomodoroTaskType} from "../../types/task.ts";
+import {
+    type ActivePomodoroTask,
+    ActivePomodoroTaskStatus,
+    ActivePomodoroTaskType,
+    type PlanPomodoroTask
+} from "../../types/task.ts";
 import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
 
 export type TimerProps = {
     activeTask?: ActivePomodoroTask | null;
+    planTasks: PlanPomodoroTask[];
     actions: {
         startTask: () => void;
         stopTask: () => void;
@@ -64,9 +70,15 @@ const getButtonTitles = (task: ActivePomodoroTask) => {
     }
 }
 
-export function Timer({ activeTask, actions }: TimerProps) {
-    if (!activeTask) {
-        return "<div>Нет активной задачи</div>";
+export function Timer({ activeTask, planTasks, actions }: TimerProps) {
+    if (!activeTask || planTasks.length === 0) {
+        return `
+                <div class="${styles.timer} ${styles.timer__empty}">
+                <div class="${styles.timer__empty_icon}">⏰</div>
+                <div class="${styles.timer__empty_title}">Нет активной задачи</div>
+                <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
+                </div>
+            `;
     }
 
     const { restTime, task } = activeTask;
