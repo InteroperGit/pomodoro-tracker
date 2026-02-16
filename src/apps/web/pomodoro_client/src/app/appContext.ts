@@ -8,8 +8,13 @@ import {
     type PomodoroTask
 } from "../types/task.ts";
 import type {PlanPomodoroTasksStatistics} from "../types/statistics.ts";
+import {ActiveTaskController, type ActiveTaskControllerConfiguration} from "./ActiveTaskController.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
+
+const POMODORO_SHORT_BREAK_TIME = 5 * 60 * 1000;
+
+const POMODORO_LONG_BREAK_TIME = 15 * 60 * 1000;
 
 const LONG_BREAK_AFTER = 4;
 
@@ -42,29 +47,60 @@ const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksSta
 }
 
 export function createContext(initialState: AppState) {
+    const configuration: ActiveTaskControllerConfiguration = {
+        taskTime: POMODORO_TASK_TIME,
+        shortBreakTime: POMODORO_SHORT_BREAK_TIME,
+        longBreakTime: POMODORO_LONG_BREAK_TIME,
+        maxShortBreaksSerie: LONG_BREAK_AFTER,
+    };
+
+    const taskController = new ActiveTaskController(configuration);
+    taskController.activateNextTask(initialState.planTasks.tasks, initialState.activeTask?.restTime);
+
+    if (!initialState.activeTask) {
+        initialState.activeTask = taskController.activeTask;
+    }
+
     const store = createStore<AppState>(initialState);
 
-    const s = store.getState();
+    taskController.onCompleted = () => {
+        let s = store.getState();
 
-    store.setState({
-        ...s,
-        planTasks: {
-            ...s.planTasks,
-            statistics: getPlanTasksStatistics(s.planTasks.tasks)
+        if (!s.activeTask) {
+            return;
         }
-    });
+
+        if (s.activeTask.type === ActivePomodoroTaskType.Task && s.activeTask.task) {
+            actions.archiveTask(s.activeTask.task.id);
+        }
+
+        if (s.planTasks.tasks.length <= 0) {
+            return;
+        }
+
+        taskController.activateNextTask(s.planTasks.tasks);
+        s = store.getState();
+
+        store.setState({
+            ...s,
+             activeTask: taskController.activeTask,
+        });
+    }
 
     const actions: AppActions = {
-        addTask(task: PomodoroTask) {
+        addTask(task: PomodoroTask): void {
             const s = store.getState();
             const updatedPlanTasks = [
-                ...s.planTasks.tasks,
                 {
                     task,
                     count: 1
-                }
+                },
+                ...s.planTasks.tasks,
             ];
+
             const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks);
+            const shortBreakCount = s.activeTask?.shortBreakCount ?? 0;
+            const restTime = s.activeTask?.restTime ?? POMODORO_SHORT_BREAK_TIME;
 
             store.setState(
                 {
@@ -78,8 +114,8 @@ export function createContext(initialState: AppState) {
                             type: ActivePomodoroTaskType.Task,
                             status: ActivePomodoroTaskStatus.Pending,
                             task,
-                            shortBreakCount: LONG_BREAK_AFTER,
-                            restTime: POMODORO_TASK_TIME,
+                            shortBreakCount,
+                            restTime,
                         },
                     planTasks:
                     {
@@ -89,19 +125,19 @@ export function createContext(initialState: AppState) {
                     }
                 });
         },
-        incTask(id: string) {
+        incTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to inc task. Id is not initialized");
             }
 
             const s = store.getState();
             const planTasks = s.planTasks.tasks;
-            const planTask = planTasks.find(pt => pt.task.id === id);
-            if (!planTask) {
-                return;
+            const index = planTasks.findIndex(pt => pt.task.id === id);
+
+            if (index < 0) {
+                throw new Error(`Failed to inc task. Task with Id = [${id}] is not found`);
             }
 
-            const index = planTasks.findIndex(pt => pt.task.id === id);
             const updatedTasks = planTasks.map((pt, ptIndex) => {
                 return ptIndex === index
                     ? { ...pt, count: pt.count + 1 }
@@ -118,21 +154,21 @@ export function createContext(initialState: AppState) {
                 }
             })
         },
-        decTask(id: string) {
+        decTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to dec task. Id is not initialized");
             }
 
             const s = store.getState();
             const planTasks = s.planTasks.tasks;
-            const planTask = planTasks.find(pt => pt.task.id === id);
-            if (!planTask) {
-                return;
+            const index = planTasks.findIndex(pt => pt.task.id === id);
+
+            if (index < 0) {
+                throw new Error(`Failed to dec task. Task with Id = [${id}] is not found`);
             }
 
-            const index = planTasks.findIndex(pt => pt.task.id === id);
             const updatedTasks =
-                planTask.count > 1
+                planTasks[index].count > 1
                     ? planTasks.map((pt, ptIndex) => {
                             return ptIndex === index
                                 ? { ...pt, count: pt.count - 1 }
@@ -150,32 +186,33 @@ export function createContext(initialState: AppState) {
                 }
             })
         },
-        archiveTask(id: string) {
+        archiveTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to dec task. Id is not initialized");
             }
 
             const s = store.getState();
             const planTasks = s.planTasks.tasks;
-            const planTask = planTasks.find(pt => pt.task.id === id);
-            const planTaskIndex = planTasks.findIndex(pt => pt.task.id === id);
+            const index = planTasks.findIndex(pt => pt.task.id === id);
 
-            if (!planTask) {
-                throw new Error(`Failed to archive task. Plan task with id [${id}] is not found`);
+            if (index < 0) {
+                throw new Error(`Failed to archive task. Task with Id = [${id}] is not found`);
             }
 
-            const updatedPlanTasks: PlanPomodoroTask[] = planTask.count > 1
-                ? [
-                    ...planTasks.filter((_, index) => index < planTaskIndex),
-                    { task: planTask.task, count: planTask.count - 1},
-                    ...planTasks.filter((_, index) => index > planTaskIndex),
-                  ]
-                : planTasks.filter(pt => pt.task.id !== id);
+            const pomodoroTask = planTasks[index].task;
+            const updatedPlanTasks =
+                planTasks[index].count > 1
+                    ? planTasks.map((pt, ptIndex) => {
+                        return ptIndex === index
+                            ? { ...pt, count: pt.count - 1 }
+                            : pt
+                    })
+                    : planTasks.filter(pt => pt.task.id !== id);
 
             const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks);
 
             const updatedArchiveTasks: ArchivePomodoroTask[] = [
-                { task: planTask.task, completedAt: new Date().getTime(), taskTime: POMODORO_TASK_TIME },
+                { task: pomodoroTask, completedAt: new Date().getTime(), taskTime: POMODORO_TASK_TIME },
                 ...s.archiveTasks.tasks,
             ];
 
@@ -192,7 +229,7 @@ export function createContext(initialState: AppState) {
                 }
             });
         },
-        startEditTask(id: string) {
+        startEditTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to edit task. Id is not initialized");
             }
@@ -203,7 +240,7 @@ export function createContext(initialState: AppState) {
                 editingTaskId: id
             });
         },
-        completeEditTask(task: PomodoroTask) {
+        completeEditTask(task: PomodoroTask): void {
             if (!task) {
                 throw new Error("Failed to edit task. Task is not initialized");
             }
@@ -226,7 +263,7 @@ export function createContext(initialState: AppState) {
                 }
             });
         },
-        cancelEditTask() {
+        cancelEditTask(): void {
             const s = store.getState();
 
             if (!s.editingTaskId) {
@@ -259,6 +296,115 @@ export function createContext(initialState: AppState) {
                    tasks: reorderedTasks
                }
             });
+        },
+        startTask(): void {
+            const s = store.getState();
+
+            if (!s.activeTask) {
+                throw new Error("Failed to start task. Active task is not initialized");
+            }
+
+            if (s.activeTask.status !== ActivePomodoroTaskStatus.Pending) {
+                throw new Error("Failed to start task. Active task is not pending");
+            }
+
+            taskController.start();
+
+            store.setState({
+                ...s,
+                activeTask: {
+                    ...s.activeTask,
+                    restTime: taskController.restTime,
+                    status: taskController.status
+                }
+            });
+        },
+        stopTask(): void {
+            const s = store.getState();
+
+            if (!s.activeTask) {
+                throw new Error("Failed to stop task. Active task is not initialized");
+            }
+
+            if (s.activeTask.status !== ActivePomodoroTaskStatus.Active) {
+                throw new Error("Failed to stop task. Active task is not active");
+            }
+
+            taskController.stop();
+
+            store.setState({
+                ...s,
+                activeTask: {
+                    ...s.activeTask,
+                    restTime: taskController.restTime,
+                    status: taskController.status
+                }
+            });
+        },
+        pauseTask(): void {
+            const s = store.getState();
+
+            if (!s.activeTask) {
+                throw new Error("Failed to pause task. Active task is not initialized");
+            }
+
+            if (s.activeTask.status !== ActivePomodoroTaskStatus.Active) {
+                throw new Error("Failed to paise task. Active task is not active");
+            }
+
+            taskController.pause();
+
+            store.setState({
+                ...s,
+                activeTask: {
+                    ...s.activeTask,
+                    restTime: taskController.restTime,
+                    status: taskController.status
+                }
+            });
+        },
+        resumeTask(): void {
+            const s = store.getState();
+
+            if (!s.activeTask) {
+                throw new Error("Failed to resume task. Active task is not initialized");
+            }
+
+            if (s.activeTask.status !== ActivePomodoroTaskStatus.Paused) {
+                throw new Error("Failed to resume task. Active task is not paused");
+            }
+
+            taskController.resume();
+
+            store.setState({
+                ...s,
+                activeTask: {
+                    ...s.activeTask,
+                    restTime: taskController.restTime,
+                    status: taskController.status
+                }
+            });
+        },
+        completeTask(): void {
+            const s = store.getState();
+
+            if (!s.activeTask) {
+                throw new Error("Failed to complete task. Active task is not initialized");
+            }
+
+            if (s.activeTask.status !== ActivePomodoroTaskStatus.Active
+                    && s.activeTask.status !== ActivePomodoroTaskStatus.Paused) {
+                throw new Error("Failed to complete task. Active task is not active or paused");
+            }
+
+            taskController.complete();
+        },
+        registerTimerTickEventListener(handler: (restTime: number) => void): void {
+            if (!handler) {
+                throw new Error("Handler is not initialized");
+            }
+
+            taskController.onTick = handler;
         }
     }
 
@@ -335,6 +481,34 @@ export function useReorderTasks(fromIndex: number, toIndex: number) {
 
 export function useArchiveTask(id: string) {
     return context.actions.archiveTask(id);
+}
+
+export function useGetActiveTask() {
+    return context.store.getState().activeTask;
+}
+
+export function useStartTask() {
+    return context.actions.startTask();
+}
+
+export function useStopTask() {
+    return context.actions.stopTask();
+}
+
+export function usePauseTask() {
+    return context.actions.pauseTask();
+}
+
+export function useResumeTask() {
+    return context.actions.resumeTask();
+}
+
+export function useCompleteTask() {
+    return context.actions.completeTask();
+}
+
+export function useActiveTaskTimerTick(handler: (restTime: number) => void) {
+    context.actions.registerTimerTickEventListener(handler);
 }
 
 export type AppContext = ReturnType<typeof createContext>;

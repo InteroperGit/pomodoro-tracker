@@ -5,7 +5,13 @@ import { Timer } from '../components/Timer';
 import {PlanTasks} from "../components/PlanTasks";
 import {ArchiveTasks} from "../components/ArchiveTasks";
 import {Footer} from "../components/Footer";
-import {type AppContext, useCancelEditTask, useGetEditingTaskId} from "./appContext.ts";
+import {
+    type AppContext,
+    useActiveTaskTimerTick,
+    useCancelEditTask, useCompleteTask,
+    useGetEditingTaskId, usePauseTask, useResumeTask,
+    useStartTask, useStopTask
+} from "./appContext.ts";
 import {generateId} from "../utils/idGenerator.ts";
 import {useEffect} from "../utils/render.ts";
 import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
@@ -17,7 +23,15 @@ export function App(ctx: AppContext) {
 
     const toolbar = Toolbar();
     const timer = Timer({
-        activeTask: state.activeTask
+        activeTask: state.activeTask,
+        actions: {
+            startTask: useStartTask,
+            stopTask: useStopTask,
+            pauseTask: usePauseTask,
+            resumeTask: useResumeTask,
+            completeTask: useCompleteTask,
+            registerActiveTaskTimerTick: useActiveTaskTimerTick
+        }
     });
     const planTasks = PlanTasks({ data: state.planTasks });
     const archiveTasks = ArchiveTasks({ data: state.archiveTasks });

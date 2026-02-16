@@ -38,7 +38,7 @@ export type ActivePomodoroTaskStatus = typeof ActivePomodoroTaskStatus[keyof typ
 
 export type ActivePomodoroTask = {
     type: ActivePomodoroTaskType;
-    task: PomodoroTask;
+    task?: PomodoroTask | null;
     restTime: number;
     status: ActivePomodoroTaskStatus;
     shortBreakCount: number;

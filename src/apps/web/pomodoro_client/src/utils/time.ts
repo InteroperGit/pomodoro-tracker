@@ -3,5 +3,5 @@ export function toHumanHourMinTime(time: number) {
     const hours = Math.floor(timeSec / 3600 );
     const minutes = Math.floor((timeSec % 3600) / 60);
 
-    return hours > 1 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
+    return hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
 }

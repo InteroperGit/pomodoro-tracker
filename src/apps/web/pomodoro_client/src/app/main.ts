@@ -7,9 +7,8 @@ import {
 } from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
-import {type ActivePomodoroTask, ActivePomodoroTaskStatus, ActivePomodoroTaskType} from "../types/task.ts";
 
-const getActiveTask = (): ActivePomodoroTask => {
+/*const getActiveTask = (): ActivePomodoroTask => {
     return {
         type: ActivePomodoroTaskType.Task,
         task: {
@@ -21,7 +20,7 @@ const getActiveTask = (): ActivePomodoroTask => {
         shortBreakCount: 3,
         status: ActivePomodoroTaskStatus.Pending,
     }
-}
+}*/
 
 const getPlanTasks = (): PlanPomodoroTasksState => {
     return {
@@ -106,13 +105,13 @@ window.addEventListener('load', () => {
         return;
     }
 
-    const activeTask = getActiveTask();
+    //const activeTask = getActiveTask();
     const planTasks: PlanPomodoroTasksState = getPlanTasks();
     const archiveTasks: ArchivePomodoroTasksState = getArchiveTasks();
 
     const initialState: AppState = {
         editingTaskId: null,
-        activeTask,
+        //activeTask,
         planTasks,
         archiveTasks,
     }

@@ -27,4 +27,10 @@ export type AppActions = {
     completeEditTask(task: PomodoroTask): void;
     cancelEditTask(): void;
     reorderTasks(fromIndex: number, toIndex: number): void;
+    startTask(): void;
+    stopTask(): void;
+    pauseTask(): void;
+    resumeTask(): void;
+    completeTask(): void;
+    registerTimerTickEventListener(handler: (restTime: number) => void): void;
 }
