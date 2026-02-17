@@ -6,6 +6,7 @@ import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
 
 export type PlanTasksListProps = {
+    isMobile: boolean;
     tasks: PlanPomodoroTask[];
     actions: {
         getEditingTaskId: () => string | null | undefined;
@@ -19,7 +20,7 @@ export type PlanTasksListProps = {
     }
 };
 
-export function PlanTaskList({ tasks, actions }: PlanTasksListProps) {
+export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     const ulId = generateId();
 
     useEffect(() => {
@@ -109,7 +110,11 @@ export function PlanTaskList({ tasks, actions }: PlanTasksListProps) {
     }
 
     const taskItems = tasks.map((planTask, index) => {
-        const taskItem = PlanTask({ planTask, actions });
+        const taskItem = PlanTask({
+            isMobile,
+            planTask,
+            actions
+        });
 
         return `
             <li data-index="${index}">

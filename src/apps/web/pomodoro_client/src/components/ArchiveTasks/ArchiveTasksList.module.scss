@@ -1,3 +1,27 @@
+.archive_tasks__list_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive_tasks__header {
+  display: flex;
+  flex-direction: row;
+  opacity: 0.75;
+  font-size: 0.75rem;
+
+  &_mobile {
+    margin-top: 0.5rem;
+  }
+}
+
+.archive_tasks__header_category {
+  flex: 0 0 120px;
+}
+
+.archive_tasks__header_description {
+  flex: 1;
+}
+
 .archive_tasks__list {
   margin-top: 0.5rem;
   list-style: none;

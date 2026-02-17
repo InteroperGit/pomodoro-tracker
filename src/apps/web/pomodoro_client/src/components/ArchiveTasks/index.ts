@@ -5,32 +5,24 @@ import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
 import type {ArchivePomodoroTasksState} from "../../types/context.ts";
 
 export type ArchiveTasksProps = {
+    isMobile: boolean;
     data: ArchivePomodoroTasksState;
 }
 
-export function ArchiveTasks({ data }: ArchiveTasksProps) {
+export function ArchiveTasks({ isMobile, data }: ArchiveTasksProps) {
     const { tasks, statistics } = data;
     const { tasksCount, tasksTime } = statistics;
 
     const title = ArchiveTasksTitle({ tasksCount, tasksTime });
-    const list = ArchiveTasksList({ tasks });
+    const list = ArchiveTasksList({ isMobile, tasks });
     const stat = ArchiveTasksStatistics({ statistics });
 
+    const addingStyles = isMobile ? styles.archive_tasks_mobile : "";
+
     return `
-        <div class="${styles.archive_tasks}">
+        <div class="${styles.archive_tasks} ${addingStyles}">
             ${title}
-            
-            <div class="${styles.archive_tasks__header}">
-                <span class="${styles.archive_tasks__header_category}">
-                    КАТЕГОРИЯ
-                </span>
-                    <span class="${styles.archive_tasks__header_description}">
-                    ОПИСАНИЕ
-                </span>
-            </div>
-            
             ${list}
-            
             ${stat}
         </div>
     `;

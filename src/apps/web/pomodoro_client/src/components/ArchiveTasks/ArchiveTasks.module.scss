@@ -2,19 +2,9 @@
   margin-top: 2.5rem;
   display: flex;
   flex-direction: column;
-}
 
-.archive_tasks__header {
-  display: flex;
-  flex-direction: row;
-  opacity: 0.75;
-  font-size: 0.75rem;
-}
-
-.archive_tasks__header_category {
-  flex: 0 0 120px;
-}
-
-.archive_tasks__header_description {
-  flex: 1;
+  &_mobile {
+    width: calc(100vw - 1rem);
+    margin-inline: auto;
+  }
 }

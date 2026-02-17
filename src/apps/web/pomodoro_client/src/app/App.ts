@@ -2,8 +2,6 @@ import globalStyles from "../components/global.module.scss";
 import styles from "./App.module.scss";
 import { Toolbar } from '../components/Toolbar';
 import { Timer } from '../components/Timer';
-import {PlanTasks} from "../components/PlanTasks";
-import {ArchiveTasks} from "../components/ArchiveTasks";
 import {Footer} from "../components/Footer";
 import {
     type AppContext,
@@ -15,14 +13,19 @@ import {
 import {generateId} from "../utils/idGenerator.ts";
 import {useEffect} from "../utils/render.ts";
 import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
+import {useIsMobile} from "../types/layout.ts";
+import {PlanTasks} from "../components/PlanTasks";
+import {ArchiveTasks} from "../components/ArchiveTasks";
 
 export function App(ctx: AppContext) {
     const appDivId = generateId();
 
     const state = ctx.store.getState();
+    const isMobile = useIsMobile();
 
-    const toolbar = Toolbar();
+    const toolbar = Toolbar({ isMobile });
     const timer = Timer({
+        isMobile,
         activeTask: state.activeTask,
         planTasks: state.planTasks.tasks,
         actions: {
@@ -34,8 +37,11 @@ export function App(ctx: AppContext) {
             registerActiveTaskTimerTick: useActiveTaskTimerTick
         }
     });
-    const planTasks = PlanTasks({ data: state.planTasks });
-    const archiveTasks = ArchiveTasks({ data: state.archiveTasks });
+    const planTasks = PlanTasks({
+        isMobile,
+        data: state.planTasks
+    });
+    const archiveTasks = ArchiveTasks({ isMobile, data: state.archiveTasks });
     const footer = Footer();
 
     //Cancel edit task, if click out of PlanTask control
@@ -78,5 +84,5 @@ export function App(ctx: AppContext) {
             
             ${footer}
         </div>
-    `;
+    `
 }

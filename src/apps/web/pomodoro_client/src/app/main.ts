@@ -7,20 +7,7 @@ import {
 } from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
-
-/*const getActiveTask = (): ActivePomodoroTask => {
-    return {
-        type: ActivePomodoroTaskType.Task,
-        task: {
-            id: "1",
-            category: { name: "test" },
-            description: "Test task 1",
-        },
-        restTime: 25 * 60 * 1000,
-        shortBreakCount: 3,
-        status: ActivePomodoroTaskStatus.Pending,
-    }
-}*/
+import {onMobileChanged} from "../types/layout.ts";
 
 const getPlanTasks = (): PlanPomodoroTasksState => {
     return {
@@ -111,7 +98,6 @@ window.addEventListener('load', () => {
 
     const initialState: AppState = {
         editingTaskId: null,
-        //activeTask,
         planTasks,
         archiveTasks,
     }
@@ -120,6 +106,10 @@ window.addEventListener('load', () => {
     registerContext(ctx);
 
     ctx.store.subscribe(() => {
+        render(root, App, ctx);
+    });
+
+    onMobileChanged(() => {
         render(root, App, ctx);
     });
 

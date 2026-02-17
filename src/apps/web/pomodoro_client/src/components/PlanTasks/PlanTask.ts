@@ -6,6 +6,7 @@ import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
 
 export type PlanTaskProps = {
+    isMobile: boolean;
     planTask: PlanPomodoroTask;
     actions: {
         getEditingTaskId: () => string | null | undefined;
@@ -18,7 +19,7 @@ export type PlanTaskProps = {
     }
 }
 
-export function PlanTask({ planTask, actions } : PlanTaskProps) {
+export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
     const taskCountId = generateId();
@@ -38,23 +39,7 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
         const decButton: HTMLButtonElement | null = document.getElementById(decButtonId) as HTMLButtonElement | null;
         const archiveTaskButton: HTMLButtonElement | null = document.getElementById(archiveTaskButtonId) as HTMLButtonElement | null;
 
-        if (!planTaskDiv) {
-            return;
-        }
-
-        if (!taskCountDiv) {
-            return;
-        }
-
-        if (!incButton) {
-            return;
-        }
-
-        if (!decButton) {
-            return;
-        }
-
-        if (!archiveTaskButton) {
+        if (!planTaskDiv || !taskCountDiv || !incButton || !decButton || !archiveTaskButton) {
             return;
         }
 
@@ -143,8 +128,76 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
         addTaskButton.addEventListener('click', addTaskButtonClickHandler);
     });
 
-    return editingTaskId != null && task.id === editingTaskId
+    const mobileVersion = isMobile && (
+        editingTaskId != null && task.id === editingTaskId
         ? `
+            <div 
+                id="${planTaskDivId}"
+                data-planTaskId="${task.id}"
+                class="${styles.plan_task}">
+                  <div class="${styles.plan_task__category}">
+                      <input 
+                        id="${categoryInputId}"
+                        class="${styles.plan_task_input}"
+                        value="${task.category?.name}" 
+                      />
+                  </div>
+                  <div class="${styles.plan_task__description}">
+                      <input 
+                        id="${descriptionInputId}"
+                        class="${styles.plan_task_input}"
+                        value="${task.description}" 
+                      />
+                  </div>
+                  <button 
+                    id="${addTaskButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                    S
+                  </button>
+              </div>
+        `
+        : `
+            <div 
+                id="${planTaskDivId}"
+                data-planTaskId="${task.id}"
+                class="${styles.plan_task_mobile}">
+                <div class="${styles.plan_task__task}">
+                    <div class="${styles.plan_task__category} ${styles.plan_task__category_mobile}">
+                      ${task.category?.name}
+                    </div>
+                    <div class="${styles.plan_task__description} ${styles.plan_task__description_mobile}">
+                      ${task.description}
+                    </div>
+                </div>
+                <div class="${styles.plan_task__toolbar}">
+                    <div 
+                    id="${taskCountId}"
+                    class="${styles.plan_task__count}">
+                      ${count}
+                    </div>
+                    <button
+                    id="${incButtonId}" 
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                        +
+                    </button>
+                    <button 
+                    id="${decButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                        -
+                    </button>
+                    <button 
+                    id="${archiveTaskButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
+                        C
+                    </button>
+                </div>
+              </div>
+        `
+    );
+
+    const desktopVersion = !isMobile && (
+        editingTaskId != null && task.id === editingTaskId
+            ? `
               <div 
                 id="${planTaskDivId}"
                 data-planTaskId="${task.id}"
@@ -170,8 +223,8 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                   </button>
               </div>
           `
-        :
-          `
+            :
+            `
               <div 
                 id="${planTaskDivId}"
                 data-planTaskId="${task.id}"
@@ -203,5 +256,8 @@ export function PlanTask({ planTask, actions } : PlanTaskProps) {
                         C
                   </button>
               </div>
-          `;
+          `
+    );
+
+    return isMobile ? mobileVersion : desktopVersion;
 }

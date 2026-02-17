@@ -16,10 +16,11 @@ import {
 } from "../../app/appContext.ts";
 
 export type PlanTasksProps = {
+    isMobile: boolean;
     data: PlanPomodoroTasksState;
 }
 
-export function PlanTasks({ data }: PlanTasksProps) {
+export function PlanTasks({ isMobile, data }: PlanTasksProps) {
     const { tasks, statistics } = data;
     const { tasksCount, tasksTime } = statistics;
 
@@ -31,6 +32,7 @@ export function PlanTasks({ data }: PlanTasksProps) {
     });
     const list = PlanTaskList(
         {
+            isMobile,
             tasks,
             actions: {
                 getEditingTaskId: useGetEditingTaskId,
@@ -46,12 +48,21 @@ export function PlanTasks({ data }: PlanTasksProps) {
         });
     const stats = tasks.length > 0 ? PlanTasksStatistics({ statistics }) : "";
 
-    return `
-        <div class="${styles.plan_tasks}">
-            ${title}
-            ${add}
-            ${list}
-            ${stats}
-        </div>
-    `;
+    return isMobile ?
+        `
+            <div class="${styles.plan_tasks} ${styles.plan_tasks_mobile}">
+                ${title}
+                ${add}
+                ${list}
+                ${stats}
+            </div>
+        `
+        : `
+            <div class="${styles.plan_tasks}">
+                ${title}
+                ${add}
+                ${list}
+                ${stats}
+            </div>
+        `;
 }

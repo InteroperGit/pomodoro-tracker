@@ -10,6 +10,7 @@ import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
 
 export type TimerProps = {
+    isMobile: boolean;
     activeTask?: ActivePomodoroTask | null;
     planTasks: PlanPomodoroTask[];
     actions: {
@@ -70,13 +71,13 @@ const getButtonTitles = (task: ActivePomodoroTask) => {
     }
 }
 
-export function Timer({ activeTask, planTasks, actions }: TimerProps) {
+export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) {
     if (!activeTask || planTasks.length === 0) {
         return `
-                <div class="${styles.timer} ${styles.timer__empty}">
-                <div class="${styles.timer__empty_icon}">⏰</div>
-                <div class="${styles.timer__empty_title}">Нет активной задачи</div>
-                <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
+                <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
+                    <div class="${styles.timer__empty_icon}">⏰</div>
+                    <div class="${styles.timer__empty_title}">Нет активной задачи</div>
+                    <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
                 </div>
             `;
     }
@@ -160,30 +161,57 @@ export function Timer({ activeTask, planTasks, actions }: TimerProps) {
         });
     });
 
-    return `
-        <div class="${styles.timer} ${timerTypeStyle}">
-            <div 
-                id="${timerCountdownId}"
-                class="${styles.timer__countdown}">
-                ${minutes}:${seconds}
-            </div>
-
-            <div class="${styles.timer__description}">
-                ${task ? task.description : ""}
-            </div>
-
-            <div class="${styles.timer__buttons}">
-                <button 
-                    id="${leftButtonId}"
-                    class="${globalStyles.button} ${styles.timer_button}">
-                    ${leftButtonTitle}
-                </button>
-                <button 
-                    id="${rightButtonId}"
-                    class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}">
-                    ${rightButtonTitle}
-                </button>
-            </div>
-        </div>
-    `;
+    return isMobile
+        ?   `
+                <div class="${styles.timer} ${styles.timer_mobile} ${timerTypeStyle}">
+                    <div 
+                        id="${timerCountdownId}"
+                        class="${styles.timer__countdown}">
+                        ${minutes}:${seconds}
+                    </div>
+        
+                    <div class="${styles.timer__description}">
+                        ${task ? task.description : ""}
+                    </div>
+                    
+                    <div class="${styles.timer__buttons_mobile}">
+                        <button 
+                            id="${leftButtonId}"
+                            class="${globalStyles.button} ${styles.timer_button}">
+                            ${leftButtonTitle}
+                        </button>
+                        <button 
+                            id="${rightButtonId}"
+                            class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}">
+                            ${rightButtonTitle}
+                        </button>
+                    </div>
+                </div>
+            `
+        :   `
+                <div class="${styles.timer} ${timerTypeStyle}">
+                    <div 
+                        id="${timerCountdownId}"
+                        class="${styles.timer__countdown}">
+                        ${minutes}:${seconds}
+                    </div>
+        
+                    <div class="${styles.timer__description}">
+                        ${task ? task.description : ""}
+                    </div>
+        
+                    <div class="${styles.timer__buttons}">
+                        <button 
+                            id="${leftButtonId}"
+                            class="${globalStyles.button} ${styles.timer_button}">
+                            ${leftButtonTitle}
+                        </button>
+                        <button 
+                            id="${rightButtonId}"
+                            class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}">
+                            ${rightButtonTitle}
+                        </button>
+                    </div>
+                </div>
+            `;
 }
