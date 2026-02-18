@@ -6,7 +6,7 @@ export function useIsMobile(threshold: number = MOBILE_STATE): boolean {
     return window.innerWidth <= threshold;
 }
 
-export function onMobileChanged(callback: (isMobile: boolean) => void, threshold: number = MOBILE_STATE) {
+export function onLayoutChanged(callback: (isMobile: boolean) => void, threshold: number = MOBILE_STATE) {
     const handler = () => {
         if (resizeTimeout) {
             clearTimeout(resizeTimeout);

@@ -1,6 +1,7 @@
 import {type AppActions, type AppState} from "../types/context.ts";
 import {createStore} from "../utils/store.ts";
 import {
+    type ActivePomodoroTask,
     ActivePomodoroTaskStatus,
     ActivePomodoroTaskType,
     type ArchivePomodoroTask,
@@ -11,11 +12,8 @@ import type {PlanPomodoroTasksStatistics} from "../types/statistics.ts";
 import {ActiveTaskController, type ActiveTaskControllerConfiguration} from "./ActiveTaskController.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
-
 const POMODORO_SHORT_BREAK_TIME = 5 * 60 * 1000;
-
 const POMODORO_LONG_BREAK_TIME = 15 * 60 * 1000;
-
 const LONG_BREAK_AFTER = 4;
 
 let context: AppContext;
@@ -46,7 +44,8 @@ const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksSta
     }
 }
 
-export function createContext(initialState: AppState) {
+export function createContext(initialState: AppState,
+                              onTickCallback: (state: AppState) => void) {
     const configuration: ActiveTaskControllerConfiguration = {
         taskTime: POMODORO_TASK_TIME,
         shortBreakTime: POMODORO_SHORT_BREAK_TIME,
@@ -54,8 +53,20 @@ export function createContext(initialState: AppState) {
         maxShortBreaksSerie: LONG_BREAK_AFTER,
     };
 
+    if (initialState.activeTask
+        && (initialState.activeTask.type === ActivePomodoroTaskType.Undefined
+            || initialState.activeTask.status === ActivePomodoroTaskType.Undefined)) {
+        initialState.activeTask = null;
+    }
+
     const taskController = new ActiveTaskController(configuration);
-    taskController.activateNextTask(initialState.planTasks.tasks, initialState.activeTask?.restTime);
+
+    if (initialState.activeTask) {
+        taskController.activateTask(initialState.activeTask);
+    }
+    else {
+        taskController.activateNextTask(initialState.planTasks.tasks);
+    }
 
     if (!initialState.activeTask) {
         initialState.activeTask = taskController.activeTask;
@@ -63,7 +74,15 @@ export function createContext(initialState: AppState) {
 
     const store = createStore<AppState>(initialState);
 
-    taskController.onCompleted = () => {
+    taskController.addEventListener("tick", (restTime?: number)=> {
+       const s = store.getState();
+       if (s.activeTask && restTime) {
+           s.activeTask.restTime = restTime;
+           onTickCallback(s);
+       }
+    });
+
+    taskController.addEventListener("completed", () => {
         let s = store.getState();
 
         if (!s.activeTask) {
@@ -83,9 +102,9 @@ export function createContext(initialState: AppState) {
 
         store.setState({
             ...s,
-             activeTask: taskController.activeTask,
+            activeTask: taskController.activeTask,
         });
-    }
+    });
 
     const actions: AppActions = {
         addTask(task: PomodoroTask): void {
@@ -177,8 +196,16 @@ export function createContext(initialState: AppState) {
                     : planTasks.filter(pt => pt.task.id !== id);
             const updatedStatistics = getPlanTasksStatistics(updatedTasks);
 
+            const activeTask = s.activeTask
+                && s.activeTask.task
+                && s.activeTask.type === ActivePomodoroTaskType.Task
+                && updatedTasks.some(t => t.task.id === s.activeTask?.task?.id)
+                    ? s.activeTask
+                    : null;
+
             store.setState({
                 ...s,
+                activeTask: activeTask,
                 planTasks: {
                     ...s.planTasks,
                     tasks: updatedTasks,
@@ -220,8 +247,16 @@ export function createContext(initialState: AppState) {
                 ...s.archiveTasks.tasks,
             ];
 
+            const activeTask = s.activeTask
+                && s.activeTask.task
+                && s.activeTask.type === ActivePomodoroTaskType.Task
+                && updatedPlanTasks.some(t => t.task.id === s.activeTask?.task?.id)
+                    ? s.activeTask
+                    : null;
+
             store.setState({
                 ...s,
+                activeTask,
                 planTasks: {
                     ...s.planTasks,
                     tasks: updatedPlanTasks,
@@ -288,14 +323,37 @@ export function createContext(initialState: AppState) {
                 throw new Error("ToIndex is not a number");
             }
 
-            const s = store.getState();
+            if (fromIndex === toIndex) {
+                return;
+            }
+
+            const s = store.getState()
+
+            if (s.planTasks.tasks.length === 0) {
+                return;
+            }
+
             const reorderedTasks = [...s.planTasks.tasks];
             const [grabbingTask] = reorderedTasks.splice(fromIndex, 1);
             reorderedTasks.splice(toIndex, 0, grabbingTask);
 
+            const activeTask: ActivePomodoroTask | null | undefined =
+                !s.activeTask
+                || reorderedTasks.findIndex(pt => pt.task.id === s.activeTask?.task?.id) === 0
+                    ? s.activeTask
+                    : {
+                        ...s.activeTask,
+                        task: reorderedTasks[0].task,
+                    };
+
+            if (activeTask) {
+                taskController.setActiveTask(activeTask);
+            }
+
             store.setState({
-               ...s,
-               planTasks: {
+                ...s,
+                activeTask,
+                planTasks: {
                    ...s.planTasks,
                    tasks: reorderedTasks
                }
@@ -408,7 +466,13 @@ export function createContext(initialState: AppState) {
                 throw new Error("Handler is not initialized");
             }
 
-            taskController.onTick = handler;
+            const wrappedHandler = (args?: number) => {
+                if (args !== undefined && args !== null) {
+                    handler(args);
+                }
+            };
+
+            taskController.addEventListener("tick", wrappedHandler);
         }
     }
 

@@ -5,8 +5,13 @@ import {
     type PlanPomodoroTask
 } from "../types/task.ts";
 import {generateId} from "../utils/idGenerator.ts";
+import {EventBus} from "../utils/eventBus.ts";
 
 const TICK_PERIOD = 1000;
+const SHORT_BREAK_TITLE = "Короткий перерыв";
+const LONG_BREAK_TITLE = "Длинный перерыв";
+
+export type ActiveTaskControllerEvents = "tick" | "completed";
 
 export type ActiveTaskControllerConfiguration = {
     taskTime: number;
@@ -25,6 +30,7 @@ export class ActiveTaskController {
     };
     private _currentTimer: number = 0;
     private _lastTime: number = 0;
+    private _eventBus: EventBus;
 
     constructor(configuration: ActiveTaskControllerConfiguration) {
         if (!configuration) {
@@ -32,6 +38,7 @@ export class ActiveTaskController {
         }
 
         this._configuration = configuration;
+        this._eventBus = new EventBus();
     }
 
     get activeTask(): ActivePomodoroTask {
@@ -63,12 +70,12 @@ export class ActiveTaskController {
                 this._activeTask.restTime -= tickPeriodCount * TICK_PERIOD;
                 this._lastTime = now;
 
-                this.onTick?.(this._activeTask.restTime)
+                this._eventBus.emit("tick", this._activeTask.restTime);
 
                 if (this._activeTask.restTime <= 0) {
                     this._stopTimer();
                     this._activeTask.status = ActivePomodoroTaskStatus.Completed;
-                    this.onCompleted?.();
+                    this._eventBus.emit("completed");
                 }
             }
 
@@ -89,24 +96,40 @@ export class ActiveTaskController {
                     : 0;
     }
 
-    activateNextTask(planTasks: PlanPomodoroTask[], restTime?: number): void {
-        const shouldNextTask = this._activeTask.type === ActivePomodoroTaskType.Undefined
+    activateTask(activeTask: ActivePomodoroTask) {
+        if (!activeTask) {
+            throw new Error("Failed to activate task. Active task is not defined");
+        }
+
+        this._activeTask = activeTask;
+
+        if (this._activeTask.status === ActivePomodoroTaskStatus.Active) {
+            this._startTimer();
+        }
+    }
+
+    activateNextTask(planTasks: PlanPomodoroTask[]): void {
+        const shouldNextTask = !this.activeTask
+            || this._activeTask.type === ActivePomodoroTaskType.Undefined
             || this._activeTask.type === ActivePomodoroTaskType.ShortBreak
             || this._activeTask.type === ActivePomodoroTaskType.LongBreak;
         const shouldNextShortBreak = this._activeTask
             && this._activeTask.type === ActivePomodoroTaskType.Task
             && this._activeTask.shortBreakCount < this._configuration.maxShortBreaksSerie;
+        const shouldNextLongBreak = this._activeTask
+            && this._activeTask.type === ActivePomodoroTaskType.Task
+            && this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
 
         if (shouldNextTask) {
             if (planTasks.length === 0) {
-                return;
+                throw new Error("Failed to activate task. Plan tasks list is empty");
             }
 
             this._activeTask = {
                 task: planTasks[0].task,
                 type: ActivePomodoroTaskType.Task,
                 status: ActivePomodoroTaskStatus.Pending,
-                restTime: restTime ?? this._configuration.taskTime,
+                restTime: this._configuration.taskTime,
                 shortBreakCount: this._activeTask.shortBreakCount,
             }
         }
@@ -119,7 +142,7 @@ export class ActiveTaskController {
                   category: {
                       name: ""
                   },
-                  description: "Короткий перерыв"
+                  description: SHORT_BREAK_TITLE
                 },
                 restTime: this._configuration.shortBreakTime,
                 shortBreakCount: this._activeTask.shortBreakCount + 1,
@@ -127,7 +150,7 @@ export class ActiveTaskController {
 
             this._startTimer();
         }
-        else {
+        else if (shouldNextLongBreak) {
             this._activeTask = {
                 type: ActivePomodoroTaskType.LongBreak,
                 status: ActivePomodoroTaskStatus.Active,
@@ -136,7 +159,7 @@ export class ActiveTaskController {
                     category: {
                         name: ""
                     },
-                    description: "Длинный перерыв"
+                    description: LONG_BREAK_TITLE
                 },
                 restTime: this._configuration.longBreakTime,
                 shortBreakCount: 0,
@@ -144,6 +167,22 @@ export class ActiveTaskController {
 
             this._startTimer();
         }
+    }
+
+    setActiveTask(activeTask: ActivePomodoroTask): void {
+        if (!activeTask) {
+            throw new Error("Active task is not defined");
+        }
+
+        if (activeTask.type !== ActivePomodoroTaskType.Task) {
+            throw new Error("Active task's type is not Task");
+        }
+
+        if (this._activeTask?.task?.id === activeTask.task?.id) {
+            return;
+        }
+
+        this._activeTask = activeTask;
     }
 
     start() {
@@ -185,7 +224,7 @@ export class ActiveTaskController {
 
         this._stopTimer();
         this._activeTask.status = ActivePomodoroTaskStatus.Completed;
-        this.onCompleted?.();
+        this._eventBus.emit("completed");
     }
 
     pause() {
@@ -214,7 +253,7 @@ export class ActiveTaskController {
         this._startTimer();
     }
 
-    onTick?: (restTime: number) => void;
-
-    onCompleted?: () => void;
+    addEventListener<T>(event: ActiveTaskControllerEvents, handler: (args?: T) => void): void  {
+        this._eventBus.addEventListener(event, handler as (args?: unknown) => void);
+    }
 }

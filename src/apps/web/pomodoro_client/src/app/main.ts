@@ -7,80 +7,31 @@ import {
 } from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
-import {onMobileChanged} from "../types/layout.ts";
+import {onLayoutChanged} from "../types/layout.ts";
+import {LocalStorage} from "../utils/localStorage.ts";
 
-const getPlanTasks = (): PlanPomodoroTasksState => {
+const STORAGE_KEY = "pomodoro";
+
+const getInitPlanTasks = (): PlanPomodoroTasksState => {
     return {
-        tasks: [{
-            task: {
-                id: "1",
-                category: { name: "test" },
-                description: "Test task 1",
-            },
-            count: 1
-        }, {
-            task: {
-                id: "2",
-                category: { name: "test2" },
-                description: "Test task 2",
-            },
-            count: 1
-        }],
+        tasks: [],
         statistics: {
-            tasksCount: 2,
-            tasksTime: 50 * 60 * 1000,
-            nextLongBreak: 0,
+            tasksCount: 0,
+            tasksTime: 0,
             finishTime: 0,
-            categories: [
-                {
-                    category: { name: "test" },
-                    count: 1,
-                },
-                {
-                    category: { name: "test2" },
-                    count: 1,
-                },
-            ],
+            nextLongBreak: 0,
+            categories: []
         }
     };
 }
 
-const getArchiveTasks = (): ArchivePomodoroTasksState => {
+const getInitArchiveTasks = (): ArchivePomodoroTasksState => {
     return {
-        tasks: [
-            {
-                task: {
-                    id: "3",
-                    category: { name: 'test' },
-                    description: "Test task 1"
-                },
-                taskTime: 25 * 60 * 1000,
-                completedAt: new Date().getTime(),
-
-            },
-            {
-                task: {
-                    id: "4",
-                    category: { name: "test" },
-                    description: "Test task 2"
-                },
-                taskTime: 25 * 60 * 1000,
-                completedAt: new Date().getTime(),
-            }
-        ],
+        tasks: [],
         statistics: {
-            tasksCount: 2,
-            tasksTime: 50 * 60 * 1000,
-            categories: [
-                {
-                    category: { name: "test" },
-                    count: 1
-                },
-                {
-                    category: { name: "test2" },
-                    count: 1
-                }
-            ]
+            tasksCount: 0,
+            tasksTime: 0,
+            categories: []
         }
     }
 }
@@ -92,24 +43,33 @@ window.addEventListener('load', () => {
         return;
     }
 
-    //const activeTask = getActiveTask();
-    const planTasks: PlanPomodoroTasksState = getPlanTasks();
-    const archiveTasks: ArchivePomodoroTasksState = getArchiveTasks();
+    const storage = new LocalStorage(STORAGE_KEY);
+    const state = storage.getItem<AppState>(STORAGE_KEY);
+    const activeTask = state?.activeTask;
+    const planTasks = state?.planTasks ?? getInitPlanTasks();
+    const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
 
     const initialState: AppState = {
         editingTaskId: null,
+        activeTask,
         planTasks,
         archiveTasks,
     }
 
-    const ctx = createContext(initialState);
+    const onTickHandler = (s: AppState)=> {
+        storage.setItem<AppState>(STORAGE_KEY, s);
+    }
+
+    const ctx = createContext(initialState, onTickHandler);
     registerContext(ctx);
 
     ctx.store.subscribe(() => {
+        const s = ctx.store.getState();
+        storage.setItem<AppState>(STORAGE_KEY, s);
         render(root, App, ctx);
     });
 
-    onMobileChanged(() => {
+    onLayoutChanged(() => {
         render(root, App, ctx);
     });
 
