@@ -10,8 +10,10 @@ import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../types/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
 import { type ActivePomodoroTask, ActivePomodoroTaskType, ActivePomodoroTaskStatus } from "../types/task.ts";
+import { throttle } from "../utils/throttle.ts";
 
 const STORAGE_KEY = "pomodoro";
+const THROTTLE_DELAY = 1000;
 
 const getInitPlanTasks = (): PlanPomodoroTasksState => {
     return {
@@ -78,8 +80,12 @@ window.addEventListener('load', () => {
         archiveTasks,
     }
 
-    const onTickHandler = (s: AppState)=> {
+    const saveStateThrottle = throttle((s: AppState) => {
         storage.setItem<AppState>(STORAGE_KEY, s);
+    }, THROTTLE_DELAY);
+
+    const onTickHandler = (s: AppState)=> {
+        saveStateThrottle(s);
     }
 
     const ctx = createContext(initialState, onTickHandler);
