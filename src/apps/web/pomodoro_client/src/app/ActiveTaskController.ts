@@ -113,6 +113,27 @@ export class ActiveTaskController {
         }
     }
 
+    private _assertStatus(
+        expectedStatuses: readonly ActivePomodoroTaskStatus[],
+        message: string
+    ): void {
+        if (!expectedStatuses.includes(this._activeTask.status)) {
+            throw new Error(message);
+        }
+    }
+
+    private _assertActive(message: string): void {
+        if (!this.isActive) {
+            throw new Error(message);
+        }
+    }
+
+    private _assertNotActive(message: string): void {
+        if (this.isActive) {
+            throw new Error(message);
+        }
+    }
+
     private _resetRestTime() {
         this._activeTask.restTime = this._activeTask.type === ActivePomodoroTaskType.Task
             ? this._configuration.taskTime
@@ -254,26 +275,23 @@ export class ActiveTaskController {
     }
 
     start() {
-        if (this.isActive) {
-            throw new Error("Task is already active");
-        }
+        this._assertNotActive("Task is already active");
+        this._assertStatus(
+            [ActivePomodoroTaskStatus.Pending],
+            "Failed to start. Task status should be pending."
+        );
 
-        if (this._activeTask.status !== ActivePomodoroTaskStatus.Pending) {
-            throw new Error("Failed to start. Task status should be pending.");
-        }
 
         this._activeTask.status = ActivePomodoroTaskStatus.Active;
         this._startTimer();
     }
 
     stop() {
-        if (!this.isActive) {
-            throw new Error("No active task was stopped.");
-        }
-
-        if (this._activeTask.status !== ActivePomodoroTaskStatus.Active) {
-            throw new Error("Failed to stop active task. Status should be active ");
-        }
+        this._assertActive("No active task was stopped.");
+        this._assertStatus(
+            [ActivePomodoroTaskStatus.Active],
+            "Failed to stop active task. Status should be active."
+        );
 
         this._stopTimer();
         this._activeTask.status = ActivePomodoroTaskStatus.Pending;
@@ -281,14 +299,11 @@ export class ActiveTaskController {
     }
 
     complete() {
-        if (!this.isActive) {
-            throw new Error("No active task was completed.");
-        }
-
-        if (this._activeTask.status !== ActivePomodoroTaskStatus.Active
-                && this._activeTask.status !== ActivePomodoroTaskStatus.Paused) {
-            throw new Error("Failed to complete task. Status should be active or paused.");
-        }
+        this._assertActive("No active task was completed.");
+        this._assertStatus(
+            [ActivePomodoroTaskStatus.Active, ActivePomodoroTaskStatus.Paused],
+            "Failed to complete task. Status should be active or paused."
+        );
 
         this._stopTimer();
         this._activeTask.status = ActivePomodoroTaskStatus.Completed;
@@ -296,26 +311,22 @@ export class ActiveTaskController {
     }
 
     pause() {
-        if (!this.isActive) {
-            throw new Error("No active task was paused.");
-        }
-
-        if (this._activeTask.status !== ActivePomodoroTaskStatus.Active) {
-            throw new Error("Failed to pause task. Status should be active ");
-        }
+        this._assertActive("No active task was paused.");
+        this._assertStatus(
+            [ActivePomodoroTaskStatus.Active],
+            "Failed to pause task. Status should be active."
+        );
 
         this._activeTask.status = ActivePomodoroTaskStatus.Paused;
         this._stopTimer();
     }
 
     resume() {
-        if (!this.isActive) {
-            throw new Error("No active task was resumed.");
-        }
-
-        if (this._activeTask.status !== ActivePomodoroTaskStatus.Paused) {
-            throw new Error("Failed to stop active task. Status should be paused ");
-        }
+        this._assertActive("No active task was resumed.");
+        this._assertStatus(
+            [ActivePomodoroTaskStatus.Paused],
+            "Failed to resume task. Status should be paused."
+        );
 
         this._activeTask.status = ActivePomodoroTaskStatus.Active;
         this._startTimer();
