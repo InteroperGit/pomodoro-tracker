@@ -11,7 +11,12 @@ const TICK_PERIOD = 1000;
 const SHORT_BREAK_TITLE = "Короткий перерыв";
 const LONG_BREAK_TITLE = "Длинный перерыв";
 
-export type ActiveTaskControllerEvents = "tick" | "completed";
+export type ActiveTaskControllerPayloads = {
+    tick: number;
+    completed: void;
+}
+
+export type ActiveTaskControllerEvents = keyof ActiveTaskControllerPayloads;
 
 export type ActiveTaskControllerConfiguration = {
     taskTime: number;
@@ -30,7 +35,7 @@ export class ActiveTaskController {
     };
     private _currentTimer: number = 0;
     private _lastTime: number = 0;
-    private _eventBus: EventBus;
+    private _eventBus: EventBus<ActiveTaskControllerPayloads>;
 
     constructor(configuration: ActiveTaskControllerConfiguration) {
         if (!configuration) {
@@ -38,7 +43,7 @@ export class ActiveTaskController {
         }
 
         this._configuration = configuration;
-        this._eventBus = new EventBus();
+        this._eventBus = new EventBus<ActiveTaskControllerPayloads>();
     }
 
     get activeTask(): ActivePomodoroTask {
@@ -253,7 +258,10 @@ export class ActiveTaskController {
         this._startTimer();
     }
 
-    addEventListener<T>(event: ActiveTaskControllerEvents, handler: (args?: T) => void): void  {
-        this._eventBus.addEventListener(event, handler as (args?: unknown) => void);
+    addEventListener<T extends ActiveTaskControllerEvents>(
+        event: T, 
+        handler: (args?: ActiveTaskControllerPayloads[T]) => void
+    ): void  {
+        this._eventBus.addEventListener(event, handler);
     }
 }

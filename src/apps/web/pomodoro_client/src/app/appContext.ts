@@ -74,7 +74,7 @@ export function createContext(initialState: AppState,
 
     const store = createStore<AppState>(initialState);
 
-    taskController.addEventListener("tick", (restTime?: number)=> {
+    taskController.addEventListener("tick", (restTime?: number) => {
        const s = store.getState();
        if (s.activeTask && restTime) {
            s.activeTask.restTime = restTime;
