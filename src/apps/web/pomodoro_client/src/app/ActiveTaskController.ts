@@ -71,6 +71,12 @@ export class ActiveTaskController {
     }
 
     private _startTimer() {
+        // Защита от повторного запуска: если таймер уже запущен, не запускаем снова
+        if (this._currentTimer !== 0) {
+            console.warn("Timer is already running. Stopping previous timer before starting a new one.");
+            this._stopTimer();
+        }
+
         this._lastTime = performance.now();
 
         this._currentTimer = setInterval(() => {
@@ -79,8 +85,14 @@ export class ActiveTaskController {
 
             if (delta >= TICK_PERIOD) {
                 const tickPeriodCount = Math.floor(delta / TICK_PERIOD);
-                this._activeTask.restTime -= tickPeriodCount * TICK_PERIOD;
-                this._lastTime = now;
+
+                // Компенсация пропущенных тиков
+                const timeToSubtract = tickPeriodCount * TICK_PERIOD;
+                this._activeTask.restTime -= timeToSubtract;
+
+                // Корректное обновление _lastTime: учитываем точное время вычитания
+                // Вместо просто now, вычитаем остаток от деления, чтобы не терять точность
+                this._lastTime = now - (delta % TICK_PERIOD);
 
                 this._eventBus.emit("tick", this._activeTask.restTime);
 
@@ -95,7 +107,10 @@ export class ActiveTaskController {
     }
 
     private _stopTimer() {
-        clearInterval(this._currentTimer);
+        if (this._currentTimer !== 0) {
+            clearInterval(this._currentTimer);
+            this._currentTimer = 0; // Явно сбрасываем в 0 для проверки в _startTimer
+        }
     }
 
     private _resetRestTime() {
