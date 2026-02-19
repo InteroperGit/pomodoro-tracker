@@ -93,17 +93,18 @@ export function createContext(initialState: AppState,
             actions.archiveTask(s.activeTask.task.id, s.activeTask.restTime);
         }
 
-        if (s.planTasks.tasks.length <= 0) {
-            return;
-        }
+        s = store.getState();
 
         taskController.activateNextTask(s.planTasks.tasks);
-        s = store.getState();
 
         store.setState({
             ...s,
             activeTask: taskController.activeTask,
         });
+    });
+
+    taskController.addEventListener("idle", () => {
+        console.log("Все задачи успешно выполнены");
     });
 
     const actions: AppActions = {
@@ -118,31 +119,27 @@ export function createContext(initialState: AppState,
             ];
 
             const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks);
-            const shortBreakCount = s.activeTask?.shortBreakCount ?? 0;
-            const restTime = s.activeTask?.restTime ?? POMODORO_SHORT_BREAK_TIME;
 
-            store.setState(
-                {
-                    ...s,
-                    activeTask: s.activeTask
-                        ? {
-                            ...s.activeTask,
-                            task,
-                        }
-                        : {
-                            type: ActivePomodoroTaskType.Task,
-                            status: ActivePomodoroTaskStatus.Pending,
-                            task,
-                            shortBreakCount,
-                            restTime,
-                        },
-                    planTasks:
-                    {
-                        ...s.planTasks,
-                        tasks: updatedPlanTasks,
-                        statistics: updatedStatistics
-                    }
-                });
+            // Обновляем план задач в сторе
+            store.setState({
+                ...s,
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: updatedPlanTasks,
+                    statistics: updatedStatistics
+                }
+            });
+
+            // Используем контроллер для определения следующей фазы
+            // Если activeTask в idle или отсутствует, контроллер активирует новую задачу
+            const updatedState = store.getState();
+            taskController.activateNextTask(updatedState.planTasks.tasks);
+
+            // Обновляем activeTask из контроллера
+            store.setState({
+                ...updatedState,
+                activeTask: taskController.activeTask,
+            });
         },
         incTask(id: string): void {
             if (!id) {

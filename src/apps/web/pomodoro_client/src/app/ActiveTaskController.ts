@@ -11,9 +11,16 @@ const TICK_PERIOD = 1000;
 const SHORT_BREAK_TITLE = "Короткий перерыв";
 const LONG_BREAK_TITLE = "Длинный перерыв";
 
+type NextPhase =
+    | { type: "task"; task: PlanPomodoroTask }
+    | { type: "shortBreak" }
+    | { type: "longBreak" }
+    | { type: "idle" }
+
 export type ActiveTaskControllerPayloads = {
     tick: number;
     completed: void;
+    idle: void;
 }
 
 export type ActiveTaskControllerEvents = keyof ActiveTaskControllerPayloads;
@@ -63,7 +70,7 @@ export class ActiveTaskController {
         return this._activeTask.restTime;
     }
 
-    _startTimer() {
+    private _startTimer() {
         this._lastTime = performance.now();
 
         this._currentTimer = setInterval(() => {
@@ -87,11 +94,11 @@ export class ActiveTaskController {
         }, TICK_PERIOD);
     }
 
-    _stopTimer() {
+    private _stopTimer() {
         clearInterval(this._currentTimer);
     }
 
-    _resetRestTime() {
+    private _resetRestTime() {
         this._activeTask.restTime = this._activeTask.type === ActivePomodoroTaskType.Task
             ? this._configuration.taskTime
             : this._activeTask.type === ActivePomodoroTaskType.ShortBreak
@@ -99,6 +106,108 @@ export class ActiveTaskController {
                 : this._activeTask.type === ActivePomodoroTaskType.LongBreak
                     ? this._configuration.longBreakTime
                     : 0;
+    }
+
+    private _determineNextPhase(planTasks: PlanPomodoroTask[]): NextPhase {
+        // Если нет активной задачи или это перерыв/undefined → следующая задача
+        const isBreakOrUndefined =
+            !this._activeTask
+            || this._activeTask.type === ActivePomodoroTaskType.Undefined
+            || this._activeTask.type === ActivePomodoroTaskType.ShortBreak
+            || this._activeTask.type === ActivePomodoroTaskType.LongBreak;
+            
+        if (isBreakOrUndefined) {
+            return planTasks.length === 0
+                ? { type: "idle" }
+                : { type: "task", task: planTasks[0] };
+        }
+
+        if (this._activeTask.type === ActivePomodoroTaskType.Task) {
+            // Если в плане больше нет задач → idle, а не перерыв
+            if (planTasks.length === 0) {
+                return { type: "idle" };
+            }
+
+            const needsLongBreak = this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
+
+            if (needsLongBreak) {
+                return { type: "longBreak" }
+            }
+            else {
+                return { type: "shortBreak" }
+            }
+        }
+
+        return { type: "idle" }
+    }
+
+    private _getTaskFromPlan(task: PlanPomodoroTask): ActivePomodoroTask {
+        return {
+            type: ActivePomodoroTaskType.Task,
+            task: task.task,
+            status: ActivePomodoroTaskStatus.Pending,
+            restTime: this._configuration.taskTime,
+            shortBreakCount: this._activeTask?.shortBreakCount ?? 0
+        }
+    }
+
+    private _getShortBreakTask(): ActivePomodoroTask {
+        return {
+            type: ActivePomodoroTaskType.ShortBreak,
+            status: ActivePomodoroTaskStatus.Active,
+            task: {
+                id: generateId(),
+                category: { name: "" },
+                description: SHORT_BREAK_TITLE
+            },
+            restTime: this._configuration.shortBreakTime,
+            shortBreakCount: (this._activeTask?.shortBreakCount ?? 0) + 1,
+        }
+    }
+
+    private _getLongBreakTask(): ActivePomodoroTask {
+        return {
+            type: ActivePomodoroTaskType.LongBreak,
+            status: ActivePomodoroTaskStatus.Active,
+            task: {
+                id: generateId(),
+                category: { name: "" },
+                description: LONG_BREAK_TITLE,
+            },
+            restTime: this._configuration.longBreakTime,
+            shortBreakCount: 0
+        }
+    }
+
+    private _getIdleTask(): ActivePomodoroTask {
+        return {
+            type: ActivePomodoroTaskType.Undefined,
+            status: ActivePomodoroTaskStatus.Undefined,
+            restTime: 0,
+            shortBreakCount: 0,
+        }
+    }
+
+    activateNextTask(planTasks: PlanPomodoroTask[]): void {
+        const nextPhase = this._determineNextPhase(planTasks);
+
+        switch (nextPhase.type) {
+            case "task":
+                this._activeTask = this._getTaskFromPlan(nextPhase.task);
+                break;
+            case "shortBreak":
+                this._activeTask = this._getShortBreakTask();
+                this._startTimer();
+                break;
+            case "longBreak":
+                this._activeTask = this._getLongBreakTask();
+                this._startTimer();
+                break;
+            case "idle":
+                this._activeTask = this._getIdleTask();
+                this._eventBus.emit("idle");
+                break;
+        }
     }
 
     activateTask(activeTask: ActivePomodoroTask) {
@@ -109,67 +218,6 @@ export class ActiveTaskController {
         this._activeTask = activeTask;
 
         if (this._activeTask.status === ActivePomodoroTaskStatus.Active) {
-            this._startTimer();
-        }
-    }
-
-    activateNextTask(planTasks: PlanPomodoroTask[]): void {
-        const shouldNextTask = !this.activeTask
-            || this._activeTask.type === ActivePomodoroTaskType.Undefined
-            || this._activeTask.type === ActivePomodoroTaskType.ShortBreak
-            || this._activeTask.type === ActivePomodoroTaskType.LongBreak;
-        const shouldNextShortBreak = this._activeTask
-            && this._activeTask.type === ActivePomodoroTaskType.Task
-            && this._activeTask.shortBreakCount < this._configuration.maxShortBreaksSerie;
-        const shouldNextLongBreak = this._activeTask
-            && this._activeTask.type === ActivePomodoroTaskType.Task
-            && this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
-
-        if (shouldNextTask) {
-            if (planTasks.length === 0) {
-                throw new Error("Failed to activate task. Plan tasks list is empty");
-            }
-
-            this._activeTask = {
-                task: planTasks[0].task,
-                type: ActivePomodoroTaskType.Task,
-                status: ActivePomodoroTaskStatus.Pending,
-                restTime: this._configuration.taskTime,
-                shortBreakCount: this._activeTask.shortBreakCount,
-            }
-        }
-        else if (shouldNextShortBreak) {
-            this._activeTask = {
-                type: ActivePomodoroTaskType.ShortBreak,
-                status: ActivePomodoroTaskStatus.Active,
-                task: {
-                  id: generateId(),
-                  category: {
-                      name: ""
-                  },
-                  description: SHORT_BREAK_TITLE
-                },
-                restTime: this._configuration.shortBreakTime,
-                shortBreakCount: this._activeTask.shortBreakCount + 1,
-            }
-
-            this._startTimer();
-        }
-        else if (shouldNextLongBreak) {
-            this._activeTask = {
-                type: ActivePomodoroTaskType.LongBreak,
-                status: ActivePomodoroTaskStatus.Active,
-                task: {
-                    id: generateId(),
-                    category: {
-                        name: ""
-                    },
-                    description: LONG_BREAK_TITLE
-                },
-                restTime: this._configuration.longBreakTime,
-                shortBreakCount: 0,
-            }
-
             this._startTimer();
         }
     }
