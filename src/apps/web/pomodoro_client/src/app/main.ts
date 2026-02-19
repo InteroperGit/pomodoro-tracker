@@ -9,6 +9,7 @@ import {createContext, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../types/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
+import { type ActivePomodoroTask, ActivePomodoroTaskType, ActivePomodoroTaskStatus } from "../types/task.ts";
 
 const STORAGE_KEY = "pomodoro";
 
@@ -36,6 +37,27 @@ const getInitArchiveTasks = (): ArchivePomodoroTasksState => {
     }
 }
 
+const getActiveTask = (activeTask: ActivePomodoroTask | null | undefined): ActivePomodoroTask | null => {
+    if (!activeTask) {
+        return null;
+    }
+
+    if (activeTask.type === ActivePomodoroTaskType.Undefined 
+        || activeTask.status === ActivePomodoroTaskStatus.Undefined) {
+        return null;
+    }
+
+    if (activeTask.restTime <= 0) {
+        return null;
+    }
+
+    if (activeTask.type === ActivePomodoroTaskType.Task && !activeTask.task) {
+        return null;
+    }
+
+    return activeTask;
+}
+
 window.addEventListener('load', () => {
     const root = findById("root");
     if (!root) {
@@ -45,7 +67,7 @@ window.addEventListener('load', () => {
 
     const storage = new LocalStorage(STORAGE_KEY);
     const state = storage.getItem<AppState>(STORAGE_KEY);
-    const activeTask = state?.activeTask;
+    const activeTask = getActiveTask(state?.activeTask);
     const planTasks = state?.planTasks ?? getInitPlanTasks();
     const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
 
