@@ -3,7 +3,7 @@ import { App } from "./App";
 import {
     type AppState,
 } from "../types/context.ts";
-import {createContext, registerContext} from "./appContext.ts";
+import {createContext, getArchiveTasksStatistics, registerContext} from "./appContext.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../types/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
@@ -30,7 +30,10 @@ const initApp = (root: HTMLElement) => {
 
     const activeTask = sanitizeActiveTask(state?.activeTask);
     const planTasks = state?.planTasks ?? getInitPlanTasks();
-    const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
+    let archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
+    if (archiveTasks.tasks.length > 0) {
+        archiveTasks = { ...archiveTasks, statistics: getArchiveTasksStatistics(archiveTasks.tasks) };
+    }
 
     // editingTaskId не восстанавливаем из storage: режим редактирования не сохраняется между сессиями
     const initialState: AppState = {

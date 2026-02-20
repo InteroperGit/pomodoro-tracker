@@ -1,5 +1,5 @@
 import styles from "./ArchiveTasksTitle.module.scss";
-import {toHumanHourMinutesTime} from "../../utils/time.ts";
+import {toHumanHourMinutesSecondsTime} from "../../utils/time.ts";
 
 /**
  * Компонент `ArchiveTasksTitle` — заголовок раздела архивных задач.
@@ -20,7 +20,7 @@ export type ArchiveTasksTitleProps = {
 }
 
 export function ArchiveTasksTitle({ tasksCount, tasksTime }: ArchiveTasksTitleProps) {
-    const humanTime = toHumanHourMinutesTime(tasksTime);
+    const humanTime = toHumanHourMinutesSecondsTime(tasksTime);
 
     return `
         <div class="${styles.archive_tasks__title}">
