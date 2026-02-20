@@ -187,7 +187,7 @@ export function createContext(initialState: AppState,
                                 ? { ...pt, count: pt.count - 1 }
                                 : pt
                         })
-                    : planTasks.filter(pt => pt.task.id !== id);
+                    : planTasks.filter((_, i) => i !== index);
             const updatedStatistics = getPlanTasksStatistics(updatedTasks, planStatisticsConfig);
 
             const activeTask = s.activeTask
@@ -228,7 +228,7 @@ export function createContext(initialState: AppState,
                             ? { ...pt, count: pt.count - 1 }
                             : pt
                     })
-                    : planTasks.filter(pt => pt.task.id !== id);
+                    : planTasks.filter((_, i) => i !== index);
 
             const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
 
@@ -283,27 +283,26 @@ export function createContext(initialState: AppState,
                 throw new Error("Failed to refresh task. Task is not initialized");
             }
             const s = store.getState();
-            const updatedPlanTasks = [
-                {
-                    task,
-                    count: 1
-                },
-                ...s.planTasks.tasks,
-            ];
+            const addedPlanTask = { task, count: 1 };
+            const updatedPlanTasks = [addedPlanTask, ...s.planTasks.tasks];
             const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
+            const current = s.activeTask?.type === ActivePomodoroTaskType.Task ? s.activeTask : null;
+            const newActiveTask: ActivePomodoroTask = {
+                type: ActivePomodoroTaskType.Task,
+                task: addedPlanTask.task,
+                status: current?.status ?? ActivePomodoroTaskStatus.Pending,
+                restTime: current?.restTime ?? POMODORO_TASK_TIME,
+                shortBreakCount: current?.shortBreakCount ?? 0,
+            };
+            taskController.activateTask(newActiveTask);
             store.setState({
                 ...s,
                 planTasks: {
                     ...s.planTasks,
                     tasks: updatedPlanTasks,
                     statistics: updatedStatistics
-                }
-            });
-            const updatedState = store.getState();
-            taskController.activateNextTask(updatedState.planTasks.tasks);
-            store.setState({
-                ...updatedState,
-                activeTask: taskController.activeTask,
+                },
+                activeTask: newActiveTask,
             });
         },
         startEditTask(id: string): void {
