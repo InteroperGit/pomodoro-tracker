@@ -47,22 +47,16 @@ export function PlanTasks({ isMobile, data }: PlanTasksProps) {
 
         });
     const stats = tasks.length > 0 ? PlanTasksStatistics({ statistics }) : "";
+    const containerClasses = isMobile 
+        ? `${styles.plan_tasks} ${styles.plan_tasks_mobile}`
+        : styles.plan_tasks;
 
-    return isMobile ?
-        `
-            <div class="${styles.plan_tasks} ${styles.plan_tasks_mobile}">
-                ${title}
-                ${add}
-                ${list}
-                ${stats}
-            </div>
-        `
-        : `
-            <div class="${styles.plan_tasks}">
-                ${title}
-                ${add}
-                ${list}
-                ${stats}
-            </div>
-        `;
+    return `
+        <div class="${containerClasses}">
+            ${title}
+            ${add}
+            ${list}
+            ${stats}
+        </div>
+    `;
 }

@@ -1,5 +1,6 @@
 import styles from "./PlanTasksStatistics.module.scss";
 import type {PlanPomodoroTasksStatistics} from "../../types/statistics.ts";
+import {escapeHtml} from "../../utils/html.ts";
 
 export type PlanTasksStatisticsProps = {
     statistics: PlanPomodoroTasksStatistics;
@@ -11,7 +12,7 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
     const categoriesItems = categories.map(({category, count}) =>
         `
             <li class="${styles.plan_tasks__statistics_categories_item}">
-                ${category.name}-${count}
+                ${escapeHtml(category.name)}-${count}
             </li>
         `
     ).join("");

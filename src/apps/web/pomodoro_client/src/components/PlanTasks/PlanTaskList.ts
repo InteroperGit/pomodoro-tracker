@@ -33,25 +33,28 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
         let dragFromIndex: number | null = null;
         let draggedElement: HTMLLIElement | null = null;
         const overCount = new Map<HTMLLIElement, number>();
+        const cleanupFunctions: Array<() => void> = [];
 
         ul.querySelectorAll("li[data-index]").forEach((li: Element) => {
             const listItem = li as HTMLLIElement;
 
             listItem.draggable = true;
 
-            listItem.addEventListener("dragstart", (e) => {
+            const handleDragStart = (e: DragEvent) => {
                 const li = e.target as HTMLLIElement;
                 dragFromIndex  = Number(li.dataset.index);
                 draggedElement = li;
                 li.classList.add(taskStyles.plan_task__dragging);
                 // Firefox требует
                 e.dataTransfer?.setData("text/plain", String(dragFromIndex));
-            });
-            listItem.addEventListener("dragover", (e) => {
+            };
+
+            const handleDragOver = (e: DragEvent) => {
                 e.preventDefault(); // обязательно!
                 e.dataTransfer!.dropEffect = "move";
-            });
-            listItem.addEventListener("dragenter", (e) => {
+            };
+
+            const handleDragEnter = (e: DragEvent) => {
                 e.preventDefault();
                 const count = (overCount.get(listItem) ?? 0) + 1;
                 overCount.set(listItem, count);
@@ -59,8 +62,9 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
                 if (count === 1) { // ← добавляем класс ТОЛЬКО при первом входе
                     listItem.classList.add(taskStyles.plan_task__drag_over);
                 }
-            });
-            listItem.addEventListener("dragleave", (e) => {
+            };
+
+            const handleDragLeave = (e: DragEvent) => {
                 e.preventDefault();
                 const count = (overCount.get(listItem) ?? 0) - 1;
                 overCount.set(listItem, count);
@@ -68,8 +72,9 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
                 if (count === 0) { // ← убираем класс ТОЛЬКО при полном выходе
                     listItem.classList.remove(taskStyles.plan_task__drag_over);
                 }
-            });
-            listItem.addEventListener("drop", (e) => {
+            };
+
+            const handleDrop = (e: DragEvent) => {
                 e.preventDefault();
 
                 const li = e.currentTarget as HTMLLIElement;
@@ -89,16 +94,37 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
                 }
 
                 dragFromIndex = null;
-            });
-            listItem.addEventListener("dragend", () => {
+            };
+
+            const handleDragEnd = () => {
                 // убираем все классы
                 ul.querySelectorAll('li').forEach(li => {
                     li.classList.remove(taskStyles.plan_task__dragging, taskStyles.plan_task__drag_over);
                 });
                 dragFromIndex = null;
                 draggedElement = null;
+            };
+
+            listItem.addEventListener("dragstart", handleDragStart);
+            listItem.addEventListener("dragover", handleDragOver);
+            listItem.addEventListener("dragenter", handleDragEnter);
+            listItem.addEventListener("dragleave", handleDragLeave);
+            listItem.addEventListener("drop", handleDrop);
+            listItem.addEventListener("dragend", handleDragEnd);
+
+            cleanupFunctions.push(() => {
+                listItem.removeEventListener("dragstart", handleDragStart);
+                listItem.removeEventListener("dragover", handleDragOver);
+                listItem.removeEventListener("dragenter", handleDragEnter);
+                listItem.removeEventListener("dragleave", handleDragLeave);
+                listItem.removeEventListener("drop", handleDrop);
+                listItem.removeEventListener("dragend", handleDragEnd);
             });
         });
+
+        return () => {
+            cleanupFunctions.forEach(cleanup => cleanup());
+        };
     });
 
     if (tasks.length === 0) {
@@ -126,7 +152,8 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     return `
         <ul 
             id="${ulId}"
-            class="${styles.plan_tasks__list}">
+            class="${styles.plan_tasks__list}"
+            role="list">
             ${taskItems}
         </ul>
     `;
