@@ -19,9 +19,12 @@ import styles from "./ArchiveTasksList.module.scss";
 export type ArchiveTasksListProps = {
     isMobile: boolean;
     tasks: ArchivePomodoroTask[];
+    actions: {
+        deleteArchiveTask: (id: string) => void;
+    };
 }
 
-export function ArchiveTasksList({ isMobile, tasks }: ArchiveTasksListProps) {
+export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListProps) {
     // Общий заголовок для обеих версий
     const headerClasses = isMobile
         ? `${styles.archive_tasks__header} ${styles.archive_tasks__header_mobile}`
@@ -54,7 +57,7 @@ export function ArchiveTasksList({ isMobile, tasks }: ArchiveTasksListProps) {
     const taskItems = tasks.map((archiveTask) =>
         `
             <li role="listitem">
-                ${ArchiveTask({ isMobile, archiveTask })}
+                ${ArchiveTask({ isMobile, archiveTask, actions })}
             </li>
         `
     ).join("");

@@ -1,6 +1,6 @@
 import styles from "./PlanTask.module.scss";
 import globalStyles from "../global.module.scss";
-import commonStyles from "./PlanTasksCommon.module.scss";
+import commonStyles from "../Common.module.scss";
 import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
@@ -264,7 +264,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             </div>
             <button 
                 id="${addTaskButtonId}"
-                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                class="${globalStyles.button} ${commonStyles.outline_button}"
                 aria-label="Сохранить изменения">
                 S
             </button>
@@ -297,7 +297,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                     <button
                         id="${menuButtonId}"
                         type="button"
-                        class="${globalStyles.button} ${commonStyles.plan_task__button} ${styles.plan_task__menu_button}"
+                        class="${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}"
                         aria-label="Действия с задачей"
                         aria-haspopup="true"
                         aria-expanded="false">
@@ -340,7 +340,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                 <button
                     id="${menuButtonId}"
                     type="button"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button} ${styles.plan_task__menu_button}"
+                    class="${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}"
                     aria-label="Действия с задачей"
                     aria-haspopup="true"
                     aria-expanded="false">
