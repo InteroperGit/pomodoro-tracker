@@ -19,6 +19,23 @@ export function toHumanMinutesSecondsTime(time: number) {
 }
 
 /**
+ * Форматирует длительность (мс) в вид «X ч Y мин Z сек».
+ * Секунды выводятся только при необходимости (если не ноль).
+ */
+export function toHumanHourMinutesSecondsTime(time: number): string {
+    const timeSec = time / 1000;
+    const hours = Math.floor(timeSec / 3600);
+    const minutes = Math.floor((timeSec % 3600) / 60);
+    const seconds = Math.floor(timeSec % 60);
+
+    const parts: string[] = [];
+    if (hours > 0) parts.push(`${hours} ч`);
+    if (minutes > 0) parts.push(`${minutes} мин`);
+    if (seconds > 0) parts.push(`${seconds} сек`);
+    return parts.length > 0 ? parts.join(" ") : "0 сек";
+}
+
+/**
  * Форматирует timestamp в читаемое время с учетом даты.
  * Если задача выполнена сегодня - показывает только время.
  * Если задача выполнена в другой день - показывает дату и время.

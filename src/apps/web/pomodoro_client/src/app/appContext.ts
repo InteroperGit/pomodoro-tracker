@@ -8,7 +8,7 @@ import {
     type PlanPomodoroTask,
     type PomodoroTask
 } from "../types/task.ts";
-import type {PlanPomodoroTasksStatistics} from "../types/statistics.ts";
+import type {ArchivePomodoroTasksStatistics, PlanPomodoroTasksStatistics} from "../types/statistics.ts";
 import {ActiveTaskController, type ActiveTaskControllerConfiguration} from "./ActiveTaskController.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
@@ -56,6 +56,28 @@ const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksSta
         nextLongBreak,
         finishTime,
         categories: getCategories(tasks)
+    };
+};
+
+const getArchiveCategories = (tasks: ArchivePomodoroTask[]) => {
+    const map = new Map<string, number>();
+    tasks.forEach(({ task }) => {
+        const key = task.category.name;
+        map.set(key, (map.get(key) ?? 0) + 1);
+    });
+    return Array.from(map.entries(), ([name, count]) => ({
+        category: { name },
+        count
+    }));
+};
+
+export const getArchiveTasksStatistics = (tasks: ArchivePomodoroTask[]): ArchivePomodoroTasksStatistics => {
+    const tasksCount = tasks.length;
+    const tasksTime = tasks.reduce((sum, t) => sum + t.taskTime, 0);
+    return {
+        tasksCount,
+        tasksTime,
+        categories: getArchiveCategories(tasks)
     };
 };
 
@@ -276,7 +298,8 @@ export function createContext(initialState: AppState,
                 },
                 archiveTasks: {
                     ...s.archiveTasks,
-                    tasks: updatedArchiveTasks
+                    tasks: updatedArchiveTasks,
+                    statistics: getArchiveTasksStatistics(updatedArchiveTasks)
                 }
             });
         },
