@@ -15,7 +15,7 @@ import styles from "./Footer.module.scss";
  * Структура разметки (имена классов через CSS modules):
  * ```html
  * <footer class="footer_xxx">
- *     <span class="footer_xxx__label">Pomodoro timer</span>
+ *     <span class="footer_xxx__label">Pomodoro tracker</span>
  * </footer>
  * ```
  *
@@ -30,7 +30,7 @@ import styles from "./Footer.module.scss";
 export function Footer() {
     return `
         <footer class="${styles.footer}">
-            <span class="${styles.footer__label}">Pomodoro timer</span>
+            <span class="${styles.footer__label}">Pomodoro tracker</span>
         </footer>
     `;
 }
