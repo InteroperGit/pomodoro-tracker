@@ -14,15 +14,15 @@ import styles from "./Navigation.module.scss";
  * @function Navigation
  *
  * @description
- * Компонент возвращает HTML‑разметку контейнера `.header__navigation`,
+ * Компонент возвращает HTML‑разметку контейнера навигации (элемент `<nav>`),
  * который служит местом для навигационных элементов пользовательского интерфейса.
  * Может использоваться для размещения ссылок, кнопок и интерактивных ссылок верхнего меню.
  *
- * Пример итоговой структуры:
+ * Пример итоговой структуры (имена классов через CSS modules):
  * ```html
- * <div class="header__navigation">
- *   <div>Профиль</div>
- * </div>
+ * <nav class="navigation_xxx" aria-label="Основное меню">
+ *   <div class="navigation_xxx__item">Профиль</div>
+ * </nav>
  * ```
  *
  * @returns {string} HTML‑разметка навигационного блока.
@@ -35,10 +35,8 @@ import styles from "./Navigation.module.scss";
  */
 export function Navigation() {
     return `
-        <div class="${styles.navigation}">
-            <div>
-                Профиль
-            </div>
-        </div>
+        <nav class="${styles.navigation}" aria-label="Основное меню">
+            <div class="${styles.navigation__item}">Профиль</div>
+        </nav>
     `;
 }
