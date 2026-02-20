@@ -11,14 +11,18 @@ export type ArchivePomodoroTasksState = {
     statistics: ArchivePomodoroTasksStatistics;
 }
 
+export type ThemeId = "light" | "dark";
+
 export type AppState = {
     editingTaskId?: string | null;
     activeTask?: ActivePomodoroTask | null;
     planTasks: PlanPomodoroTasksState;
     archiveTasks: ArchivePomodoroTasksState;
+    theme: ThemeId;
 }
 
 export type AppActions = {
+    setTheme(theme: ThemeId): void;
     addTask(task: PomodoroTask): void;
     incTask(id: string): void;
     decTask(id: string): void;

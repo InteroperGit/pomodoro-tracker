@@ -1,4 +1,14 @@
-import {type AppActions, type AppState} from "../types/context.ts";
+import {type AppActions, type AppState, type ThemeId} from "../types/context.ts";
+
+const THEME_CLASS_DARK = "theme-dark";
+
+export function applyTheme(theme: ThemeId) {
+    if (theme === "dark") {
+        document.documentElement.classList.add(THEME_CLASS_DARK);
+    } else {
+        document.documentElement.classList.remove(THEME_CLASS_DARK);
+    }
+}
 import {createStore} from "../utils/store.ts";
 import {
     type ActivePomodoroTask,
@@ -91,6 +101,10 @@ export function createContext(initialState: AppState,
     });
 
     const actions: AppActions = {
+        setTheme(theme: ThemeId): void {
+            applyTheme(theme);
+            store.setState({ ...store.getState(), theme });
+        },
         addTask(task: PomodoroTask): void {
             const s = store.getState();
             const updatedPlanTasks = [
@@ -558,6 +572,10 @@ export function useCompleteTask() {
 
 export function useActiveTaskTimerTick(handler: (restTime: number) => void) {
     context.actions.registerTimerTickEventListener(handler);
+}
+
+export function useSetTheme(theme: ThemeId) {
+    context.actions.setTheme(theme);
 }
 
 export type AppContext = ReturnType<typeof createContext>;
