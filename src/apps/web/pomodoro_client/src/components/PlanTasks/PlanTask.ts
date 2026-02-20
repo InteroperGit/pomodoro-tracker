@@ -4,6 +4,7 @@ import commonStyles from "./PlanTasksCommon.module.scss";
 import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
+import {escapeHtml} from "../../utils/html.ts";
 
 export type PlanTaskProps = {
     isMobile: boolean;
@@ -32,6 +33,22 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
 
     const editingTaskId = actions.getEditingTaskId();
 
+    // Создание задачи для редактирования
+    const createEditingTask = (categoryInput: HTMLInputElement, descriptionInput: HTMLInputElement): PomodoroTask => {
+        return {
+            id: task.id,
+            category: {
+                name: categoryInput.value.trim(),
+            },
+            description: descriptionInput.value.trim()
+        };
+    };
+
+    // Валидация задачи
+    const isValidTask = (task: PomodoroTask): boolean => {
+        return task.category.name.length > 0 || task.description.length > 0;
+    };
+
     useEffect(() => {
         const planTaskDiv: HTMLDivElement | null = document.getElementById(planTaskDivId) as HTMLDivElement | null;
         const taskCountDiv: HTMLDivElement | null = document.getElementById(taskCountId) as HTMLDivElement | null;
@@ -43,7 +60,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             return;
         }
 
-        planTaskDiv.addEventListener("click", (e) => {
+        const handlePlanTaskClick = (e: MouseEvent) => {
             if (task.id === editingTaskId) {
                 return;
             }
@@ -58,23 +75,37 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             }
 
             actions.startEditTask(task.id);
-        });
+        };
 
-        taskCountDiv.addEventListener("click", () => {
+        const handleTaskCountClick = () => {
             actions.incTask(task.id);
-        });
+        };
 
-        incButton.addEventListener("click", () => {
+        const handleIncClick = () => {
             actions.incTask(task.id);
-        });
+        };
 
-        decButton.addEventListener("click", () => {
+        const handleDecClick = () => {
             actions.decTask(task.id);
-        });
+        };
 
-        archiveTaskButton.addEventListener("click", () => {
+        const handleArchiveClick = () => {
             actions.archiveTask(task.id);
-        })
+        };
+
+        planTaskDiv.addEventListener("click", handlePlanTaskClick);
+        taskCountDiv.addEventListener("click", handleTaskCountClick);
+        incButton.addEventListener("click", handleIncClick);
+        decButton.addEventListener("click", handleDecClick);
+        archiveTaskButton.addEventListener("click", handleArchiveClick);
+
+        return () => {
+            planTaskDiv.removeEventListener("click", handlePlanTaskClick);
+            taskCountDiv.removeEventListener("click", handleTaskCountClick);
+            incButton.removeEventListener("click", handleIncClick);
+            decButton.removeEventListener("click", handleDecClick);
+            archiveTaskButton.removeEventListener("click", handleArchiveClick);
+        };
     });
 
     useEffect(() => {
@@ -84,180 +115,172 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
 
         const categoryInput: HTMLInputElement | null = document.getElementById(categoryInputId) as HTMLInputElement | null;
         const descriptionInput: HTMLInputElement | null = document.getElementById(descriptionInputId) as HTMLInputElement | null;
-        const addTaskButton = document.getElementById(addTaskButtonId);
+        const addTaskButton: HTMLButtonElement | null = document.getElementById(addTaskButtonId) as HTMLButtonElement | null;
 
         if (!categoryInput || !descriptionInput || !addTaskButton) {
             return;
         }
 
+        // Автофокус на первое поле при редактировании
+        categoryInput.focus();
+        categoryInput.select();
+
+        const handleSave = () => {
+            const editingTask = createEditingTask(categoryInput, descriptionInput);
+            if (isValidTask(editingTask)) {
+                actions.completeEditTask(editingTask);
+            }
+        };
+
         const inputKeyDownHandler = (e: KeyboardEvent) => {
             if (e.key === 'Enter' || e.code === 'Enter') {
                 e.preventDefault();
-                const editingTask: PomodoroTask = {
-                    id: task.id,
-                    category: {
-                        name: categoryInput.value,
-                    },
-                    description: descriptionInput.value
-                }
-
-                actions.completeEditTask(editingTask);
+                handleSave();
             }
             else if (e.key === 'Escape' || e.code === 'Escape') {
                 e.preventDefault();
                 actions.cancelEditTask();
             }
-        }
+        };
 
         const addTaskButtonClickHandler = (e: PointerEvent) => {
             e.preventDefault();
-
-            const editingTask: PomodoroTask = {
-                id: task.id,
-                category: {
-                    name: categoryInput.value,
-                },
-                description: descriptionInput.value
-            }
-
-            actions.completeEditTask(editingTask);
-        }
+            handleSave();
+        };
 
         categoryInput.addEventListener('keydown', inputKeyDownHandler);
         descriptionInput.addEventListener('keydown', inputKeyDownHandler);
         addTaskButton.addEventListener('click', addTaskButtonClickHandler);
+
+        return () => {
+            categoryInput.removeEventListener('keydown', inputKeyDownHandler);
+            descriptionInput.removeEventListener('keydown', inputKeyDownHandler);
+            addTaskButton.removeEventListener('click', addTaskButtonClickHandler);
+        };
     });
 
-    const mobileVersion = isMobile && (
-        editingTaskId != null && task.id === editingTaskId
-        ? `
-            <div 
-                id="${planTaskDivId}"
-                data-planTaskId="${task.id}"
-                class="${styles.plan_task}">
-                  <div class="${styles.plan_task__category}">
-                      <input 
-                        id="${categoryInputId}"
-                        class="${styles.plan_task_input}"
-                        value="${task.category?.name}" 
-                      />
-                  </div>
-                  <div class="${styles.plan_task__description}">
-                      <input 
-                        id="${descriptionInputId}"
-                        class="${styles.plan_task_input}"
-                        value="${task.description}" 
-                      />
-                  </div>
-                  <button 
-                    id="${addTaskButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                    S
-                  </button>
-              </div>
-        `
-        : `
-            <div 
-                id="${planTaskDivId}"
-                data-planTaskId="${task.id}"
-                class="${styles.plan_task_mobile}">
-                <div class="${styles.plan_task__task}">
-                    <div class="${styles.plan_task__category} ${styles.plan_task__category_mobile}">
-                      ${task.category?.name}
-                    </div>
-                    <div class="${styles.plan_task__description} ${styles.plan_task__description_mobile}">
-                      ${task.description}
-                    </div>
-                </div>
-                <div class="${styles.plan_task__toolbar}">
-                    <div 
-                    id="${taskCountId}"
-                    class="${styles.plan_task__count}">
-                      ${count}
-                    </div>
-                    <button
-                    id="${incButtonId}" 
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        +
-                    </button>
-                    <button 
-                    id="${decButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        -
-                    </button>
-                    <button 
-                    id="${archiveTaskButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        C
-                    </button>
-                </div>
-              </div>
-        `
-    );
+    const isEditing = editingTaskId != null && task.id === editingTaskId;
+    const escapedCategory = escapeHtml(task.category?.name);
+    const escapedDescription = escapeHtml(task.description);
 
-    const desktopVersion = !isMobile && (
-        editingTaskId != null && task.id === editingTaskId
-            ? `
-              <div 
-                id="${planTaskDivId}"
-                data-planTaskId="${task.id}"
-                class="${styles.plan_task}">
-                  <div class="${styles.plan_task__category}">
-                      <input 
-                        id="${categoryInputId}"
-                        class="${styles.plan_task_input}"
-                        value="${task.category?.name}" 
-                      />
-                  </div>
-                  <div class="${styles.plan_task__description}">
-                      <input 
-                        id="${descriptionInputId}"
-                        class="${styles.plan_task_input}"
-                        value="${task.description}" 
-                      />
-                  </div>
-                  <button 
-                    id="${addTaskButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                    S
-                  </button>
-              </div>
-          `
-            :
-            `
-              <div 
-                id="${planTaskDivId}"
-                data-planTaskId="${task.id}"
-                class="${styles.plan_task}">
-                  <div class="${styles.plan_task__category}">
-                      ${task.category?.name}
-                  </div>
-                  <div class="${styles.plan_task__description}">
-                      ${task.description}
-                  </div>
-                  <div 
-                    id="${taskCountId}"
-                    class="${styles.plan_task__count}">
-                      ${count}
-                  </div>
-                  <button
-                    id="${incButtonId}" 
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        +
-                  </button>
-                  <button 
-                    id="${decButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        -
-                  </button>
-                  <button 
-                    id="${archiveTaskButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}">
-                        C
-                  </button>
-              </div>
-          `
-    );
+    // Общая разметка для режима редактирования
+    const editModeMarkup = `
+        <div 
+            id="${planTaskDivId}"
+            data-planTaskId="${task.id}"
+            class="${styles.plan_task}">
+            <div class="${styles.plan_task__category}">
+                <input 
+                    id="${categoryInputId}"
+                    class="${styles.plan_task_input}"
+                    value="${escapedCategory}" 
+                    aria-label="Категория задачи"
+                />
+            </div>
+            <div class="${styles.plan_task__description}">
+                <input 
+                    id="${descriptionInputId}"
+                    class="${styles.plan_task_input}"
+                    value="${escapedDescription}" 
+                    aria-label="Описание задачи"
+                />
+            </div>
+            <button 
+                id="${addTaskButtonId}"
+                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                aria-label="Сохранить изменения">
+                S
+            </button>
+        </div>
+    `;
 
-    return isMobile ? mobileVersion : desktopVersion;
+    // Разметка для мобильной версии (режим просмотра)
+    const mobileViewMarkup = `
+        <div 
+            id="${planTaskDivId}"
+            data-planTaskId="${task.id}"
+            class="${styles.plan_task_mobile}">
+            <div class="${styles.plan_task__task}">
+                <div class="${styles.plan_task__category} ${styles.plan_task__category_mobile}">
+                    ${escapedCategory}
+                </div>
+                <div class="${styles.plan_task__description} ${styles.plan_task__description_mobile}">
+                    ${escapedDescription}
+                </div>
+            </div>
+            <div class="${styles.plan_task__toolbar}">
+                <div 
+                    id="${taskCountId}"
+                    class="${styles.plan_task__count}"
+                    role="status"
+                    aria-label="Количество помодоро">
+                    ${count}
+                </div>
+                <button
+                    id="${incButtonId}" 
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                    aria-label="Увеличить количество помодоро">
+                    +
+                </button>
+                <button 
+                    id="${decButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                    aria-label="Уменьшить количество помодоро">
+                    -
+                </button>
+                <button 
+                    id="${archiveTaskButtonId}"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                    aria-label="Архивировать задачу">
+                    C
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Разметка для десктопной версии (режим просмотра)
+    const desktopViewMarkup = `
+        <div 
+            id="${planTaskDivId}"
+            data-planTaskId="${task.id}"
+            class="${styles.plan_task}">
+            <div class="${styles.plan_task__category}">
+                ${escapedCategory}
+            </div>
+            <div class="${styles.plan_task__description}">
+                ${escapedDescription}
+            </div>
+            <div 
+                id="${taskCountId}"
+                class="${styles.plan_task__count}"
+                role="status"
+                aria-label="Количество помодоро">
+                ${count}
+            </div>
+            <button
+                id="${incButtonId}" 
+                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                aria-label="Увеличить количество помодоро">
+                +
+            </button>
+            <button 
+                id="${decButtonId}"
+                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                aria-label="Уменьшить количество помодоро">
+                -
+            </button>
+            <button 
+                id="${archiveTaskButtonId}"
+                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                aria-label="Архивировать задачу">
+                C
+            </button>
+        </div>
+    `;
+
+    if (isEditing) {
+        return editModeMarkup;
+    }
+
+    return isMobile ? mobileViewMarkup : desktopViewMarkup;
 }

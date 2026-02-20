@@ -61,41 +61,58 @@ export function  PlanTasksAdd(props: PlanTaskAddProps): string {
         const categoryInput: HTMLInputElement | null = document.getElementById(categoryInputId) as HTMLInputElement | null;
         const descriptionInput: HTMLInputElement | null = document.getElementById(descriptionInputId) as HTMLInputElement | null;
 
-        if (!button) {
+        if (!button || !categoryInput || !descriptionInput) {
             return;
         }
 
-        if (!categoryInput) {
-            return;
-        }
-
-        if (!descriptionInput) {
-            return;
-        }
-
-        const createTask = () => {
+        const createTask = (): PomodoroTask => {
             return {
                 id: generateId(),
                 category: {
-                    name: categoryInput.value
+                    name: categoryInput.value.trim(),
                 },
-                description: descriptionInput.value,
+                description: descriptionInput.value.trim(),
             } as PomodoroTask;
-        }
+        };
+
+        const isValidTask = (task: PomodoroTask): boolean => {
+            return task.category.name.length > 0 || task.description.length > 0;
+        };
+
+        const clearInputs = () => {
+            categoryInput.value = '';
+            descriptionInput.value = '';
+            categoryInput.focus();
+        };
+
+        const handleAddTask = () => {
+            const newTask = createTask();
+            if (isValidTask(newTask)) {
+                actions.addTask(newTask);
+                clearInputs();
+            }
+        };
 
         const inputKeyDownHandler = (e: KeyboardEvent) => {
             if (e.key === 'Enter' || e.code === 'Enter') {
                 e.preventDefault();
-                actions.addTask(createTask())
+                handleAddTask();
             }
-        }
+        };
 
-        button.addEventListener("click", () => {
-            actions.addTask(createTask());
-        });
+        const buttonClickHandler = () => {
+            handleAddTask();
+        };
 
+        button.addEventListener("click", buttonClickHandler);
         categoryInput.addEventListener("keydown", inputKeyDownHandler);
         descriptionInput.addEventListener("keydown", inputKeyDownHandler);
+
+        return () => {
+            button.removeEventListener("click", buttonClickHandler);
+            categoryInput.removeEventListener("keydown", inputKeyDownHandler);
+            descriptionInput.removeEventListener("keydown", inputKeyDownHandler);
+        };
     });
 
     return `
@@ -117,6 +134,7 @@ export function  PlanTasksAdd(props: PlanTaskAddProps): string {
             <button 
                 id="${buttonId}"
                 class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                aria-label="Добавить задачу"
             >
                 +
             </button>
