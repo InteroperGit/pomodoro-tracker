@@ -6,9 +6,30 @@ import {
     ActivePomodoroTaskType,
     type PlanPomodoroTask
 } from "../../types/task.ts";
-import {generateId} from "../../utils/idGenerator.ts";
-import {useEffect} from "../../utils/render.ts";
+import { useEffect } from "../../utils/render.ts";
 
+/** Стабильные id элементов таймера (одно приложение на странице). */
+const TIMER_LEFT_BUTTON_ID = "timer-left-btn";
+const TIMER_RIGHT_BUTTON_ID = "timer-right-btn";
+const TIMER_COUNTDOWN_ID = "timer-countdown";
+
+/** Подписи кнопок управления таймером. */
+const BUTTON_TITLES = {
+    START: "СТАРТ",
+    STOP: "СТОП",
+    PAUSE: "ПАУЗА",
+    RESUME: "ПРОДОЛЖИТЬ",
+    DONE: "СДЕЛАНО",
+    SKIP: "ПРОПУСТИТЬ",
+} as const;
+
+/**
+ * Пропсы компонента таймера.
+ * @property {boolean} isMobile - признак мобильного вида.
+ * @property {ActivePomodoroTask | null | undefined} [activeTask] - текущая активная задача или перерыв.
+ * @property {PlanPomodoroTask[]} planTasks - задачи в плане.
+ * @property {Object} actions - действия таймера и подписка на тик.
+ */
 export type TimerProps = {
     isMobile: boolean;
     activeTask?: ActivePomodoroTask | null;
@@ -20,9 +41,14 @@ export type TimerProps = {
         resumeTask: () => void;
         completeTask: () => void;
         registerActiveTaskTimerTick: (handler: (restTime: number) => void) => void;
-    }
-}
+    };
+};
 
+/**
+ * Преобразует время в миллисекундах в объект с минутами и секундами (строки с ведущим нулём).
+ * @param {number} time - время в мс.
+ * @returns {{ minutes: string, seconds: string }}
+ */
 const getTime = (time: number): { minutes: string, seconds: string } => {
     const timeSec = time / 1000;
     const min = Math.floor(timeSec / 60);
@@ -34,10 +60,15 @@ const getTime = (time: number): { minutes: string, seconds: string } => {
     return {
         minutes,
         seconds,
-    }
-}
+    };
+};
 
-const getButtonTitles = (task: ActivePomodoroTask) => {
+/**
+ * Возвращает подписи левой и правой кнопок в зависимости от типа и статуса задачи.
+ * @param {ActivePomodoroTask} task - активная задача или перерыв.
+ * @returns {[string, string]} [leftTitle, rightTitle]
+ */
+const getButtonTitles = (task: ActivePomodoroTask): [string, string] => {
     switch (task.type) {
         case ActivePomodoroTaskType.Undefined:
             return ["", ""];
@@ -46,11 +77,11 @@ const getButtonTitles = (task: ActivePomodoroTask) => {
                 case ActivePomodoroTaskStatus.Undefined:
                     return ["", ""];
                 case ActivePomodoroTaskStatus.Pending:
-                    return ["СТАРТ", "СТОП"];
+                    return [BUTTON_TITLES.START, BUTTON_TITLES.STOP];
                 case ActivePomodoroTaskStatus.Active:
-                    return ["ПАУЗА", "СТОП"];
+                    return [BUTTON_TITLES.PAUSE, BUTTON_TITLES.STOP];
                 case ActivePomodoroTaskStatus.Paused:
-                    return ["ПРОДОЛЖИТЬ", "СДЕЛАНО"];
+                    return [BUTTON_TITLES.RESUME, BUTTON_TITLES.DONE];
                 default:
                     return ["", ""];
             }
@@ -60,33 +91,46 @@ const getButtonTitles = (task: ActivePomodoroTask) => {
                 case ActivePomodoroTaskStatus.Undefined:
                     return ["", ""];
                 case ActivePomodoroTaskStatus.Active:
-                    return ["ПАУЗА", "ПРОПУСТИТЬ"];
+                    return [BUTTON_TITLES.PAUSE, BUTTON_TITLES.SKIP];
                 case ActivePomodoroTaskStatus.Paused:
-                    return ["ПРОДОЛЖИТЬ", "ПРОПУСТИТЬ"]
+                    return [BUTTON_TITLES.RESUME, BUTTON_TITLES.SKIP];
                 default:
                     return ["", ""];
             }
         default:
             return ["", ""];
     }
-}
+};
 
+/**
+ * Компонент таймера Pomodoro: обратный отсчёт, описание задачи, кнопки управления.
+ * При отсутствии активной задачи или задач в плане показывает пустое состояние.
+ *
+ * @param {TimerProps} props - пропсы компонента.
+ * @returns {string} HTML‑разметка блока таймера или пустого состояния.
+ */
 export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) {
-    if (!activeTask || planTasks.length === 0) {
+    if (planTasks.length === 0) {
         return `
-                <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
-                    <div class="${styles.timer__empty_icon}">⏰</div>
-                    <div class="${styles.timer__empty_title}">Нет активной задачи</div>
-                    <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
-                </div>
-            `;
+            <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
+                <div class="${styles.timer__empty_icon}">⏰</div>
+                <div class="${styles.timer__empty_title}">Нет задач в плане</div>
+                <div class="${styles.timer__empty_subtitle}">Добавьте задачи в план выше</div>
+            </div>
+        `;
+    }
+
+    if (!activeTask) {
+        return `
+            <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
+                <div class="${styles.timer__empty_icon}">⏰</div>
+                <div class="${styles.timer__empty_title}">Нет активной задачи</div>
+                <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
+            </div>
+        `;
     }
 
     const { restTime, task } = activeTask;
-
-    const leftButtonId = generateId();
-    const rightButtonId = generateId();
-    const timerCountdownId = generateId();
 
     const { minutes, seconds } = getTime(restTime);
     const [leftButtonTitle, rightButtonTitle] = getButtonTitles(activeTask);
@@ -98,12 +142,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     const rightButtonDisabled =
         activeTask.type === ActivePomodoroTaskType.Task
             && activeTask.status === ActivePomodoroTaskStatus.Pending
-        ? `${styles.disabled}`
-        : "";
+            ? styles.disabled
+            : "";
 
     useEffect(() => {
-        const leftButton = document.getElementById(leftButtonId);
-        const rightButton = document.getElementById(rightButtonId);
+        const leftButton = document.getElementById(TIMER_LEFT_BUTTON_ID);
+        const rightButton = document.getElementById(TIMER_RIGHT_BUTTON_ID);
 
         if (!leftButton || !rightButton) {
             return;
@@ -111,16 +155,13 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
 
         actions.registerActiveTaskTimerTick((restTime) => {
             const { minutes, seconds } = getTime(restTime);
-            const timerCountdown = document.getElementById(timerCountdownId);
-
-            if (!timerCountdown) {
-                return;
+            const timerCountdown = document.getElementById(TIMER_COUNTDOWN_ID);
+            if (timerCountdown) {
+                timerCountdown.textContent = `${minutes}:${seconds}`;
             }
-
-            timerCountdown.innerHTML = `${minutes}:${seconds}`;
         });
 
-        leftButton.addEventListener("click", () => {
+        const handleLeftClick = () => {
             if (activeTask.type === ActivePomodoroTaskType.Task
                 || activeTask.type === ActivePomodoroTaskType.ShortBreak
                 || activeTask.type === ActivePomodoroTaskType.LongBreak) {
@@ -136,9 +177,9 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                         break;
                 }
             }
-        });
+        };
 
-        rightButton.addEventListener("click", () => {
+        const handleRightClick = () => {
             if (activeTask.type === ActivePomodoroTaskType.Task
                 || activeTask.type === ActivePomodoroTaskType.ShortBreak
                 || activeTask.type === ActivePomodoroTaskType.LongBreak) {
@@ -146,72 +187,90 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                     case ActivePomodoroTaskStatus.Active:
                         if (activeTask.type === ActivePomodoroTaskType.Task) {
                             actions.stopTask();
-                        }
-                        else if (activeTask.type === ActivePomodoroTaskType.ShortBreak
+                        } else if (activeTask.type === ActivePomodoroTaskType.ShortBreak
                             || activeTask.type === ActivePomodoroTaskType.LongBreak) {
                             actions.completeTask();
                         }
-
                         break;
                     case ActivePomodoroTaskStatus.Paused:
                         actions.completeTask();
                         break;
                 }
             }
-        });
+        };
+
+        leftButton.addEventListener("click", handleLeftClick);
+        rightButton.addEventListener("click", handleRightClick);
+
+        return () => {
+            leftButton.removeEventListener("click", handleLeftClick);
+            rightButton.removeEventListener("click", handleRightClick);
+        };
     });
 
+    const countdownAriaLabel = `Осталось времени: ${minutes} минут ${seconds} секунд`;
+
     return isMobile
-        ?   `
-                <div class="${styles.timer} ${styles.timer_mobile} ${timerTypeStyle}">
-                    <div 
-                        id="${timerCountdownId}"
-                        class="${styles.timer__countdown}">
-                        ${minutes}:${seconds}
-                    </div>
-        
-                    <div class="${styles.timer__description}">
-                        ${task ? task.description : ""}
-                    </div>
-                    
-                    <div class="${styles.timer__buttons_mobile}">
-                        <button 
-                            id="${leftButtonId}"
-                            class="${globalStyles.button} ${styles.timer_button}">
-                            ${leftButtonTitle}
-                        </button>
-                        <button 
-                            id="${rightButtonId}"
-                            class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}">
-                            ${rightButtonTitle}
-                        </button>
-                    </div>
+        ? `
+            <div class="${styles.timer} ${styles.timer_mobile} ${timerTypeStyle}">
+                <div
+                    id="${TIMER_COUNTDOWN_ID}"
+                    class="${styles.timer__countdown}"
+                    role="status"
+                    aria-live="polite"
+                    aria-label="${countdownAriaLabel}">
+                    ${minutes}:${seconds}
                 </div>
-            `
-        :   `
-                <div class="${styles.timer} ${timerTypeStyle}">
-                    <div 
-                        id="${timerCountdownId}"
-                        class="${styles.timer__countdown}">
-                        ${minutes}:${seconds}
-                    </div>
-        
-                    <div class="${styles.timer__description}">
-                        ${task ? task.description : ""}
-                    </div>
-        
-                    <div class="${styles.timer__buttons}">
-                        <button 
-                            id="${leftButtonId}"
-                            class="${globalStyles.button} ${styles.timer_button}">
-                            ${leftButtonTitle}
-                        </button>
-                        <button 
-                            id="${rightButtonId}"
-                            class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}">
-                            ${rightButtonTitle}
-                        </button>
-                    </div>
+                <div class="${styles.timer__description}">
+                    ${task ? task.description : ""}
                 </div>
-            `;
+                <div class="${styles.timer__buttons_mobile}">
+                    <button
+                        id="${TIMER_LEFT_BUTTON_ID}"
+                        type="button"
+                        class="${globalStyles.button} ${styles.timer_button}"
+                        aria-label="${leftButtonTitle}">
+                        ${leftButtonTitle}
+                    </button>
+                    <button
+                        id="${TIMER_RIGHT_BUTTON_ID}"
+                        type="button"
+                        class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}"
+                        aria-label="${rightButtonTitle}">
+                        ${rightButtonTitle}
+                    </button>
+                </div>
+            </div>
+        `
+        : `
+            <div class="${styles.timer} ${timerTypeStyle}">
+                <div
+                    id="${TIMER_COUNTDOWN_ID}"
+                    class="${styles.timer__countdown}"
+                    role="status"
+                    aria-live="polite"
+                    aria-label="${countdownAriaLabel}">
+                    ${minutes}:${seconds}
+                </div>
+                <div class="${styles.timer__description}">
+                    ${task ? task.description : ""}
+                </div>
+                <div class="${styles.timer__buttons}">
+                    <button
+                        id="${TIMER_LEFT_BUTTON_ID}"
+                        type="button"
+                        class="${globalStyles.button} ${styles.timer_button}"
+                        aria-label="${leftButtonTitle}">
+                        ${leftButtonTitle}
+                    </button>
+                    <button
+                        id="${TIMER_RIGHT_BUTTON_ID}"
+                        type="button"
+                        class="${globalStyles.button} ${styles.timer_button} ${rightButtonDisabled}"
+                        aria-label="${rightButtonTitle}">
+                        ${rightButtonTitle}
+                    </button>
+                </div>
+            </div>
+        `;
 }
