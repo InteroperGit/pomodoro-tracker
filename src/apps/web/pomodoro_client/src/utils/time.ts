@@ -22,37 +22,37 @@ export function toHumanMinutesSecondsTime(time: number) {
  * Форматирует timestamp в читаемое время с учетом даты.
  * Если задача выполнена сегодня - показывает только время.
  * Если задача выполнена в другой день - показывает дату и время.
- * @param completedAt - timestamp в миллисекундах
+ * @param time - timestamp в миллисекундах
  * @returns объект с отформатированным временем и ISO строкой для атрибута datetime
  */
-export function formatCompletedTime(completedAt: number): { display: string; iso: string } {
+export function formatDateTime(time: number): { display: string; iso: string } {
     try {
-        const completedDate = new Date(completedAt);
+        const dateTime = new Date(time);
         
         // Проверка валидности даты
-        if (isNaN(completedDate.getTime())) {
+        if (isNaN(dateTime.getTime())) {
             return { display: '--:--', iso: '' };
         }
 
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const completedDay = new Date(completedDate.getFullYear(), completedDate.getMonth(), completedDate.getDate());
+        const completedDay = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
         
         const isToday = completedDay.getTime() === today.getTime();
         
         if (isToday) {
             // Сегодня - показываем только время
-            const timeString = completedDate.toLocaleTimeString('ru-RU', {
+            const timeString = dateTime.toLocaleTimeString('ru-RU', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
             return {
                 display: timeString,
-                iso: completedDate.toISOString()
+                iso: dateTime.toISOString()
             };
         } else {
             // Другая дата - показываем дату и время
-            const dateTimeString = completedDate.toLocaleString('ru-RU', {
+            const dateTimeString = dateTime.toLocaleString('ru-RU', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
@@ -61,7 +61,7 @@ export function formatCompletedTime(completedAt: number): { display: string; iso
             });
             return {
                 display: dateTimeString,
-                iso: completedDate.toISOString()
+                iso: dateTime.toISOString()
             };
         }
     } catch(error) {

@@ -1,6 +1,6 @@
 import type {ArchivePomodoroTask} from "../../types/task";
 import styles from "./ArchiveTask.module.scss"
-import {toHumanMinutesSecondsTime, formatCompletedTime} from "../../utils/time.ts";
+import {toHumanMinutesSecondsTime, formatDateTime} from "../../utils/time.ts";
 import {escapeHtml} from "../../utils/html.ts";
 
 /**
@@ -30,7 +30,7 @@ export function ArchiveTask({ isMobile, archiveTask }: ArchiveTaskProps) {
     const humanTaskTime = toHumanMinutesSecondsTime(taskTime);
     
     // Форматирование времени завершения с учетом даты
-    const completedTime = formatCompletedTime(completedAt);
+    const completedTime = formatDateTime(completedAt);
     
     // Экранирование пользовательского контента для защиты от XSS
     const escapedCategory = escapeHtml(category?.name ?? '');
