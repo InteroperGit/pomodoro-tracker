@@ -24,9 +24,11 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
     const taskCountId = generateId();
-    const incButtonId = generateId();
-    const decButtonId = generateId();
-    const archiveTaskButtonId = generateId();
+    const menuButtonId = generateId();
+    const dropdownId = generateId();
+    const menuIncId = generateId();
+    const menuDecId = generateId();
+    const menuArchiveId = generateId();
     const categoryInputId = generateId();
     const descriptionInputId = generateId();
     const addTaskButtonId = generateId();
@@ -50,15 +52,63 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     };
 
     useEffect(() => {
-        const planTaskDiv: HTMLDivElement | null = document.getElementById(planTaskDivId) as HTMLDivElement | null;
-        const taskCountDiv: HTMLDivElement | null = document.getElementById(taskCountId) as HTMLDivElement | null;
-        const incButton: HTMLButtonElement | null = document.getElementById(incButtonId) as HTMLButtonElement | null;
-        const decButton: HTMLButtonElement | null = document.getElementById(decButtonId) as HTMLButtonElement | null;
-        const archiveTaskButton: HTMLButtonElement | null = document.getElementById(archiveTaskButtonId) as HTMLButtonElement | null;
+        const planTaskDiv = document.getElementById(planTaskDivId) as HTMLDivElement | null;
+        const taskCountDiv = document.getElementById(taskCountId) as HTMLDivElement | null;
+        const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement | null;
+        const dropdown = document.getElementById(dropdownId) as HTMLDivElement | null;
+        const menuInc = document.getElementById(menuIncId) as HTMLButtonElement | null;
+        const menuDec = document.getElementById(menuDecId) as HTMLButtonElement | null;
+        const menuArchive = document.getElementById(menuArchiveId) as HTMLButtonElement | null;
 
-        if (!planTaskDiv || !taskCountDiv || !incButton || !decButton || !archiveTaskButton) {
+        if (!planTaskDiv || !taskCountDiv || !menuButton || !dropdown || !menuInc || !menuDec || !menuArchive) {
             return;
         }
+
+        const openClass = styles.plan_task__dropdown_open;
+        const MARGIN = 8;
+
+        const positionDropdown = () => {
+            const rect = menuButton.getBoundingClientRect();
+            dropdown.style.visibility = "hidden";
+            dropdown.classList.add(openClass);
+            const dr = dropdown.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            let top: number;
+            const canOpenBelow = rect.bottom + dr.height + MARGIN <= vh;
+            const canOpenAbove = rect.top - dr.height - MARGIN >= 0;
+            const fallbackTop = Math.max(MARGIN, Math.min(rect.bottom, vh - dr.height - MARGIN));
+
+            if (canOpenBelow) {
+                top = rect.bottom + MARGIN;
+            } else if (canOpenAbove) {
+                top = rect.top - dr.height - MARGIN;
+            } else {
+                top = fallbackTop;
+            }
+
+            let left = rect.left;
+            if (left + dr.width > vw - MARGIN)  {
+                left = vw - dr.width - MARGIN;
+            }
+
+            if (left < MARGIN) {
+                left = MARGIN;
+            }
+
+            dropdown.style.top = `${top}px`;
+            dropdown.style.left = `${left}px`;
+            dropdown.style.visibility = "";
+        };
+
+        const closeDropdown = () => {
+            dropdown.classList.remove(openClass);
+            dropdown.setAttribute("aria-hidden", "true");
+            menuButton.setAttribute("aria-expanded", "false");
+        };
+
+        const isOpen = () => dropdown.classList.contains(openClass);
 
         const handlePlanTaskClick = (e: MouseEvent) => {
             if (task.id === editingTaskId) {
@@ -66,14 +116,13 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             }
 
             const node = e.target as Node;
-
-            if (taskCountDiv.contains(node)
-                || incButton.contains(node)
-                || decButton.contains(node)
-                || archiveTaskButton.contains(node)) {
+            if (
+                taskCountDiv.contains(node) ||
+                menuButton.contains(node) ||
+                dropdown.contains(node)
+            ) {
                 return;
             }
-
             actions.startEditTask(task.id);
         };
 
@@ -81,30 +130,58 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             actions.incTask(task.id);
         };
 
-        const handleIncClick = () => {
+        const handleMenuButtonClick = (e: MouseEvent) => {
+            e.stopPropagation();
+            if (isOpen()) {
+                closeDropdown();
+            } else {
+                positionDropdown();
+                dropdown.setAttribute("aria-hidden", "false");
+                menuButton.setAttribute("aria-expanded", "true");
+            }
+        };
+
+        const handleMenuInc = () => {
             actions.incTask(task.id);
         };
-
-        const handleDecClick = () => {
+        const handleMenuDec = () => {
             actions.decTask(task.id);
         };
-
-        const handleArchiveClick = () => {
+        const handleMenuArchive = () => {
             actions.archiveTask(task.id);
+        };
+
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (isOpen() && !dropdown.contains(target) && !menuButton.contains(target)) {
+                closeDropdown();
+            }
+        };
+
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen()) {
+                closeDropdown();
+            }
         };
 
         planTaskDiv.addEventListener("click", handlePlanTaskClick);
         taskCountDiv.addEventListener("click", handleTaskCountClick);
-        incButton.addEventListener("click", handleIncClick);
-        decButton.addEventListener("click", handleDecClick);
-        archiveTaskButton.addEventListener("click", handleArchiveClick);
+        menuButton.addEventListener("click", handleMenuButtonClick);
+        menuInc.addEventListener("click", handleMenuInc);
+        menuDec.addEventListener("click", handleMenuDec);
+        menuArchive.addEventListener("click", handleMenuArchive);
+        document.addEventListener("click", handleClickOutside);
+        document.addEventListener("keydown", handleEscape);
 
         return () => {
             planTaskDiv.removeEventListener("click", handlePlanTaskClick);
             taskCountDiv.removeEventListener("click", handleTaskCountClick);
-            incButton.removeEventListener("click", handleIncClick);
-            decButton.removeEventListener("click", handleDecClick);
-            archiveTaskButton.removeEventListener("click", handleArchiveClick);
+            menuButton.removeEventListener("click", handleMenuButtonClick);
+            menuInc.removeEventListener("click", handleMenuInc);
+            menuDec.removeEventListener("click", handleMenuDec);
+            menuArchive.removeEventListener("click", handleMenuArchive);
+            document.removeEventListener("click", handleClickOutside);
+            document.removeEventListener("keydown", handleEscape);
         };
     });
 
@@ -216,24 +293,26 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                     aria-label="Количество помодоро">
                     ${count}
                 </div>
-                <button
-                    id="${incButtonId}" 
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                    aria-label="Увеличить количество помодоро">
-                    +
-                </button>
-                <button 
-                    id="${decButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                    aria-label="Уменьшить количество помодоро">
-                    -
-                </button>
-                <button 
-                    id="${archiveTaskButtonId}"
-                    class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                    aria-label="Архивировать задачу">
-                    C
-                </button>
+                <div class="${styles.plan_task__menu_wrap}">
+                    <button
+                        id="${menuButtonId}"
+                        type="button"
+                        class="${globalStyles.button} ${commonStyles.plan_task__button} ${styles.plan_task__menu_button}"
+                        aria-label="Действия с задачей"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        …
+                    </button>
+                    <div
+                        id="${dropdownId}"
+                        class="${styles.plan_task__dropdown}"
+                        role="menu"
+                        aria-hidden="true">
+                        <button type="button" id="${menuIncId}" class="${styles.plan_task__dropdown_item}" role="menuitem">+ помидор</button>
+                        <button type="button" id="${menuDecId}" class="${styles.plan_task__dropdown_item}" role="menuitem">− помидор</button>
+                        <button type="button" id="${menuArchiveId}" class="${styles.plan_task__dropdown_item}" role="menuitem">В архив</button>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -257,24 +336,26 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                 aria-label="Количество помодоро">
                 ${count}
             </div>
-            <button
-                id="${incButtonId}" 
-                class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                aria-label="Увеличить количество помодоро">
-                +
-            </button>
-            <button 
-                id="${decButtonId}"
-                class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                aria-label="Уменьшить количество помодоро">
-                -
-            </button>
-            <button 
-                id="${archiveTaskButtonId}"
-                class="${globalStyles.button} ${commonStyles.plan_task__button}"
-                aria-label="Архивировать задачу">
-                C
-            </button>
+            <div class="${styles.plan_task__menu_wrap}">
+                <button
+                    id="${menuButtonId}"
+                    type="button"
+                    class="${globalStyles.button} ${commonStyles.plan_task__button} ${styles.plan_task__menu_button}"
+                    aria-label="Действия с задачей"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    …
+                </button>
+                <div
+                    id="${dropdownId}"
+                    class="${styles.plan_task__dropdown}"
+                    role="menu"
+                    aria-hidden="true">
+                    <button type="button" id="${menuIncId}" class="${styles.plan_task__dropdown_item}" role="menuitem">+ помидор</button>
+                    <button type="button" id="${menuDecId}" class="${styles.plan_task__dropdown_item}" role="menuitem">− помидор</button>
+                    <button type="button" id="${menuArchiveId}" class="${styles.plan_task__dropdown_item}" role="menuitem">В архив</button>
+                </div>
+            </div>
         </div>
     `;
 
