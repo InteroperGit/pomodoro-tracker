@@ -102,7 +102,18 @@
 
     &:hover {
       background-color: transparent;
-      transform: none;                   // отключаем scale
+      transform: none;
     }
+  }
+}
+
+/* Отдельный класс для использования в JS (styles.disabled), дублирует модификатор .timer_button.disabled */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+
+  &:hover {
+    background-color: transparent;
+    transform: none;
   }
 }
