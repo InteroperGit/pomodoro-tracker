@@ -70,8 +70,12 @@ export type DropdownConfig = {
 
 const MARGIN = 8;
 
+/** Реестр открытых выпадающих меню: при открытии одного закрываются остальные (PlanTasks, ArchiveTasks). */
+const openDropdowns = new Map<string, () => void>();
+
 /**
  * Подключает поведение выпадающего меню: портал в body, позиционирование, закрытие по клику снаружи и Escape.
+ * При открытии меню все остальные открытые выпадающие меню в приложении закрываются.
  * Возвращает функцию очистки для использования в useEffect.
  */
 export function useDropdown(config: DropdownConfig): () => void {
@@ -135,6 +139,7 @@ export function useDropdown(config: DropdownConfig): () => void {
     };
 
     const closeDropdown = () => {
+        openDropdowns.delete(dropdownId);
         dropdown.classList.remove(openClass);
         dropdown.setAttribute("aria-hidden", "true");
         menuButton.setAttribute("aria-expanded", "false");
@@ -150,9 +155,13 @@ export function useDropdown(config: DropdownConfig): () => void {
         if (isOpen()) {
             closeDropdown();
         } else {
+            // Закрыть все остальные открытые выпадающие меню (PlanTasks, ArchiveTasks)
+            const others = [...openDropdowns.entries()].filter(([id]) => id !== dropdownId);
+            others.forEach(([, close]) => close());
             positionDropdown();
             dropdown.setAttribute("aria-hidden", "false");
             menuButton.setAttribute("aria-expanded", "true");
+            openDropdowns.set(dropdownId, closeDropdown);
         }
     };
 
@@ -187,6 +196,7 @@ export function useDropdown(config: DropdownConfig): () => void {
     }
 
     return () => {
+        openDropdowns.delete(dropdownId);
         if (dropdown.parentElement === document.body) {
             document.body.removeChild(dropdown);
         }
