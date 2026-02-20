@@ -100,8 +100,12 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
 
         const openClass = styles.archive_task__dropdown_open;
         const MARGIN = 8;
+        const menuWrap = menuButton.parentElement;
 
         const positionDropdown = () => {
+            if (menuWrap && dropdown.parentElement !== document.body) {
+                document.body.appendChild(dropdown);
+            }
             const rect = menuButton.getBoundingClientRect();
             dropdown.style.visibility = "hidden";
             dropdown.classList.add(openClass);
@@ -139,6 +143,9 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
             dropdown.classList.remove(openClass);
             dropdown.setAttribute("aria-hidden", "true");
             menuButton.setAttribute("aria-expanded", "false");
+            if (menuWrap && dropdown.parentElement === document.body) {
+                menuWrap.insertBefore(dropdown, menuButton.nextSibling);
+            }
         };
 
         const isOpen = () => dropdown.classList.contains(openClass);
@@ -178,6 +185,9 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
         document.addEventListener("keydown", handleEscape);
 
         return () => {
+            if (dropdown.parentElement === document.body) {
+                document.body.removeChild(dropdown);
+            }
             menuButton.removeEventListener("click", handleMenuButtonClick);
             menuDelete.removeEventListener("click", handleMenuDelete);
             document.removeEventListener("click", handleClickOutside);
