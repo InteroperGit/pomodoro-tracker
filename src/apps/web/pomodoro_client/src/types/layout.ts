@@ -17,7 +17,7 @@ export function onLayoutChanged(callback: (isMobile: boolean) => void, threshold
         }, 100);
     }
 
-    window.addEventListener("resized", handler);
+    window.addEventListener("resize", handler);
     return () => {
         window.removeEventListener("resize", handler);
         if (resizeTimeout) {
