@@ -18,11 +18,11 @@ import styles from "./Logo.module.scss";
  * Элемент `.logo` предназначен для идентификации бренда и навигационной панели.
  * Предполагается, что логотип остаётся постоянным во всех разделах приложения.
  *
- * Пример итоговой структуры:
+ * Пример итоговой структуры (имена классов через CSS modules):
  * ```html
- * <div class="logo">
- *   <img class="logo__icon" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
- *   <span class="logo__label">Pomodoro</span>
+ * <div class="logo_xxx">
+ *   <img class="logo_xxx__icon" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
+ *   <span class="logo_xxx__label">Pomodoro</span>
  * </div>
  * ```
  *
