@@ -62,7 +62,20 @@
   gap: 0.5rem;
   width: 100%;
   align-items: center;
-  justify-content: flex-end;
+    justify-content: flex-end;
+}
+
+.archive_task__refresh_button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archive_task__refresh_icon {
+  font-size: 0.875rem;
 }
 
 .archive_task__category {

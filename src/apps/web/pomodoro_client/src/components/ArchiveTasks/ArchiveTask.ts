@@ -1,4 +1,4 @@
-import type {ArchivePomodoroTask} from "../../types/task";
+import type {ArchivePomodoroTask, PomodoroTask} from "../../types/task";
 import styles from "./ArchiveTask.module.scss";
 import globalStyles from "../global.module.scss";
 import commonStyles from "../Common.module.scss";
@@ -29,6 +29,7 @@ export type ArchiveTaskProps = {
     archiveTask: ArchivePomodoroTask;
     actions: {
         deleteArchiveTask: (id: string) => void;
+        refreshTask: (task: PomodoroTask) => void;
     };
 };
 
@@ -37,6 +38,7 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
     const { category, description } = task;
 
     const archiveTaskDivId = generateId();
+    const refreshButtonId = generateId();
     const menuButtonId = generateId();
     const dropdownId = generateId();
     const menuDeleteId = generateId();
@@ -78,8 +80,16 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
         items: [{ id: menuDeleteId, content: "Удалить" }],
     });
 
+    const refreshButtonMarkup = `
+        <button id="${refreshButtonId}" 
+                class="${globalStyles.button} ${commonStyles.outline_button} ${styles.archive_task__refresh_button}"
+                aria-label="Обновить задачу">
+            <i class="fa-solid fa-arrow-rotate-left ${styles.archive_task__refresh_icon}" aria-hidden="true"></i>
+        </button>
+    `;
+
     useEffect(() => {
-        return useDropdown({
+        const unsubscribeDropdown = useDropdown({
             buttonId: menuButtonId,
             dropdownId,
             openClass: dropdownStyles.dropdown_open,
@@ -87,6 +97,19 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
                 [menuDeleteId]: () => actions.deleteArchiveTask(task.id),
             },
         });
+
+        const refreshButton = document.getElementById(refreshButtonId);
+        if (refreshButton) {
+            const handleRefreshClick = () => {
+                actions.refreshTask(task);
+            };
+            refreshButton.addEventListener('click', handleRefreshClick);
+            return () => {
+                refreshButton.removeEventListener('click', handleRefreshClick);
+                unsubscribeDropdown();
+            };
+        }
+        return unsubscribeDropdown;
     });
 
     // Мобильная версия
@@ -103,6 +126,7 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
                 </div>
                 <div class="${styles.archive_task__time}">
                     ${timeMarkup}
+                    ${refreshButtonMarkup}
                     ${menuBlock}
                 </div>
             </div>
@@ -119,6 +143,7 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
                 ${escapedDescription}
             </div>
             ${timeMarkup}
+            ${refreshButtonMarkup}
             ${menuBlock}
         </div>
     `;

@@ -28,6 +28,7 @@ export type AppActions = {
     decTask(id: string): void;
     archiveTask(id: string, restTime?: number): void;
     deleteArchiveTask(id: string): void;
+    refreshTask(task: PomodoroTask): void;
     startEditTask(id: string): void;
     completeEditTask(task: PomodoroTask): void;
     cancelEditTask(): void;
