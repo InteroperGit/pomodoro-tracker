@@ -263,6 +263,21 @@ export function createContext(initialState: AppState,
                 }
             });
         },
+        deleteArchiveTask(id: string): void {
+            if (!id) {
+                throw new Error("Failed to delete archive task. Id is not initialized");
+            }
+            const s = store.getState();
+            const updatedArchiveTasks = s.archiveTasks.tasks.filter(at => at.task.id !== id);
+            store.setState({
+                ...s,
+                archiveTasks: {
+                    ...s.archiveTasks,
+                    tasks: updatedArchiveTasks,
+                    statistics: getArchiveTasksStatistics(updatedArchiveTasks)
+                }
+            });
+        },
         startEditTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to edit task. Id is not initialized");
@@ -544,6 +559,10 @@ export function useReorderTasks(fromIndex: number, toIndex: number) {
 
 export function useArchiveTask(id: string) {
     return context.actions.archiveTask(id);
+}
+
+export function useDeleteArchiveTask() {
+    return (id: string) => context.actions.deleteArchiveTask(id);
 }
 
 export function useGetActiveTask() {

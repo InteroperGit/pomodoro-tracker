@@ -1,0 +1,23 @@
+/* Общие стили кнопок для PlanTasks и ArchiveTasks
+   Hover кнопки сильнее, чем hover строки (0.05/0.08), чтобы кнопка явно выделялась на фоне строки. */
+
+.outline_button {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  color: var(--text-primary, inherit);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  :global(html.theme-dark) & {
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Светлая тема: строка — 0.05, кнопка — заметно темнее */
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.18);
+  }
+
+  /* Тёмная тема: строка — 0.08, кнопка — заметно светлее */
+  :global(html.theme-dark) &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}

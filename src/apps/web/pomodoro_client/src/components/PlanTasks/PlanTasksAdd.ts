@@ -1,5 +1,5 @@
 import globalStyles from "../global.module.scss";
-import commonStyles from "./PlanTasksCommon.module.scss";
+import commonStyles from "../Common.module.scss";
 import styles from "./PlanTasksAdd.module.scss";
 import {useEffect} from "../../utils/render.ts";
 import type {PomodoroTask} from "../../types/task.ts";
@@ -133,7 +133,7 @@ export function  PlanTasksAdd(props: PlanTaskAddProps): string {
             
             <button 
                 id="${buttonId}"
-                class="${globalStyles.button} ${commonStyles.plan_task__button}"
+                class="${globalStyles.button} ${commonStyles.outline_button}"
                 aria-label="Добавить задачу"
             >
                 +

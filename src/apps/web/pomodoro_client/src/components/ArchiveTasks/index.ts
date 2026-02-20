@@ -32,15 +32,18 @@ import type {ArchivePomodoroTasksState} from "../../types/context.ts";
 export type ArchiveTasksProps = {
     isMobile: boolean;
     data: ArchivePomodoroTasksState;
+    actions: {
+        deleteArchiveTask: (id: string) => void;
+    };
 }
 
-export function ArchiveTasks({ isMobile, data }: ArchiveTasksProps) {
+export function ArchiveTasks({ isMobile, data, actions }: ArchiveTasksProps) {
     const { tasks, statistics } = data;
     const { tasksCount, tasksTime } = statistics;
 
     // Формирование подкомпонентов
     const title = ArchiveTasksTitle({ tasksCount, tasksTime });
-    const list = ArchiveTasksList({ isMobile, tasks });
+    const list = ArchiveTasksList({ isMobile, tasks, actions });
     const stat = ArchiveTasksStatistics({ statistics });
 
     // Условное добавление мобильных стилей

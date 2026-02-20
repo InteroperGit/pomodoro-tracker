@@ -8,6 +8,7 @@ import {
     useActiveTaskTimerTick,
     useCancelEditTask,
     useCompleteTask,
+    useDeleteArchiveTask,
     useGetEditingTaskId,
     usePauseTask,
     useResumeTask,
@@ -45,7 +46,12 @@ export function App(ctx: AppContext) {
         isMobile,
         data: state.planTasks
     });
-    const archiveTasks = ArchiveTasks({ isMobile, data: state.archiveTasks });
+    const deleteArchiveTask = useDeleteArchiveTask();
+    const archiveTasks = ArchiveTasks({
+        isMobile,
+        data: state.archiveTasks,
+        actions: { deleteArchiveTask },
+    });
     const footer = Footer();
 
     //Cancel edit when clicking outside PlanTask control
