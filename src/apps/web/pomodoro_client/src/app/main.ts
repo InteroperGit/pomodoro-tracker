@@ -14,30 +14,27 @@ import { throttle } from "../utils/throttle.ts";
 
 const STORAGE_KEY = "pomodoro";
 const THROTTLE_DELAY = 1000;
+const ROOT_ELEMENT_ID = "root"
 
-const getInitPlanTasks = (): PlanPomodoroTasksState => {
-    return {
-        tasks: [],
-        statistics: {
-            tasksCount: 0,
-            tasksTime: 0,
-            finishTime: 0,
-            nextLongBreak: 0,
-            categories: []
-        }
-    };
-}
-
-const getInitArchiveTasks = (): ArchivePomodoroTasksState => {
-    return {
-        tasks: [],
-        statistics: {
-            tasksCount: 0,
-            tasksTime: 0,
-            categories: []
-        }
+const getInitPlanTasks = (): PlanPomodoroTasksState => ({
+    tasks: [],
+    statistics: {
+        tasksCount: 0,
+        tasksTime: 0,
+        finishTime: 0,
+        nextLongBreak: 0,
+        categories: []
     }
-}
+});
+
+const getInitArchiveTasks = (): ArchivePomodoroTasksState => ({
+    tasks: [],
+    statistics: {
+        tasksCount: 0,
+        tasksTime: 0,
+        categories: []
+    }
+});
 
 const getActiveTask = (activeTask: ActivePomodoroTask | null | undefined): ActivePomodoroTask | null => {
     if (!activeTask) {
@@ -61,9 +58,14 @@ const getActiveTask = (activeTask: ActivePomodoroTask | null | undefined): Activ
 }
 
 window.addEventListener('load', () => {
-    const root = findById("root");
+    const root = findById(ROOT_ELEMENT_ID);
     if (!root) {
-        alert("Элемент с идентификатором root не найден");
+        const message = "Элемент с идентификатором root не найден";
+        console.error(message);
+        const fallback = document.createElement("div");
+        fallback.textContent = message;
+        fallback.style.cssText = "padding: 1rem; font-family: sans-serif; color: #c00;";
+        document.body.appendChild(fallback);
         return;
     }
 
@@ -73,6 +75,7 @@ window.addEventListener('load', () => {
     const planTasks = state?.planTasks ?? getInitPlanTasks();
     const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
 
+    // editingTaskId не восстанавливаем из storage: режим редактирования не сохраняется между сессиями
     const initialState: AppState = {
         editingTaskId: null,
         activeTask,
@@ -93,7 +96,7 @@ window.addEventListener('load', () => {
 
     ctx.store.subscribe(() => {
         const s = ctx.store.getState();
-        storage.setItem<AppState>(STORAGE_KEY, s);
+        saveStateThrottle(s);
         render(root, App, ctx);
     });
 
