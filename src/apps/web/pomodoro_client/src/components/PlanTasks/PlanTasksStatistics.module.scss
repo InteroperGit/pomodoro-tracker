@@ -33,6 +33,17 @@
   padding-inline: 0.5rem;       /* небольшой “разрыв” линии вокруг текста */
 }
 
+.plan_tasks__statistics_title_label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  .fa-mug-hot,
+  .fa-clock {
+    font-size: 0.9em;
+  }
+}
+
 .plan_tasks__statistics_title_time {
   text-decoration: underline;
 }
