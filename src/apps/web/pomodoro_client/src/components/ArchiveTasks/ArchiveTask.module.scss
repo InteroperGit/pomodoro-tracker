@@ -3,13 +3,14 @@
   gap: 0.25rem;
   align-items: center;
   border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-  padding: 0.5rem 0;
+  padding: 0.5rem;
   opacity: 0.75;
 
   transition: background-color 0.2s ease;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    cursor: grab;
   }
 
   :global(html.theme-dark) &:hover {
