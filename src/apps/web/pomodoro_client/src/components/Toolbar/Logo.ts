@@ -38,7 +38,7 @@ export function Logo() {
     return `
         <div class="${styles.logo}">
             <img class="${styles.logo__icon}" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
-            <span class="${styles.logo__label}">Pomodoro</span>
+            <span class="${styles.logo__label}">Pomodoro Tracker</span>
         </div>
     `;
 }
