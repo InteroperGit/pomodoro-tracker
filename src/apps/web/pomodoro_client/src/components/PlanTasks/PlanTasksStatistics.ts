@@ -25,9 +25,15 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
     return `
         <div class="${styles.plan_tasks__statistics}">
             <div class="${styles.plan_tasks__statistics_title}">
-                <div>Следующий длинный перерыв</div>
+                <div class="${styles.plan_tasks__statistics_title_label}">
+                    <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>
+                    <span>Следующий длинный перерыв</span>
+                </div>
                 <div class="${styles.plan_tasks__statistics_title_time}">${nextLongBreakText}</div>
-                <div>Время окончания</div>
+                <div class="${styles.plan_tasks__statistics_title_label}">
+                    <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                    <span>Время окончания</span>
+                </div>
                 <div class="${styles.plan_tasks__statistics_title_time}">${finishTimeText}</div>
             </div>
             

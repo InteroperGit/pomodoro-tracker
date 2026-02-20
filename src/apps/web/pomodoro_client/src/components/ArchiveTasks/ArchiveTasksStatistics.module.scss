@@ -35,6 +35,17 @@
   padding-inline: 0.5rem;
 }
 
+.archive_tasks__statistics_summary_label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  .fa-trophy,
+  .fa-clock {
+    font-size: 0.9em;
+  }
+}
+
 .archive_tasks__statistics_summary_value {
   font-weight: 500;
   text-decoration: underline;

@@ -51,9 +51,15 @@ export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsPro
     return `
         <div class="${styles.archive_tasks__statistics}">
             <div class="${styles.archive_tasks__statistics_summary}">
-                <div>Выполнено помидоров</div>
+                <div class="${styles.archive_tasks__statistics_summary_label}">
+                    <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                    <span>Выполнено помидоров</span>
+                </div>
                 <div class="${styles.archive_tasks__statistics_summary_value}">${tasksCount}</div>
-                <div>Общее время</div>
+                <div class="${styles.archive_tasks__statistics_summary_label}">
+                    <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                    <span>Общее время</span>
+                </div>
                 <div class="${styles.archive_tasks__statistics_summary_value}">${tasksTimeText}</div>
             </div>
             ${categoriesBlock}

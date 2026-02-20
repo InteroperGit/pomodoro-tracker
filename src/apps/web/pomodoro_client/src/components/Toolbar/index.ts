@@ -20,10 +20,11 @@ function toolbarMenuMarkup(theme: "light" | "dark") {
                 id="${TOOLBAR_MENU_BTN_ID}"
                 type="button"
                 class="${styles.menu_button}"
-                aria-label="Меню"
+                aria-label="Настройки"
                 aria-haspopup="true"
                 aria-expanded="false">
-                ⋮
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                <span class="${styles.menu_button_label}">Настройки</span>
             </button>
             <div
                 id="${TOOLBAR_DROPDOWN_ID}"

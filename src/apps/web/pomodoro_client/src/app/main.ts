@@ -1,3 +1,4 @@
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { findById } from "../utils/dom";
 import { App } from "./App";
 import {
