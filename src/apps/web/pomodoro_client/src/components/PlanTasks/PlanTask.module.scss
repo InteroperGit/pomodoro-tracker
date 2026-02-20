@@ -13,6 +13,11 @@
     background-color: rgba(0, 0, 0, 0.05);  // лёгкий серый
   }
 
+  /* Тёмная тема: заметный фон при наведении на строку задачи */
+  :global(html.theme-dark) &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
   &:active {
     cursor: grabbing;
   }
@@ -24,6 +29,10 @@
     border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
     padding: 0.5rem 0.5rem 0.5rem 0;
     gap: 0.5rem;
+
+    :global(html.theme-dark) &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
   }
 }
 
@@ -103,6 +112,14 @@
             rgba(0, 0, 0, 0.06) 0%,
             rgba(0, 0, 0, 0.12) 100%);
     box-shadow: 0 3px 12px rgba(0,0,0,0.15)
+  }
+
+  /* Тёмная тема: заметная заливка при наведении на счётчик */
+  :global(html.theme-dark) &:hover {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0.2) 100%);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
   }
 }
 
