@@ -2,7 +2,7 @@ import globalStyles from "../components/global.module.scss";
 import styles from "./App.module.scss";
 import { Toolbar } from '../components/Toolbar';
 import { Timer } from '../components/Timer';
-import {Footer} from "../components/Footer";
+import { Footer } from "../components/Footer";
 import {
     type AppContext,
     useActiveTaskTimerTick,

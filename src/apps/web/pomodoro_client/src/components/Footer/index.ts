@@ -12,10 +12,10 @@ import styles from "./Footer.module.scss";
  * Простая функция‑компонент, возвращающая статическую HTML‑разметку для подвала.
  * Обычно располагается внизу корневого контейнера приложения и используется во всех страницах.
  *
- * Структура разметки:
+ * Структура разметки (имена классов через CSS modules):
  * ```html
- * <footer class="footer">
- *     Pomodoro timer
+ * <footer class="footer_xxx">
+ *     <span class="footer_xxx__label">Pomodoro timer</span>
  * </footer>
  * ```
  *
@@ -28,9 +28,9 @@ import styles from "./Footer.module.scss";
  * document.querySelector('.app').insertAdjacentHTML('beforeend', Footer());
  */
 export function Footer() {
-    return  `
+    return `
         <footer class="${styles.footer}">
-            Pomodoro timer
+            <span class="${styles.footer__label}">Pomodoro timer</span>
         </footer>
     `;
 }
