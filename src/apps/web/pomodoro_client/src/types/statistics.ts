@@ -8,7 +8,9 @@ export type PomodoroTaskCategoryStatistics = {
 export type PlanPomodoroTasksStatistics = {
     tasksCount: number;
     tasksTime: number;
+    /** Длительность (мс) от начала до старта первого длинного перерыва; 0 если перерывов нет */
     nextLongBreak: number;
+    /** Общая длительность плана (мс) — все помидоры и перерывы */
     finishTime: number;
     categories: PomodoroTaskCategoryStatistics[];
 }

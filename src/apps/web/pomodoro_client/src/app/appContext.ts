@@ -33,16 +33,31 @@ const getCategories = (tasks: PlanPomodoroTask[]) => {
 }
 
 const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksStatistics => {
-    const tasksCount = tasks.reduce((sum,  task) => sum + task.count, 0);
+    const tasksCount = tasks.reduce((sum, task) => sum + task.count, 0);
+    const longBreaksCount = Math.floor(tasksCount / LONG_BREAK_AFTER);
+    const shortBreaksCount = Math.max(0, tasksCount - 1 - longBreaksCount);
+
+    const finishTime =
+        Date.now() +
+        tasksCount * POMODORO_TASK_TIME +
+        shortBreaksCount * POMODORO_SHORT_BREAK_TIME +
+        longBreaksCount * POMODORO_LONG_BREAK_TIME;
+
+    // Длительность (мс) от начала до старта первого длинного перерыва: 4 помидора + 3 коротких перерыва
+    const timeUntilFirstLongBreak =
+        Date.now() +
+        LONG_BREAK_AFTER * POMODORO_TASK_TIME +
+        (LONG_BREAK_AFTER - 1) * POMODORO_SHORT_BREAK_TIME;
+    const nextLongBreak = tasksCount >= LONG_BREAK_AFTER ? timeUntilFirstLongBreak : 0;
 
     return {
         tasksCount,
         tasksTime: tasksCount * POMODORO_TASK_TIME,
-        nextLongBreak: 0,
-        finishTime: 0,
+        nextLongBreak,
+        finishTime,
         categories: getCategories(tasks)
-    }
-}
+    };
+};
 
 export function createContext(initialState: AppState,
                               onTickCallback: (state: AppState) => void) {
