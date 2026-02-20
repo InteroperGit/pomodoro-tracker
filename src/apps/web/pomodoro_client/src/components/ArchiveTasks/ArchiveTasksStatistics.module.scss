@@ -1,9 +1,12 @@
 .archive_tasks__statistics {
   display: flex;
   flex-direction: column;
+  margin-top: 0.5rem;
 }
 
+/* Перечеркивающая линия — как у итогов PlanTasks */
 .archive_tasks__statistics_summary {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -15,14 +18,31 @@
   padding-bottom: 0.5rem;
 }
 
+.archive_tasks__statistics_summary::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--divider-line-height, 1px);
+  background: var(--divider-line-color, #000);
+  opacity: 0.1;
+}
+
+.archive_tasks__statistics_summary > * {
+  position: relative;
+  z-index: 1;
+  background: var(--background_color);
+  padding-inline: 0.5rem;
+}
+
 .archive_tasks__statistics_summary_value {
   font-weight: 500;
+  text-decoration: underline;
 }
 
 .archive_tasks__statistics_categories {
   display: flex;
   opacity: 0.7;
-  border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
   padding: 0.5rem 0;
 }
 
