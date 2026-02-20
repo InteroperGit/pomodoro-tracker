@@ -4,8 +4,7 @@ import styles from "./Navigation.module.scss";
  * Компонент `Navigation` — блок навигации в шапке Pomodoro‑приложения.
  * Отвечает за отображение пользовательского навигационного меню или ссылок разделов.
  *
- * В текущей реализации содержит только пункт `"Профиль"`, но может быть расширен
- * для добавления других элементов управления (настройки, статистика, история и т.п.).
+ * Может быть расширен для добавления пунктов меню (настройки, статистика и т.п.).
  *
  * Используется внутри верхнего блока {@link Toolbar}.
  *
@@ -21,7 +20,7 @@ import styles from "./Navigation.module.scss";
  * Пример итоговой структуры (имена классов через CSS modules):
  * ```html
  * <nav class="navigation_xxx" aria-label="Основное меню">
- *   <div class="navigation_xxx__item">Профиль</div>
+ *   (пункты меню при необходимости)
  * </nav>
  * ```
  *
@@ -36,7 +35,6 @@ import styles from "./Navigation.module.scss";
 export function Navigation() {
     return `
         <nav class="${styles.navigation}" aria-label="Основное меню">
-            <div class="${styles.navigation__item}">Профиль</div>
         </nav>
     `;
 }

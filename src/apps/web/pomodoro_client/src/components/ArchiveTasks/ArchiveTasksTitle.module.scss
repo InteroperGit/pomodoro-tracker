@@ -13,8 +13,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 1px;
-  background: #000;      /* или var(--timer_font_color) и т.п. */
+  height: var(--divider-line-height, 1px);
+  background: var(--divider-line-color, #000);
   opacity: 0.1;                /* “полупрозрачная” линия */
 }
 

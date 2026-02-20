@@ -3,7 +3,7 @@ import { App } from "./App";
 import {
     type AppState,
 } from "../types/context.ts";
-import {createContext, registerContext} from "./appContext.ts";
+import {applyTheme, createContext, registerContext} from "./appContext.ts";
 import {getArchiveTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../types/layout.ts";
@@ -36,13 +36,16 @@ const initApp = (root: HTMLElement) => {
         archiveTasks = { ...archiveTasks, statistics: getArchiveTasksStatistics(archiveTasks.tasks) };
     }
 
-    // editingTaskId не восстанавливаем из storage: режим редактирования не сохраняется между сессиями
+    const theme = state?.theme === "dark" ? "dark" : "light";
+    applyTheme(theme);
+
     const initialState: AppState = {
         editingTaskId: null,
         activeTask,
         planTasks,
         archiveTasks,
-    }
+        theme,
+    };
 
     const saveStateThrottle: (s: AppState) => void = throttle((s: AppState) => {
         if (s == null) return;

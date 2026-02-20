@@ -4,4 +4,7 @@
     --break-color: #00A131;
     --timer_font_color: #ffffff;
     --border-color: #000000;
+    --divider-line-color: #000000;
+    --divider-line-height: 1px;
+    --border-subtle: rgba(0, 0, 0, 0.1);
 }

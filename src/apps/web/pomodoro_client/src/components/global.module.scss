@@ -12,6 +12,7 @@
 
 .button {
   cursor: pointer; /* рука */
+  color: var(--text-primary, inherit);
   transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
   width: 2rem;
   height: 2rem;

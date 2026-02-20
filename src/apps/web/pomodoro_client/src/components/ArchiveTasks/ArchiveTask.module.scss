@@ -2,7 +2,7 @@
   display: flex;
   gap: 0.25rem;
   align-items: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
   padding: 0.5rem 0;
   opacity: 0.75;
 
@@ -10,7 +10,7 @@
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
     padding: 0.5rem 0.5rem 0.5rem 0;
     gap: 0.5rem;
   }
@@ -36,7 +36,7 @@
   flex: 0 0 120px;
 
   &_mobile {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
     border-radius: 0.25rem;
     padding: 0 0.5rem;
   }
@@ -46,7 +46,7 @@
   flex: 1;
 
   &_mobile {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
     border-radius: 0.25rem;
     padding: 0 0.5rem;
     text-wrap: wrap;
