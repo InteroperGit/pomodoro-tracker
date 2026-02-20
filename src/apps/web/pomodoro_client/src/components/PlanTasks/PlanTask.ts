@@ -9,10 +9,11 @@ import {escapeHtml} from "../../utils/html.ts";
 
 export type PlanTaskProps = {
     isMobile: boolean;
+    planTaskIndex: number;
     planTask: PlanPomodoroTask;
     actions: {
-        getEditingTaskId: () => string | null | undefined;
-        startEditTask: (id: string) => void;
+        getEditingPlanTaskIndex: () => number | null | undefined;
+        startEditTask: (index: number) => void;
         completeEditTask: (task: PomodoroTask) => void;
         cancelEditTask: () => void;
         incTask: (id: string) => void;
@@ -21,7 +22,7 @@ export type PlanTaskProps = {
     }
 }
 
-export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
+export function PlanTask({ isMobile, planTaskIndex, planTask, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
     const taskCountId = generateId();
@@ -34,7 +35,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     const descriptionInputId = generateId();
     const addTaskButtonId = generateId();
 
-    const editingTaskId = actions.getEditingTaskId();
+    const editingPlanTaskIndex = actions.getEditingPlanTaskIndex();
 
     // Создание задачи для редактирования
     const createEditingTask = (categoryInput: HTMLInputElement, descriptionInput: HTMLInputElement): PomodoroTask => {
@@ -74,7 +75,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
         });
 
         const handlePlanTaskClick = (e: MouseEvent) => {
-            if (task.id === editingTaskId) {
+            if (planTaskIndex === editingPlanTaskIndex) {
                 return;
             }
             const node = e.target as Node;
@@ -85,7 +86,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             ) {
                 return;
             }
-            actions.startEditTask(task.id);
+            actions.startEditTask(planTaskIndex);
         };
 
         const handleTaskCountClick = () => {
@@ -103,7 +104,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     });
 
     useEffect(() => {
-        if (!editingTaskId || task.id !== editingTaskId) {
+        if (editingPlanTaskIndex == null || planTaskIndex !== editingPlanTaskIndex) {
             return;
         }
 
@@ -153,7 +154,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
         };
     });
 
-    const isEditing = editingTaskId != null && task.id === editingTaskId;
+    const isEditing = editingPlanTaskIndex != null && planTaskIndex === editingPlanTaskIndex;
     const escapedCategory = escapeHtml(task.category?.name);
     const escapedDescription = escapeHtml(task.description);
 

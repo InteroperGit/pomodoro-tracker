@@ -11,7 +11,7 @@ import {
     useCompleteTask,
     useDeleteArchiveTask,
     useRefreshTask,
-    useGetEditingTaskId,
+    useGetEditingPlanTaskIndex,
     usePauseTask,
     useResumeTask,
     useSetTheme,
@@ -64,8 +64,8 @@ export function App(ctx: AppContext) {
             return;
         }
 
-        const editingTaskId = useGetEditingTaskId();
-        if (!editingTaskId) {
+        const editingPlanTaskIndex = useGetEditingPlanTaskIndex();
+        if (editingPlanTaskIndex == null) {
             return;
         }
 

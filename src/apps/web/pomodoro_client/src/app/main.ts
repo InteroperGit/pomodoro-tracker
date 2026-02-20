@@ -41,7 +41,7 @@ const initApp = (root: HTMLElement) => {
     applyTheme(theme);
 
     const initialState: AppState = {
-        editingTaskId: null,
+        editingPlanTaskIndex: null,
         activeTask,
         planTasks,
         archiveTasks,

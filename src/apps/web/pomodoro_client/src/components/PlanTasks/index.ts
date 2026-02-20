@@ -9,7 +9,7 @@ import {
     useCancelEditTask,
     useCompleteEditTask,
     useDecTask,
-    useGetEditingTaskId,
+    useGetEditingPlanTaskIndex,
     useIncTask,
     useReorderTasks,
     useStartEditTask
@@ -35,7 +35,7 @@ export function PlanTasks({ isMobile, data }: PlanTasksProps) {
             isMobile,
             tasks,
             actions: {
-                getEditingTaskId: useGetEditingTaskId,
+                getEditingPlanTaskIndex: useGetEditingPlanTaskIndex,
                 startEditTask: useStartEditTask,
                 completeEditTask: useCompleteEditTask,
                 cancelEditTask: useCancelEditTask,
