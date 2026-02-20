@@ -9,8 +9,8 @@ export type PlanTasksListProps = {
     isMobile: boolean;
     tasks: PlanPomodoroTask[];
     actions: {
-        getEditingTaskId: () => string | null | undefined;
-        startEditTask: (id: string) => void;
+        getEditingPlanTaskIndex: () => number | null | undefined;
+        startEditTask: (index: number) => void;
         completeEditTask: (task: PomodoroTask) => void;
         cancelEditTask: () => void;
         incTask: (id: string) => void;
@@ -138,6 +138,7 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     const taskItems = tasks.map((planTask, index) => {
         const taskItem = PlanTask({
             isMobile,
+            planTaskIndex: index,
             planTask,
             actions
         });

@@ -305,15 +305,15 @@ export function createContext(initialState: AppState,
                 activeTask: newActiveTask,
             });
         },
-        startEditTask(id: string): void {
-            if (!id) {
-                throw new Error("Failed to edit task. Id is not initialized");
+        startEditTask(index: number): void {
+            if (typeof index !== "number" || index < 0) {
+                throw new Error("Failed to edit task. Index is not valid");
             }
 
             const s = store.getState();
             store.setState({
                 ...s,
-                editingTaskId: id
+                editingPlanTaskIndex: index
             });
         },
         completeEditTask(task: PomodoroTask): void {
@@ -322,17 +322,17 @@ export function createContext(initialState: AppState,
             }
 
             const s = store.getState();
-            const planTasks = s.planTasks.tasks;
-            const index = planTasks.findIndex(pt => pt.task.id === task.id);
-            const updatedTasks = planTasks.map((pt, ptIndex) => {
-                return ptIndex === index
-                    ? { ...pt, task: task }
-                    : pt
-            });
+            const index = s.editingPlanTaskIndex;
+            if (index == null || index < 0 || index >= s.planTasks.tasks.length) {
+                return;
+            }
+            const updatedTasks = s.planTasks.tasks.map((pt, ptIndex) =>
+                ptIndex === index ? { ...pt, task } : pt
+            );
 
             store.setState({
                 ...s,
-                editingTaskId: null,
+                editingPlanTaskIndex: null,
                 planTasks: {
                     ...s.planTasks,
                     tasks: updatedTasks
@@ -342,13 +342,13 @@ export function createContext(initialState: AppState,
         cancelEditTask(): void {
             const s = store.getState();
 
-            if (!s.editingTaskId) {
+            if (s.editingPlanTaskIndex == null) {
                 return;
             }
 
             store.setState({
                 ...s,
-                editingTaskId: null,
+                editingPlanTaskIndex: null,
             });
         },
         reorderTasks(fromIndex: number, toIndex: number): void {
@@ -556,12 +556,12 @@ export function useDecTask(id: string) {
     context.actions.decTask(id);
 }
 
-export function useStartEditTask(id: string) {
-    if (!id) {
-        throw new Error("Failed to edit task. Id is not initialized");
+export function useStartEditTask(index: number) {
+    if (typeof index !== "number" || index < 0) {
+        throw new Error("Failed to edit task. Index is not valid");
     }
 
-    context.actions.startEditTask(id);
+    context.actions.startEditTask(index);
 }
 
 export function useCompleteEditTask(task: PomodoroTask) {
@@ -576,8 +576,8 @@ export function useCancelEditTask() {
     context.actions.cancelEditTask();
 }
 
-export function useGetEditingTaskId(): string | null | undefined {
-    return context.store.getState().editingTaskId;
+export function useGetEditingPlanTaskIndex(): number | null | undefined {
+    return context.store.getState().editingPlanTaskIndex;
 }
 
 export function useReorderTasks(fromIndex: number, toIndex: number) {
