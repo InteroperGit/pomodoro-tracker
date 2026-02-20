@@ -10,6 +10,7 @@ import {
     useCancelEditTask,
     useCompleteTask,
     useDeleteArchiveTask,
+    useRefreshTask,
     useGetEditingTaskId,
     usePauseTask,
     useResumeTask,
@@ -48,10 +49,11 @@ export function App(ctx: AppContext) {
         data: state.planTasks
     });
     const deleteArchiveTask = useDeleteArchiveTask();
+    const refreshTask = useRefreshTask();
     const archiveTasks = ArchiveTasks({
         isMobile,
         data: state.archiveTasks,
-        actions: { deleteArchiveTask },
+        actions: { deleteArchiveTask, refreshTask },
     });
     const footer = Footer();
 

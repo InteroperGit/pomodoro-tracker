@@ -278,6 +278,34 @@ export function createContext(initialState: AppState,
                 }
             });
         },
+        refreshTask(task: PomodoroTask): void {
+            if (!task) {
+                throw new Error("Failed to refresh task. Task is not initialized");
+            }
+            const s = store.getState();
+            const updatedPlanTasks = [
+                {
+                    task,
+                    count: 1
+                },
+                ...s.planTasks.tasks,
+            ];
+            const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
+            store.setState({
+                ...s,
+                planTasks: {
+                    ...s.planTasks,
+                    tasks: updatedPlanTasks,
+                    statistics: updatedStatistics
+                }
+            });
+            const updatedState = store.getState();
+            taskController.activateNextTask(updatedState.planTasks.tasks);
+            store.setState({
+                ...updatedState,
+                activeTask: taskController.activeTask,
+            });
+        },
         startEditTask(id: string): void {
             if (!id) {
                 throw new Error("Failed to edit task. Id is not initialized");
@@ -563,6 +591,10 @@ export function useArchiveTask(id: string) {
 
 export function useDeleteArchiveTask() {
     return (id: string) => context.actions.deleteArchiveTask(id);
+}
+
+export function useRefreshTask() {
+    return (task: PomodoroTask) => context.actions.refreshTask(task);
 }
 
 export function useGetActiveTask() {
