@@ -1,6 +1,7 @@
 import styles from "./PlanTask.module.scss";
 import globalStyles from "../global.module.scss";
 import commonStyles from "../Common.module.scss";
+import { dropdownMarkup, useDropdown, dropdownStyles } from "../Dropdown";
 import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
@@ -56,71 +57,26 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
         const taskCountDiv = document.getElementById(taskCountId) as HTMLDivElement | null;
         const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement | null;
         const dropdown = document.getElementById(dropdownId) as HTMLDivElement | null;
-        const menuInc = document.getElementById(menuIncId) as HTMLButtonElement | null;
-        const menuDec = document.getElementById(menuDecId) as HTMLButtonElement | null;
-        const menuArchive = document.getElementById(menuArchiveId) as HTMLButtonElement | null;
 
-        if (!planTaskDiv || !taskCountDiv || !menuButton || !dropdown || !menuInc || !menuDec || !menuArchive) {
+        if (!planTaskDiv || !taskCountDiv || !menuButton || !dropdown) {
             return;
         }
 
-        const openClass = styles.plan_task__dropdown_open;
-        const MARGIN = 8;
-        const menuWrap = menuButton.parentElement;
-
-        const positionDropdown = () => {
-            if (menuWrap && dropdown.parentElement !== document.body) {
-                document.body.appendChild(dropdown);
-            }
-            const rect = menuButton.getBoundingClientRect();
-            dropdown.style.visibility = "hidden";
-            dropdown.classList.add(openClass);
-            const dr = dropdown.getBoundingClientRect();
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-
-            let top: number;
-            const canOpenBelow = rect.bottom + dr.height + MARGIN <= vh;
-            const canOpenAbove = rect.top - dr.height - MARGIN >= 0;
-            const fallbackTop = Math.max(MARGIN, Math.min(rect.bottom, vh - dr.height - MARGIN));
-
-            if (canOpenBelow) {
-                top = rect.bottom + MARGIN;
-            } else if (canOpenAbove) {
-                top = rect.top - dr.height - MARGIN;
-            } else {
-                top = fallbackTop;
-            }
-
-            let left = rect.left;
-            if (left + dr.width > vw - MARGIN) {
-                left = vw - dr.width - MARGIN;
-            }
-            if (left < MARGIN) {
-                left = MARGIN;
-            }
-
-            dropdown.style.top = `${top}px`;
-            dropdown.style.left = `${left}px`;
-            dropdown.style.visibility = "";
-        };
-
-        const closeDropdown = () => {
-            dropdown.classList.remove(openClass);
-            dropdown.setAttribute("aria-hidden", "true");
-            menuButton.setAttribute("aria-expanded", "false");
-            if (menuWrap && dropdown.parentElement === document.body) {
-                menuWrap.insertBefore(dropdown, menuButton.nextSibling);
-            }
-        };
-
-        const isOpen = () => dropdown.classList.contains(openClass);
+        const cleanupDropdown = useDropdown({
+            buttonId: menuButtonId,
+            dropdownId,
+            openClass: dropdownStyles.dropdown_open,
+            itemHandlers: {
+                [menuIncId]: () => actions.incTask(task.id),
+                [menuDecId]: () => actions.decTask(task.id),
+                [menuArchiveId]: () => actions.archiveTask(task.id),
+            },
+        });
 
         const handlePlanTaskClick = (e: MouseEvent) => {
             if (task.id === editingTaskId) {
                 return;
             }
-
             const node = e.target as Node;
             if (
                 taskCountDiv.contains(node) ||
@@ -136,61 +92,13 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             actions.incTask(task.id);
         };
 
-        const handleMenuButtonClick = (e: MouseEvent) => {
-            e.stopPropagation();
-            if (isOpen()) {
-                closeDropdown();
-            } else {
-                positionDropdown();
-                dropdown.setAttribute("aria-hidden", "false");
-                menuButton.setAttribute("aria-expanded", "true");
-            }
-        };
-
-        const handleMenuInc = () => {
-            actions.incTask(task.id);
-        };
-        const handleMenuDec = () => {
-            actions.decTask(task.id);
-        };
-        const handleMenuArchive = () => {
-            actions.archiveTask(task.id);
-        };
-
-        const handleClickOutside = (e: MouseEvent) => {
-            const target = e.target as Node;
-            if (isOpen() && !dropdown.contains(target) && !menuButton.contains(target)) {
-                closeDropdown();
-            }
-        };
-
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && isOpen()) {
-                closeDropdown();
-            }
-        };
-
         planTaskDiv.addEventListener("click", handlePlanTaskClick);
         taskCountDiv.addEventListener("click", handleTaskCountClick);
-        menuButton.addEventListener("click", handleMenuButtonClick);
-        menuInc.addEventListener("click", handleMenuInc);
-        menuDec.addEventListener("click", handleMenuDec);
-        menuArchive.addEventListener("click", handleMenuArchive);
-        document.addEventListener("click", handleClickOutside);
-        document.addEventListener("keydown", handleEscape);
 
         return () => {
-            if (dropdown.parentElement === document.body) {
-                document.body.removeChild(dropdown);
-            }
+            cleanupDropdown();
             planTaskDiv.removeEventListener("click", handlePlanTaskClick);
             taskCountDiv.removeEventListener("click", handleTaskCountClick);
-            menuButton.removeEventListener("click", handleMenuButtonClick);
-            menuInc.removeEventListener("click", handleMenuInc);
-            menuDec.removeEventListener("click", handleMenuDec);
-            menuArchive.removeEventListener("click", handleMenuArchive);
-            document.removeEventListener("click", handleClickOutside);
-            document.removeEventListener("keydown", handleEscape);
         };
     });
 
@@ -249,6 +157,20 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
     const escapedCategory = escapeHtml(task.category?.name);
     const escapedDescription = escapeHtml(task.description);
 
+    const planTaskMenuMarkup = dropdownMarkup({
+        wrapClass: styles.plan_task__menu_wrap,
+        buttonId: menuButtonId,
+        buttonClass: `${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}`,
+        buttonContent: "…",
+        buttonAriaLabel: "Действия с задачей",
+        dropdownId,
+        items: [
+            { id: menuIncId, content: "+ помидор" },
+            { id: menuDecId, content: "− помидор" },
+            { id: menuArchiveId, content: "В архив" },
+        ],
+    });
+
     // Общая разметка для режима редактирования
     const editModeMarkup = `
         <div 
@@ -302,26 +224,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                     aria-label="Количество помодоро">
                     ${count}
                 </div>
-                <div class="${styles.plan_task__menu_wrap}">
-                    <button
-                        id="${menuButtonId}"
-                        type="button"
-                        class="${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}"
-                        aria-label="Действия с задачей"
-                        aria-haspopup="true"
-                        aria-expanded="false">
-                        …
-                    </button>
-                    <div
-                        id="${dropdownId}"
-                        class="${styles.plan_task__dropdown}"
-                        role="menu"
-                        aria-hidden="true">
-                        <button type="button" id="${menuIncId}" class="${styles.plan_task__dropdown_item}" role="menuitem">+ помидор</button>
-                        <button type="button" id="${menuDecId}" class="${styles.plan_task__dropdown_item}" role="menuitem">− помидор</button>
-                        <button type="button" id="${menuArchiveId}" class="${styles.plan_task__dropdown_item}" role="menuitem">В архив</button>
-                    </div>
-                </div>
+                ${planTaskMenuMarkup}
             </div>
         </div>
     `;
@@ -345,26 +248,7 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
                 aria-label="Количество помодоро">
                 ${count}
             </div>
-            <div class="${styles.plan_task__menu_wrap}">
-                <button
-                    id="${menuButtonId}"
-                    type="button"
-                    class="${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}"
-                    aria-label="Действия с задачей"
-                    aria-haspopup="true"
-                    aria-expanded="false">
-                    …
-                </button>
-                <div
-                    id="${dropdownId}"
-                    class="${styles.plan_task__dropdown}"
-                    role="menu"
-                    aria-hidden="true">
-                    <button type="button" id="${menuIncId}" class="${styles.plan_task__dropdown_item}" role="menuitem">+ помидор</button>
-                    <button type="button" id="${menuDecId}" class="${styles.plan_task__dropdown_item}" role="menuitem">− помидор</button>
-                    <button type="button" id="${menuArchiveId}" class="${styles.plan_task__dropdown_item}" role="menuitem">В архив</button>
-                </div>
-            </div>
+            ${planTaskMenuMarkup}
         </div>
     `;
 

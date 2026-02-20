@@ -1,6 +1,7 @@
 import globalStyles from "../components/global.module.scss";
 import styles from "./App.module.scss";
 import { Toolbar, TOOLBAR_DROPDOWN_ID, TOOLBAR_MENU_BTN_ID, TOOLBAR_THEME_TOGGLE_ID } from '../components/Toolbar';
+import { useDropdown, dropdownStyles } from '../components/Dropdown';
 import { Timer } from '../components/Timer';
 import { Footer } from "../components/Footer";
 import {
@@ -85,73 +86,18 @@ export function App(ctx: AppContext) {
     });
 
     useEffect(() => {
-        const menuBtn = document.getElementById(TOOLBAR_MENU_BTN_ID) as HTMLButtonElement | null;
-        const dropdown = document.getElementById(TOOLBAR_DROPDOWN_ID) as HTMLDivElement | null;
-        const themeToggle = document.getElementById(TOOLBAR_THEME_TOGGLE_ID) as HTMLButtonElement | null;
-        if (!menuBtn || !dropdown || !themeToggle) return;
-
-        const MARGIN = 8;
-
-        const positionDropdown = () => {
-            const rect = menuBtn.getBoundingClientRect();
-            dropdown.style.visibility = "hidden";
-            dropdown.setAttribute("data-open", "true");
-            const dr = dropdown.getBoundingClientRect();
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            let top = rect.bottom + MARGIN;
-            if (top + dr.height > vh - MARGIN) top = rect.top - dr.height - MARGIN;
-            top = Math.max(MARGIN, Math.min(top, vh - dr.height - MARGIN));
-            let left = rect.right - dr.width;
-            if (left < MARGIN) left = MARGIN;
-            if (left + dr.width > vw - MARGIN) left = vw - dr.width - MARGIN;
-            dropdown.style.top = `${top}px`;
-            dropdown.style.left = `${left}px`;
-            dropdown.style.visibility = "";
-        };
-
-        const closeDropdown = () => {
-            dropdown.removeAttribute("data-open");
-            menuBtn.setAttribute("aria-expanded", "false");
-            dropdown.setAttribute("aria-hidden", "true");
-        };
-
-        const isOpen = () => dropdown.getAttribute("data-open") === "true";
-
-        const onMenuBtnClick = (e: MouseEvent) => {
-            e.stopPropagation();
-            if (isOpen()) {
-                closeDropdown();
-            } else {
-                positionDropdown();
-                menuBtn.setAttribute("aria-expanded", "true");
-                dropdown.setAttribute("aria-hidden", "false");
-            }
-        };
-        const onThemeToggleClick = () => {
-            const current = ctx.store.getState().theme;
-            useSetTheme(current === "dark" ? "light" : "dark");
-            closeDropdown();
-        };
-        const onDocClick = (e: MouseEvent) => {
-            const target = e.target as Node;
-            if (isOpen() && !dropdown.contains(target) && !menuBtn.contains(target)) closeDropdown();
-        };
-        const onEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && isOpen()) closeDropdown();
-        };
-
-        menuBtn.addEventListener("click", onMenuBtnClick);
-        themeToggle.addEventListener("click", onThemeToggleClick);
-        document.addEventListener("click", onDocClick);
-        document.addEventListener("keydown", onEscape);
-
-        return () => {
-            menuBtn.removeEventListener("click", onMenuBtnClick);
-            themeToggle.removeEventListener("click", onThemeToggleClick);
-            document.removeEventListener("click", onDocClick);
-            document.removeEventListener("keydown", onEscape);
-        };
+        return useDropdown({
+            buttonId: TOOLBAR_MENU_BTN_ID,
+            dropdownId: TOOLBAR_DROPDOWN_ID,
+            openClass: dropdownStyles.dropdown_open,
+            align: "right",
+            itemHandlers: {
+                [TOOLBAR_THEME_TOGGLE_ID]: () => {
+                    const current = ctx.store.getState().theme;
+                    useSetTheme(current === "dark" ? "light" : "dark");
+                },
+            },
+        });
     });
 
     return `

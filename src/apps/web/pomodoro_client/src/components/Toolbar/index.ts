@@ -1,6 +1,7 @@
 import styles from "./Toolbar.module.scss";
 import { Logo } from "./Logo";
 import { Navigation } from "./Navigation";
+import { dropdownMarkup } from "../Dropdown";
 
 const TOOLBAR_MENU_BTN_ID = "toolbar-menu-btn";
 const TOOLBAR_DROPDOWN_ID = "toolbar-dropdown";
@@ -14,29 +15,21 @@ export type ToolbarProps = {
 /** Кнопка меню и выпадающее меню (переключатель темы). */
 function toolbarMenuMarkup(theme: "light" | "dark") {
     const isDark = theme === "dark";
-    return `
-        <div class="${styles.menu_wrap}">
-            <button
-                id="${TOOLBAR_MENU_BTN_ID}"
-                type="button"
-                class="${styles.menu_button}"
-                aria-label="Настройки"
-                aria-haspopup="true"
-                aria-expanded="false">
-                <i class="fa-solid fa-gear" aria-hidden="true"></i>
-                <span class="${styles.menu_button_label}">Настройки</span>
-            </button>
-            <div
-                id="${TOOLBAR_DROPDOWN_ID}"
-                class="${styles.dropdown}"
-                role="menu"
-                aria-hidden="true">
-                <button type="button" id="${TOOLBAR_THEME_TOGGLE_ID}" class="${styles.dropdown_item}" role="menuitem">
-                    Тёмная тема ${isDark ? "✓" : ""}
-                </button>
-            </div>
-        </div>
+    const buttonContent = `
+        <i class="fa-solid fa-gear" aria-hidden="true"></i>
+        <span class="${styles.menu_button_label}">Настройки</span>
     `;
+    return dropdownMarkup({
+        wrapClass: styles.menu_wrap,
+        buttonId: TOOLBAR_MENU_BTN_ID,
+        buttonClass: styles.menu_button,
+        buttonContent,
+        buttonAriaLabel: "Настройки",
+        dropdownId: TOOLBAR_DROPDOWN_ID,
+        items: [
+            { id: TOOLBAR_THEME_TOGGLE_ID, content: `Тёмная тема ${isDark ? "✓" : ""}` },
+        ],
+    });
 }
 
 export function Toolbar({ isMobile, theme }: ToolbarProps) {
