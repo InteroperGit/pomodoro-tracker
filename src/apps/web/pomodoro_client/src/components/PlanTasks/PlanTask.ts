@@ -66,8 +66,12 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
 
         const openClass = styles.plan_task__dropdown_open;
         const MARGIN = 8;
+        const menuWrap = menuButton.parentElement;
 
         const positionDropdown = () => {
+            if (menuWrap && dropdown.parentElement !== document.body) {
+                document.body.appendChild(dropdown);
+            }
             const rect = menuButton.getBoundingClientRect();
             dropdown.style.visibility = "hidden";
             dropdown.classList.add(openClass);
@@ -89,10 +93,9 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             }
 
             let left = rect.left;
-            if (left + dr.width > vw - MARGIN)  {
+            if (left + dr.width > vw - MARGIN) {
                 left = vw - dr.width - MARGIN;
             }
-
             if (left < MARGIN) {
                 left = MARGIN;
             }
@@ -106,6 +109,9 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
             dropdown.classList.remove(openClass);
             dropdown.setAttribute("aria-hidden", "true");
             menuButton.setAttribute("aria-expanded", "false");
+            if (menuWrap && dropdown.parentElement === document.body) {
+                menuWrap.insertBefore(dropdown, menuButton.nextSibling);
+            }
         };
 
         const isOpen = () => dropdown.classList.contains(openClass);
@@ -174,6 +180,9 @@ export function PlanTask({ isMobile, planTask, actions } : PlanTaskProps) {
         document.addEventListener("keydown", handleEscape);
 
         return () => {
+            if (dropdown.parentElement === document.body) {
+                document.body.removeChild(dropdown);
+            }
             planTaskDiv.removeEventListener("click", handlePlanTaskClick);
             taskCountDiv.removeEventListener("click", handleTaskCountClick);
             menuButton.removeEventListener("click", handleMenuButtonClick);

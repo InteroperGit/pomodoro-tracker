@@ -51,10 +51,10 @@
 
 .archive_task__dropdown {
   position: fixed;
-  z-index: 1000;
+  z-index: 9999;
   min-width: 10rem;
   padding: 0.25rem 0;
-  background: var(--background_color, #fff);
+  background: #fff;
   border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.15));
   border-radius: 0.25rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -62,11 +62,16 @@
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.15s ease, visibility 0.15s ease;
+  isolation: isolate;
+
+  :global(html.theme-dark) & {
+    background: #1a1a1a;
+  }
 
   &_open {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto;
+    pointer-events: auto !important;
   }
 }
 
