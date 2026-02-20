@@ -5,10 +5,12 @@ import {
     ActivePomodoroTaskStatus,
     ActivePomodoroTaskType,
     type ArchivePomodoroTask,
-    type PlanPomodoroTask,
     type PomodoroTask
 } from "../types/task.ts";
-import type {ArchivePomodoroTasksStatistics, PlanPomodoroTasksStatistics} from "../types/statistics.ts";
+import {
+    getArchiveTasksStatistics,
+    getPlanTasksStatistics,
+} from "../utils/statistics.ts";
 import {ActiveTaskController, type ActiveTaskControllerConfiguration} from "./ActiveTaskController.ts";
 
 const POMODORO_TASK_TIME = 25 * 60 * 1000;
@@ -16,70 +18,14 @@ const POMODORO_SHORT_BREAK_TIME = 5 * 60 * 1000;
 const POMODORO_LONG_BREAK_TIME = 15 * 60 * 1000;
 const LONG_BREAK_AFTER = 4;
 
+const planStatisticsConfig = {
+    taskTime: POMODORO_TASK_TIME,
+    shortBreakTime: POMODORO_SHORT_BREAK_TIME,
+    longBreakTime: POMODORO_LONG_BREAK_TIME,
+    longBreakAfter: LONG_BREAK_AFTER,
+};
+
 let context: AppContext;
-
-const getCategories = (tasks: PlanPomodoroTask[]) => {
-    const map = new Map<string, number>();
-
-    tasks.forEach(({task, count}) => {
-        const key = task.category.name;
-        map.set(key, (map.get(key) ?? 0) + count)
-    });
-
-    return Array.from(map.entries(), ([name, count]) => ({
-        category: { name },
-        count
-    }));
-}
-
-const getPlanTasksStatistics = (tasks: PlanPomodoroTask[]): PlanPomodoroTasksStatistics => {
-    const tasksCount = tasks.reduce((sum, task) => sum + task.count, 0);
-    const longBreaksCount = Math.floor(tasksCount / LONG_BREAK_AFTER);
-    const shortBreaksCount = Math.max(0, tasksCount - 1 - longBreaksCount);
-
-    const finishTime =
-        Date.now() +
-        tasksCount * POMODORO_TASK_TIME +
-        shortBreaksCount * POMODORO_SHORT_BREAK_TIME +
-        longBreaksCount * POMODORO_LONG_BREAK_TIME;
-
-    // Длительность (мс) от начала до старта первого длинного перерыва: 4 помидора + 3 коротких перерыва
-    const timeUntilFirstLongBreak =
-        Date.now() +
-        LONG_BREAK_AFTER * POMODORO_TASK_TIME +
-        (LONG_BREAK_AFTER - 1) * POMODORO_SHORT_BREAK_TIME;
-    const nextLongBreak = tasksCount >= LONG_BREAK_AFTER ? timeUntilFirstLongBreak : 0;
-
-    return {
-        tasksCount,
-        tasksTime: tasksCount * POMODORO_TASK_TIME,
-        nextLongBreak,
-        finishTime,
-        categories: getCategories(tasks)
-    };
-};
-
-const getArchiveCategories = (tasks: ArchivePomodoroTask[]) => {
-    const map = new Map<string, number>();
-    tasks.forEach(({ task }) => {
-        const key = task.category.name;
-        map.set(key, (map.get(key) ?? 0) + 1);
-    });
-    return Array.from(map.entries(), ([name, count]) => ({
-        category: { name },
-        count
-    }));
-};
-
-export const getArchiveTasksStatistics = (tasks: ArchivePomodoroTask[]): ArchivePomodoroTasksStatistics => {
-    const tasksCount = tasks.length;
-    const tasksTime = tasks.reduce((sum, t) => sum + t.taskTime, 0);
-    return {
-        tasksCount,
-        tasksTime,
-        categories: getArchiveCategories(tasks)
-    };
-};
 
 export function createContext(initialState: AppState,
                               onTickCallback: (state: AppState) => void) {
@@ -155,7 +101,7 @@ export function createContext(initialState: AppState,
                 ...s.planTasks.tasks,
             ];
 
-            const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks);
+            const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
 
             // Обновляем план задач в сторе
             store.setState({
@@ -196,7 +142,7 @@ export function createContext(initialState: AppState,
                     ? { ...pt, count: pt.count + 1 }
                     : pt
             });
-            const updatedStatistics = getPlanTasksStatistics(updatedTasks);
+            const updatedStatistics = getPlanTasksStatistics(updatedTasks, planStatisticsConfig);
 
             store.setState({
                 ...s,
@@ -228,7 +174,7 @@ export function createContext(initialState: AppState,
                                 : pt
                         })
                     : planTasks.filter(pt => pt.task.id !== id);
-            const updatedStatistics = getPlanTasksStatistics(updatedTasks);
+            const updatedStatistics = getPlanTasksStatistics(updatedTasks, planStatisticsConfig);
 
             const activeTask = s.activeTask
                 && s.activeTask.task
@@ -270,7 +216,7 @@ export function createContext(initialState: AppState,
                     })
                     : planTasks.filter(pt => pt.task.id !== id);
 
-            const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks);
+            const updatePlanTasksStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
 
             const updatedArchiveTasks: ArchivePomodoroTask[] = [
                 {

@@ -3,7 +3,8 @@ import { App } from "./App";
 import {
     type AppState,
 } from "../types/context.ts";
-import {createContext, getArchiveTasksStatistics, registerContext} from "./appContext.ts";
+import {createContext, registerContext} from "./appContext.ts";
+import {getArchiveTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../types/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
