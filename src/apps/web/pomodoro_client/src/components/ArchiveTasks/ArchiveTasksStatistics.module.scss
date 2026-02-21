@@ -28,6 +28,12 @@
   opacity: 0.1;
 }
 
+.archive_tasks__statistics_summary_row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .archive_tasks__statistics_summary > * {
   position: relative;
   z-index: 1;
@@ -66,5 +72,18 @@
 .archive_tasks__statistics_categories_item {
   border: 1px solid var(--main-color);
   padding: 0 0.25rem;
+}
 
+@media (max-width: 767px) {
+  .archive_tasks__statistics_summary {
+    flex-direction: column;
+    gap: 0.25rem;
+    border-top: 1px solid var(--divider-line-color, rgba(0, 0, 0, 0.1));
+    border-bottom: 1px solid var(--divider-line-color, rgba(0, 0, 0, 0.1));
+    padding-block: 0.5rem;
+  }
+
+  .archive_tasks__statistics_summary::before {
+    display: none;
+  }
 }
