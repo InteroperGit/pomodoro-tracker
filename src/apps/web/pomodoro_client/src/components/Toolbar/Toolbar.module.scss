@@ -25,10 +25,12 @@
   border-radius: 0.2rem;
   cursor: pointer;
   color: var(--text-primary, inherit);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.06);
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 }
 

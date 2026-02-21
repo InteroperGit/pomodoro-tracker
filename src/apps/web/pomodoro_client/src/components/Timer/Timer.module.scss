@@ -111,6 +111,12 @@
   opacity: 0.8;
   border: 1px solid var(--timer_font_color);
   padding: 0.25rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover:not(.disabled) {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
 
   &.disabled {
     opacity: 0.5;
