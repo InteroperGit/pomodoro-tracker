@@ -222,24 +222,21 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
         </div>
     `;
 
-    // Разметка для мобильной версии (режим просмотра)
     const mobileViewMarkup = `
         <div 
             id="${planTaskDivId}"
             data-planTaskId="${task.id}"
-            class="${styles.plan_task_mobile}">
-            <div class="${styles.plan_task__task}">
-                <div class="${styles.plan_task__category} ${styles.plan_task__category_mobile}">
-                    ${escapedCategory}
-                </div>
-                <div class="${styles.plan_task__description} ${styles.plan_task__description_mobile}">
-                    ${escapedDescription}
-                </div>
+            class="${styles.plan_task} ${styles.plan_task_mobile}">
+            <div class="${styles.plan_task__category} ${styles.plan_task__category_mobile}">
+                ${escapedCategory}
             </div>
-            <div class="${styles.plan_task__toolbar}">
+            <div class="${styles.plan_task__description} ${styles.plan_task__description_mobile}">
+                ${escapedDescription}
+            </div>
+            <div class="${styles.plan_task__actions}">
                 <div 
                     id="${taskCountId}"
-                    class="${styles.plan_task__count}"
+                    class="${styles.plan_task__count} ${styles.plan_task__count_mobile}"
                     role="status"
                     aria-label="Количество помодоро">
                     ${count}
@@ -249,7 +246,6 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
         </div>
     `;
 
-    // Разметка для десктопной версии (режим просмотра)
     const desktopViewMarkup = `
         <div 
             id="${planTaskDivId}"
@@ -261,14 +257,16 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
             <div class="${styles.plan_task__description}">
                 ${escapedDescription}
             </div>
-            <div 
-                id="${taskCountId}"
-                class="${styles.plan_task__count}"
-                role="status"
-                aria-label="Количество помодоро">
-                ${count}
+            <div class="${styles.plan_task__actions}">
+                <div 
+                    id="${taskCountId}"
+                    class="${styles.plan_task__count}"
+                    role="status"
+                    aria-label="Количество помодоро">
+                    ${count}
+                </div>
+                ${planTaskMenuMarkup}
             </div>
-            ${planTaskMenuMarkup}
         </div>
     `;
 

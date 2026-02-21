@@ -1,25 +1,24 @@
+/* Общая сетка для выравнивания с PlanTask: категория | описание | действия */
 .plan_tasks__add {
-  display: flex;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
   gap: 0.5rem;
   margin-top: 0.5rem;
   min-width: 0;
-}
-
-.plan_tasks__add_category {
-  flex: 0 0 auto;
-  width: 120px;
-  min-width: 0;
 
   @media (max-width: 400px) {
-    width: 80px;
+    grid-template-columns: 80px 1fr auto;
   }
 }
 
+.plan_tasks__add_category {
+  min-width: 0;
+}
+
 .plan_tasks__add_description {
-  flex: 1;
   min-width: 0;
 }
 
 .plan_tasks__add button {
-  flex-shrink: 0;
+  justify-self: end;
 }
