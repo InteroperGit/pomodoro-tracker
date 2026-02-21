@@ -1,6 +1,7 @@
 import {type AppActions, type AppState, type PomodoroEvent, type ThemeId} from "../types/context.ts";
 
 const THEME_CLASS_DARK = "theme-dark";
+const PREFER_TASK = true;
 
 export function applyTheme(theme: ThemeId) {
     if (theme === "dark") {
@@ -62,9 +63,6 @@ export function createContext(
     }
     else {
         taskController.activateNextTask(initialState.planTasks.tasks);
-    }
-
-    if (!initialState.activeTask) {
         initialState.activeTask = taskController.activeTask;
     }
 
@@ -213,10 +211,8 @@ export function createContext(
             const updatedStatistics = getPlanTasksStatistics(updatedTasks, planStatisticsConfig);
 
             const shouldActivateNextTask = shouldRemoveTask && index === 0;
-
             if (shouldActivateNextTask) {
-                console.log('Try to activate next task');
-                taskController.activateNextTask(updatedTasks);
+                taskController.activateNextTask(updatedTasks, PREFER_TASK);
             }
 
             const activeTask = taskController.activeTask;
@@ -269,7 +265,7 @@ export function createContext(
 
 
             if (needsActivateNextTask) {
-                taskController.activateNextTask(updatedPlanTasks);
+                taskController.activateNextTask(updatedPlanTasks, PREFER_TASK);
             }
 
             const activeTask = taskController.activeTask

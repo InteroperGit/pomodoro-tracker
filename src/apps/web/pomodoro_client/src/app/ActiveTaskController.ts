@@ -145,7 +145,7 @@ export class ActiveTaskController {
                     : 0;
     }
 
-    private _determineNextPhase(planTasks: PlanPomodoroTask[]): NextPhase {
+    private _determineNextPhase(planTasks: PlanPomodoroTask[], preferTask?: boolean | null): NextPhase {
         // Если нет активной задачи или это перерыв/undefined → следующая задача
         const isBreakOrUndefined =
             !this._activeTask
@@ -165,7 +165,8 @@ export class ActiveTaskController {
                 return { type: "idle" };
             }
 
-            const needsNextTask = this._activeTask 
+            const needsNextTask = preferTask
+                 && this._activeTask 
                  && this._activeTask.type === ActivePomodoroTaskType.Task;
 
             const needsLongBreak = this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
@@ -231,8 +232,8 @@ export class ActiveTaskController {
         }
     }
 
-    activateNextTask(planTasks: PlanPomodoroTask[]): void {
-        const nextPhase = this._determineNextPhase(planTasks);
+    activateNextTask(planTasks: PlanPomodoroTask[], preferTask?: boolean | null): void {
+        const nextPhase = this._determineNextPhase(planTasks, preferTask);
 
         switch (nextPhase.type) {
             case "task":
@@ -240,10 +241,12 @@ export class ActiveTaskController {
                 break;
             case "replaceTask": {
                 const replacedActiveTask = this._getActiveTask(nextPhase.task);
-                this._activeTask = {
+                this._activeTask = this._activeTask.status === ActivePomodoroTaskStatus.Completed 
+                ? replacedActiveTask
+                : {
                     ...this._activeTask,
-                    task: replacedActiveTask.task
-                } as ActivePomodoroTask;
+                    task: replacedActiveTask.task,
+                };
                 break;
             }
             case "shortBreak":
