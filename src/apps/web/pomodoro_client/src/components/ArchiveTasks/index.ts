@@ -3,6 +3,7 @@ import {ArchiveTasksTitle} from "./ArchiveTasksTitle.ts";
 import {ArchiveTasksList} from "./ArchiveTasksList.ts";
 import {ArchiveTasksStatistics} from "./ArchiveTasksStatistics.ts";
 import type {ArchivePomodoroTasksState} from "../../types/context.ts";
+import type { PomodoroTask } from "../../types/task.ts";
 
 /**
  * Компонент `ArchiveTasks` — главный компонент раздела архивных задач.
@@ -34,6 +35,7 @@ export type ArchiveTasksProps = {
     data: ArchivePomodoroTasksState;
     actions: {
         deleteArchiveTask: (index: number) => void;
+        refreshTask: (task: PomodoroTask) => void;
     };
 }
 

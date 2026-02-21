@@ -1,5 +1,6 @@
 import {ArchiveTask} from "./ArchiveTask.ts";
-import type {ArchivePomodoroTask} from "../../types/task.ts";
+import {ArchiveTasksTarget} from "./ArchiveTasksTarget.ts";
+import type {ArchivePomodoroTask, PomodoroTask} from "../../types/task.ts";
 import styles from "./ArchiveTasksList.module.scss";
 import {EmptyState} from "../EmptyState/index.ts";
 
@@ -22,6 +23,7 @@ export type ArchiveTasksListProps = {
     tasks: ArchivePomodoroTask[];
     actions: {
         deleteArchiveTask: (index: number) => void;
+        refreshTask: (task: PomodoroTask) => void;
     };
 }
 
@@ -42,11 +44,14 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
         </div>
     `;
 
+    const target = ArchiveTasksTarget({ tasksCount: tasks.length });
+
     // Обработка пустого списка
     if (tasks.length === 0) {
         return `
             <div class="${styles.archive_tasks__list_container}">
                 ${header}
+                ${target}
                 ${EmptyState({
                     variant: "archive",
                     title: "Архив пуст",
@@ -69,6 +74,7 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
     return `
         <div class="${styles.archive_tasks__list_container}">
             ${header}
+            ${target}
             <ul class="${styles.archive_tasks__list}" role="list">
                 ${taskItems}
             </ul>
