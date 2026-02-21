@@ -25,16 +25,20 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
     return `
         <div class="${styles.plan_tasks__statistics}">
             <div class="${styles.plan_tasks__statistics_title}">
-                <div class="${styles.plan_tasks__statistics_title_label}">
-                    <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>
-                    <span>Следующий длинный перерыв</span>
+                <div class="${styles.plan_tasks__statistics_title_row}">
+                    <div class="${styles.plan_tasks__statistics_title_label}">
+                        <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>
+                        <span>Следующий длинный перерыв</span>
+                    </div>
+                    <div class="${styles.plan_tasks__statistics_title_time}">${nextLongBreakText}</div>
                 </div>
-                <div class="${styles.plan_tasks__statistics_title_time}">${nextLongBreakText}</div>
-                <div class="${styles.plan_tasks__statistics_title_label}">
-                    <i class="fa-solid fa-clock" aria-hidden="true"></i>
-                    <span>Время окончания</span>
+                <div class="${styles.plan_tasks__statistics_title_row}">
+                    <div class="${styles.plan_tasks__statistics_title_label}">
+                        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                        <span>Время окончания</span>
+                    </div>
+                    <div class="${styles.plan_tasks__statistics_title_time}">${finishTimeText}</div>
                 </div>
-                <div class="${styles.plan_tasks__statistics_title_time}">${finishTimeText}</div>
             </div>
             
             <div class="${styles.plan_tasks__statistics_categories}">
