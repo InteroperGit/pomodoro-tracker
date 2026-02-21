@@ -238,6 +238,7 @@ export class ActiveTaskController {
         switch (nextPhase.type) {
             case "task":
                 this._activeTask = this._getActiveTask(nextPhase.task);
+                this._stopTimer();
                 break;
             case "replaceTask": {
                 const replacedActiveTask = this._getActiveTask(nextPhase.task);
