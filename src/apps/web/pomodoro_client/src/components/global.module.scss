@@ -13,13 +13,15 @@
 .button {
   cursor: pointer; /* рука */
   color: var(--text-primary, inherit);
-  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
   width: 2rem;
   height: 2rem;
   font-size: inherit;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.12); /* лёгкое затемнение */
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 }
 
