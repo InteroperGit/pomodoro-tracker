@@ -14,7 +14,10 @@
   isolation: isolate;
 
   :global(html.theme-dark) & {
-    background: #1a1a1a;
+    background: rgba(30, 30, 30, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   &_open {
