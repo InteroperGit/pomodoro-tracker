@@ -180,26 +180,30 @@ export function createContext(initialState: AppState,
                 throw new Error(`Failed to dec task. Task with Id = [${id}] is not found`);
             }
 
+            const shouldRemoveTask = planTasks[index].count <= 1;
+
             const updatedTasks =
-                planTasks[index].count > 1
-                    ? planTasks.map((pt, ptIndex) => {
+                shouldRemoveTask
+                    ? planTasks.filter((_, i) => i !== index)
+                    : planTasks.map((pt, ptIndex) => {
                             return ptIndex === index
                                 ? { ...pt, count: pt.count - 1 }
                                 : pt
-                        })
-                    : planTasks.filter((_, i) => i !== index);
+                      });
             const updatedStatistics = getPlanTasksStatistics(updatedTasks, planStatisticsConfig);
 
-            const activeTask = s.activeTask
-                && s.activeTask.task
-                && s.activeTask.type === ActivePomodoroTaskType.Task
-                && updatedTasks.some(t => t.task.id === s.activeTask?.task?.id)
-                    ? s.activeTask
-                    : null;
+            const shouldActivateNextTask = shouldRemoveTask && index === 0;
+
+            if (shouldActivateNextTask) {
+                console.log('Try to activate next task');
+                taskController.activateNextTask(updatedTasks);
+            }
+
+            const activeTask = taskController.activeTask;
 
             store.setState({
                 ...s,
-                activeTask: activeTask,
+                activeTask,
                 planTasks: {
                     ...s.planTasks,
                     tasks: updatedTasks,
@@ -241,12 +245,12 @@ export function createContext(initialState: AppState,
                 ...s.archiveTasks.tasks,
             ];
 
-            const activeTask = s.activeTask
-                && s.activeTask.task
-                && s.activeTask.type === ActivePomodoroTaskType.Task
-                && updatedPlanTasks.some(t => t.task.id === s.activeTask?.task?.id)
-                    ? s.activeTask
-                    : null;
+            const needsActivateNextTask = index === 0;
+            if (needsActivateNextTask) {
+                taskController.activateNextTask(updatedPlanTasks);
+            }
+
+            const activeTask = taskController.activeTask
 
             store.setState({
                 ...s,
