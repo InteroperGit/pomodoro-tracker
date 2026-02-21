@@ -1,9 +1,7 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { findById } from "../utils/dom";
 import { App } from "./App";
-import {
-    type AppState,
-} from "../types/context.ts";
+import { type AppState, type PomodoroEvent } from "../types/context.ts";
 import {applyTheme, createContext, registerContext} from "./appContext.ts";
 import {getArchiveTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
@@ -13,6 +11,7 @@ import { throttle } from "../utils/throttle.ts";
 import { getInitArchiveTasks, getInitPlanTasks } from "../constants/initialState.ts";
 import { sanitizeActiveTask } from "../utils/activeTask.ts";
 import { updateTabTitle } from "../utils/updateTabTitle.ts";
+import { showToast } from "../components/Toast";
 
 const STORAGE_PREFIX = "pomodoro";
 const STATE_ITEM_KEY = "state";
@@ -59,7 +58,23 @@ const initApp = (root: HTMLElement) => {
         updateTabTitle(s.activeTask);
     };
 
-    const ctx = createContext(initialState, onTickHandler);
+    const onPomodoroHandler = (event: PomodoroEvent) => {
+        switch (event.type) {
+            case "started":
+                if (event.taskType === "task") showToast("Помидор начат!", "info");
+                else showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                break;
+            case "completed":
+                if (event.taskType === "task") showToast("Помидор завершён!", "success");
+                else showToast(event.taskType === "shortBreak" ? "Короткий перерыв окончен" : "Длинный перерыв окончен", "success");
+                break;
+            case "breakStarted":
+                showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                break;
+        }
+    };
+
+    const ctx = createContext(initialState, onTickHandler, onPomodoroHandler);
     registerContext(ctx);
 
     ctx.store.subscribe(() => {

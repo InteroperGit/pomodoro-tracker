@@ -13,6 +13,11 @@ export type ArchivePomodoroTasksState = {
 
 export type ThemeId = "light" | "dark";
 
+export type PomodoroEvent =
+    | { type: "started"; taskType: "task" | "shortBreak" | "longBreak" }
+    | { type: "completed"; taskType: "task" | "shortBreak" | "longBreak" }
+    | { type: "breakStarted"; taskType: "shortBreak" | "longBreak" };
+
 export type AppState = {
     editingPlanTaskIndex?: number | null;
     activeTask?: ActivePomodoroTask | null;

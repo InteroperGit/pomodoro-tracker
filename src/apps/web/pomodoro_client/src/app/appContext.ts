@@ -1,4 +1,4 @@
-import {type AppActions, type AppState, type ThemeId} from "../types/context.ts";
+import {type AppActions, type AppState, type PomodoroEvent, type ThemeId} from "../types/context.ts";
 
 const THEME_CLASS_DARK = "theme-dark";
 
@@ -37,8 +37,11 @@ const planStatisticsConfig = {
 
 let context: AppContext;
 
-export function createContext(initialState: AppState,
-                              onTickCallback: (state: AppState) => void) {
+export function createContext(
+    initialState: AppState,
+    onTickCallback: (state: AppState) => void,
+    onPomodoroCallback?: (event: PomodoroEvent) => void
+) {
     const configuration: ActiveTaskControllerConfiguration = {
         taskTime: POMODORO_TASK_TIME,
         shortBreakTime: POMODORO_SHORT_BREAK_TIME,
@@ -82,6 +85,7 @@ export function createContext(initialState: AppState,
             return;
         }
 
+        const completedType = s.activeTask.type;
         if (s.activeTask.type === ActivePomodoroTaskType.Task && s.activeTask.task) {
             actions.archiveTask(s.activeTask.task.id, s.activeTask.restTime);
         }
@@ -90,9 +94,25 @@ export function createContext(initialState: AppState,
 
         taskController.activateNextTask(s.planTasks.tasks);
 
+        const nextTask = taskController.activeTask;
+
+        if (completedType === ActivePomodoroTaskType.Task) {
+            onPomodoroCallback?.({ type: "completed", taskType: "task" });
+        } else if (completedType === ActivePomodoroTaskType.ShortBreak) {
+            onPomodoroCallback?.({ type: "completed", taskType: "shortBreak" });
+        } else if (completedType === ActivePomodoroTaskType.LongBreak) {
+            onPomodoroCallback?.({ type: "completed", taskType: "longBreak" });
+        }
+
+        if (nextTask.type === ActivePomodoroTaskType.ShortBreak) {
+            onPomodoroCallback?.({ type: "breakStarted", taskType: "shortBreak" });
+        } else if (nextTask.type === ActivePomodoroTaskType.LongBreak) {
+            onPomodoroCallback?.({ type: "breakStarted", taskType: "longBreak" });
+        }
+
         store.setState({
             ...s,
-            activeTask: taskController.activeTask,
+            activeTask: nextTask,
         });
     });
 
@@ -414,6 +434,14 @@ export function createContext(initialState: AppState,
             }
 
             taskController.start();
+
+            if (s.activeTask.type === ActivePomodoroTaskType.Task) {
+                onPomodoroCallback?.({ type: "started", taskType: "task" });
+            } else if (s.activeTask.type === ActivePomodoroTaskType.ShortBreak) {
+                onPomodoroCallback?.({ type: "started", taskType: "shortBreak" });
+            } else if (s.activeTask.type === ActivePomodoroTaskType.LongBreak) {
+                onPomodoroCallback?.({ type: "started", taskType: "longBreak" });
+            }
 
             store.setState({
                 ...s,
