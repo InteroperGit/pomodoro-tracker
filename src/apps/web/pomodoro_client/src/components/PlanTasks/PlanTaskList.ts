@@ -167,11 +167,12 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
             isMobile,
             planTaskIndex: index,
             planTask,
-            actions
+            actions,
+            completingClass: styles.plan_task_item__completing
         });
 
         return `
-            <li data-index="${index}">
+            <li data-index="${index}" class="${styles.plan_task_item}">
                 ${taskItem}
             </li>
         `

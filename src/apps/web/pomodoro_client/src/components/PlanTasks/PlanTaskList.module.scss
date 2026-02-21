@@ -4,6 +4,32 @@
   padding: 0;
 }
 
+.plan_task_item {
+  position: relative;
+  transition: opacity 1s ease-out, background-color 1s ease-out;
+}
+
+.plan_task_item__completing {
+  opacity: 0;
+  pointer-events: none;
+  background-color: rgba(200, 60, 60, 0.12);
+
+  :global(html.theme-dark) & {
+    background-color: rgba(255, 80, 80, 0.15);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+}
+
 .plan_tasks__empty {
   margin-top: 0.5rem;
   padding: 2rem;
