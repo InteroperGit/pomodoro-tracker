@@ -8,6 +8,8 @@ import {
 } from "../../types/task.ts";
 import { useEffect } from "../../utils/render.ts";
 
+let _prevTimerType: ActivePomodoroTaskType | undefined;
+
 /** Стабильные id элементов таймера (одно приложение на странице). */
 const TIMER_LEFT_BUTTON_ID = "timer-left-btn";
 const TIMER_RIGHT_BUTTON_ID = "timer-right-btn";
@@ -135,9 +137,14 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     const { minutes, seconds } = getTime(restTime);
     const [leftButtonTitle, rightButtonTitle] = getButtonTitles(activeTask);
 
+    const modeChanged = _prevTimerType !== undefined && _prevTimerType !== activeTask.type;
+    _prevTimerType = activeTask.type;
+
     const timerTypeStyle = activeTask.type === ActivePomodoroTaskType.Task
         ? styles.timer__task
         : styles.timer__break;
+
+    const transitionClass = modeChanged ? styles.timer__mode_enter : "";
 
     const rightButtonDisabled =
         activeTask.type === ActivePomodoroTaskType.Task
@@ -212,7 +219,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
 
     return isMobile
         ? `
-            <div class="${styles.timer} ${styles.timer_mobile} ${timerTypeStyle}">
+            <div class="${styles.timer} ${styles.timer_mobile} ${timerTypeStyle} ${transitionClass}">
                 <div
                     id="${TIMER_COUNTDOWN_ID}"
                     class="${styles.timer__countdown}"
@@ -243,7 +250,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
             </div>
         `
         : `
-            <div class="${styles.timer} ${timerTypeStyle}">
+            <div class="${styles.timer} ${timerTypeStyle} ${transitionClass}">
                 <div
                     id="${TIMER_COUNTDOWN_ID}"
                     class="${styles.timer__countdown}"
