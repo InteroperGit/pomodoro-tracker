@@ -53,7 +53,21 @@
 }
 
 .plan_task__dragging {
-  opacity: 0.5;
+  opacity: 0.4;
+}
+
+.plan_task__ghost {
+  opacity: 0.95;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  border-radius: 0.25rem;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.2));
+  transform: rotate(-2deg);
+
+  :global(html.theme-dark) & {
+    background: var(--bg-primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .plan_task__drag_over {
