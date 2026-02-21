@@ -32,6 +32,7 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
 
         let dragFromIndex: number | null = null;
         let draggedElement: HTMLLIElement | null = null;
+        let ghostElement: HTMLElement | null = null;
         const overCount = new Map<HTMLLIElement, number>();
         const cleanupFunctions: Array<() => void> = [];
 
@@ -41,12 +42,37 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
             listItem.draggable = true;
 
             const handleDragStart = (e: DragEvent) => {
-                const li = e.target as HTMLLIElement;
-                dragFromIndex  = Number(li.dataset.index);
+                const li = (e.target as HTMLElement).closest("li[data-index]") as HTMLLIElement | null;
+                if (!li) return;
+                const inner = li.firstElementChild as HTMLElement;
+                if (!inner) return;
+
+                dragFromIndex = Number(li.dataset.index);
                 draggedElement = li;
                 li.classList.add(taskStyles.plan_task__dragging);
-                // Firefox требует
-                e.dataTransfer?.setData("text/plain", String(dragFromIndex));
+
+                const ghost = inner.cloneNode(true) as HTMLElement;
+                ghost.classList.add(taskStyles.plan_task__ghost);
+                Object.assign(ghost.style, {
+                    position: "absolute",
+                    top: "-9999px",
+                    left: "-9999px",
+                    width: `${li.offsetWidth}px`,
+                    pointerEvents: "none",
+                });
+                document.body.appendChild(ghost);
+                ghostElement = ghost;
+
+                const rect = li.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+
+                const dt = e.dataTransfer;
+                if (dt) {
+                    dt.setData("text/plain", String(dragFromIndex));
+                    dt.effectAllowed = "move";
+                    dt.setDragImage(ghost, offsetX, offsetY);
+                }
             };
 
             const handleDragOver = (e: DragEvent) => {
@@ -97,10 +123,11 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
             };
 
             const handleDragEnd = () => {
-                // убираем все классы
                 ul.querySelectorAll('li').forEach(li => {
                     li.classList.remove(taskStyles.plan_task__dragging, taskStyles.plan_task__drag_over);
                 });
+                ghostElement?.remove();
+                ghostElement = null;
                 dragFromIndex = null;
                 draggedElement = null;
             };
