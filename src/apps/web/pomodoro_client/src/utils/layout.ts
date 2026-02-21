@@ -7,12 +7,21 @@ export function useIsMobile(threshold: number = MOBILE_STATE): boolean {
 }
 
 export function onLayoutChanged(callback: (isMobile: boolean) => void, threshold: number = MOBILE_STATE) {
+    let lastIsMobile = useIsMobile(threshold);
+    
     const handler = () => {
         if (resizeTimeout) {
             clearTimeout(resizeTimeout);
         }
 
         resizeTimeout = window.setTimeout(() => {
+
+            const isMobile = useIsMobile(threshold);
+            if (isMobile === lastIsMobile) {
+                return;
+            }
+
+            lastIsMobile = isMobile;
             callback(useIsMobile(threshold));
         }, 100);
     }
