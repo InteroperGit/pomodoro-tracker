@@ -235,7 +235,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                     aria-label="${countdownAriaLabel}">
                     ${minutes}:${seconds}
                 </div>
-                <div class="${styles.timer__description}">
+                <div class="${styles.timer__description} ${styles.timer__description_mobile}">
                     ${task ? task.description : ""}
                 </div>
                 <div class="${styles.timer__buttons_mobile}">
