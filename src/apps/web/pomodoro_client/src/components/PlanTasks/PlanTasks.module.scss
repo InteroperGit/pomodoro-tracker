@@ -4,7 +4,7 @@
   flex-direction: column;
 
   &_mobile {
-    margin-inline: auto;
-    width: calc(100vw - 1rem);
+    width: 100%;
+    max-width: 100%;
   }
 }
