@@ -125,7 +125,7 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
                         ${escapedDescription}
                     </div>
                 </div>
-                <div class="${styles.archive_task__time}">
+                <div class="${styles.archive_task__actions}">
                     ${timeMarkup}
                     ${refreshButtonMarkup}
                     ${menuBlock}
@@ -143,9 +143,11 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
             <div class="${styles.archive_task__description}">
                 ${escapedDescription}
             </div>
-            ${timeMarkup}
-            ${refreshButtonMarkup}
-            ${menuBlock}
+            <div class="${styles.archive_task__actions}">
+                ${timeMarkup}
+                ${refreshButtonMarkup}
+                ${menuBlock}
+            </div>
         </div>
     `;
 }
