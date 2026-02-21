@@ -5,19 +5,19 @@ import { type AppState, type PomodoroEvent } from "../types/context.ts";
 import {applyTheme, createContext, registerContext} from "./appContext.ts";
 import {getArchiveTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
-import {onLayoutChanged} from "../types/layout.ts";
+import {onLayoutChanged} from "../utils/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
 import { throttle } from "../utils/throttle.ts";
 import { getInitArchiveTasks, getInitPlanTasks } from "../constants/initialState.ts";
 import { sanitizeActiveTask } from "../utils/activeTask.ts";
 import { updateTabTitle } from "../utils/updateTabTitle.ts";
 import { showToast } from "../components/Toast";
+import { hasActiveInput } from "../utils/input.ts";
 
 const STORAGE_PREFIX = "pomodoro";
 const STATE_ITEM_KEY = "state";
 const THROTTLE_DELAY = 1000;
 const ROOT_ELEMENT_ID = "root";
-
 
 const initApp = (root: HTMLElement) => {
     const storage = new LocalStorage(STORAGE_PREFIX);
@@ -85,6 +85,10 @@ const initApp = (root: HTMLElement) => {
     });
 
     onLayoutChanged(() => {
+        if (hasActiveInput()) {
+            return;
+        }
+
         render(root, App, ctx);
     });
 

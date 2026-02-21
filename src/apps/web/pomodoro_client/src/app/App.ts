@@ -20,7 +20,7 @@ import {
 } from "./appContext.ts";
 import {useEffect} from "../utils/render.ts";
 import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
-import {useIsMobile} from "../types/layout.ts";
+import {useIsMobile} from "../utils/layout.ts";
 import {PlanTasks} from "../components/PlanTasks";
 import {ArchiveTasks} from "../components/ArchiveTasks";
 
