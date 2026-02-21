@@ -62,9 +62,10 @@ export function createContext(
         taskController.activateTask(initialState.activeTask);
     }
     else {
-        taskController.activateNextTask(initialState.planTasks.tasks);
-        initialState.activeTask = taskController.activeTask;
+        taskController.activateNextTask(initialState.planTasks.tasks, PREFER_TASK);
     }
+
+    initialState.activeTask = taskController.activeTask;
 
     const store = createStore<AppState>(initialState);
 
@@ -148,7 +149,7 @@ export function createContext(
             // Используем контроллер для определения следующей фазы
             // Если activeTask в idle или отсутствует, контроллер активирует новую задачу
             const updatedState = store.getState();
-            taskController.activateNextTask(updatedState.planTasks.tasks);
+            taskController.activateNextTask(updatedState.planTasks.tasks, PREFER_TASK);
 
             // Обновляем activeTask из контроллера
             store.setState({
@@ -308,15 +309,7 @@ export function createContext(
             const addedPlanTask = { task, count: 1 };
             const updatedPlanTasks = [addedPlanTask, ...s.planTasks.tasks];
             const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
-            const current = s.activeTask?.type === ActivePomodoroTaskType.Task ? s.activeTask : null;
-            const newActiveTask: ActivePomodoroTask = {
-                type: ActivePomodoroTaskType.Task,
-                task: addedPlanTask.task,
-                status: current?.status ?? ActivePomodoroTaskStatus.Pending,
-                restTime: current?.restTime ?? POMODORO_TASK_TIME,
-                shortBreakCount: current?.shortBreakCount ?? 0,
-            };
-            taskController.activateTask(newActiveTask);
+            taskController.activateNextTask(updatedPlanTasks, PREFER_TASK);
             store.setState({
                 ...s,
                 planTasks: {
@@ -324,7 +317,7 @@ export function createContext(
                     tasks: updatedPlanTasks,
                     statistics: updatedStatistics
                 },
-                activeTask: newActiveTask,
+                activeTask: taskController.activeTask,
             });
         },
         startEditTask(index: number): void {
