@@ -225,6 +225,8 @@ export function createContext(initialState: AppState,
             }
 
             const pomodoroTask = planTasks[index].task;
+            const needsActivateNextTask = index === 0 && planTasks[index].count === 1;
+            
             const updatedPlanTasks =
                 planTasks[index].count > 1
                     ? planTasks.map((pt, ptIndex) => {
@@ -245,7 +247,7 @@ export function createContext(initialState: AppState,
                 ...s.archiveTasks.tasks,
             ];
 
-            const needsActivateNextTask = index === 0;
+
             if (needsActivateNextTask) {
                 taskController.activateNextTask(updatedPlanTasks);
             }

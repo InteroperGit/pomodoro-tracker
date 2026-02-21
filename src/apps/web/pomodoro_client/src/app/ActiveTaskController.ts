@@ -166,8 +166,7 @@ export class ActiveTaskController {
             }
 
             const needsNextTask = this._activeTask 
-                 && this._activeTask.type === ActivePomodoroTaskType.Task
-                 && this._activeTask.task?.id !== planTasks[0].task.id;
+                 && this._activeTask.type === ActivePomodoroTaskType.Task;
 
             const needsLongBreak = this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
 
