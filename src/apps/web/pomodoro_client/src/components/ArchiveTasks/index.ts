@@ -33,7 +33,7 @@ export type ArchiveTasksProps = {
     isMobile: boolean;
     data: ArchivePomodoroTasksState;
     actions: {
-        deleteArchiveTask: (id: string) => void;
+        deleteArchiveTask: (index: number) => void;
     };
 }
 

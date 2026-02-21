@@ -20,7 +20,7 @@ export type ArchiveTasksListProps = {
     isMobile: boolean;
     tasks: ArchivePomodoroTask[];
     actions: {
-        deleteArchiveTask: (id: string) => void;
+        deleteArchiveTask: (index: number) => void;
     };
 }
 
@@ -54,10 +54,10 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
     }
 
     // Формирование списка задач
-    const taskItems = tasks.map((archiveTask) =>
+    const taskItems = tasks.map((archiveTask, index) =>
         `
             <li role="listitem">
-                ${ArchiveTask({ isMobile, archiveTask, actions })}
+                ${ArchiveTask({ isMobile, archiveTask, index, actions })}
             </li>
         `
     ).join("");

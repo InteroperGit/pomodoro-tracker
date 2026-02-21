@@ -267,12 +267,12 @@ export function createContext(initialState: AppState,
                 }
             });
         },
-        deleteArchiveTask(id: string): void {
-            if (!id) {
-                throw new Error("Failed to delete archive task. Id is not initialized");
+        deleteArchiveTask(index: number): void {
+            if (typeof index !== "number" || index < 0) {
+                throw new Error("Failed to delete archive task. Index is not valid");
             }
             const s = store.getState();
-            const updatedArchiveTasks = s.archiveTasks.tasks.filter(at => at.task.id !== id);
+            const updatedArchiveTasks = s.archiveTasks.tasks.filter((_, i) => i !== index);
             store.setState({
                 ...s,
                 archiveTasks: {
@@ -593,7 +593,7 @@ export function useArchiveTask(id: string) {
 }
 
 export function useDeleteArchiveTask() {
-    return (id: string) => context.actions.deleteArchiveTask(id);
+    return (index: number) => context.actions.deleteArchiveTask(index);
 }
 
 export function useRefreshTask() {

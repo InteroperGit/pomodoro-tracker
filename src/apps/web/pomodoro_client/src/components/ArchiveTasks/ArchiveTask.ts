@@ -27,13 +27,14 @@ import {generateId} from "../../utils/idGenerator.ts";
 export type ArchiveTaskProps = {
     isMobile: boolean;
     archiveTask: ArchivePomodoroTask;
+    index: number;
     actions: {
-        deleteArchiveTask: (id: string) => void;
+        deleteArchiveTask: (index: number) => void;
         refreshTask: (task: PomodoroTask) => void;
     };
 };
 
-export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps) {
+export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTaskProps) {
     const { task, taskTime, completedAt } = archiveTask;
     const { category, description } = task;
 
@@ -94,7 +95,7 @@ export function ArchiveTask({ isMobile, archiveTask, actions }: ArchiveTaskProps
             dropdownId,
             openClass: dropdownStyles.dropdown_open,
             itemHandlers: {
-                [menuDeleteId]: () => actions.deleteArchiveTask(task.id),
+                [menuDeleteId]: () => actions.deleteArchiveTask(index),
             },
         });
 
