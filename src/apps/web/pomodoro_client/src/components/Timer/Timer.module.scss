@@ -21,27 +21,12 @@
 
 .timer__empty {
   padding: 2rem;
-  text-align: center;
   color: var(--text-secondary, #666);
   border: 1px solid var(--text-secondary, #666);
+}
 
-  &_icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.7;
-  }
-
-  &_title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary, #333);
-  }
-
-  &_subtitle {
-    font-size: 0.95rem;
-    opacity: 0.8;
-  }
+.timer__empty_content {
+  width: 100%;
 }
 
 @keyframes timerModeEnter {

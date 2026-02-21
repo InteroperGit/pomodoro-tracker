@@ -30,8 +30,6 @@
 
 .archive_tasks__empty {
   margin-top: 0.5rem;
-  padding: 1rem;
-  text-align: center;
-  opacity: 0.6;
-  font-style: italic;
+  border: 1px dashed rgba(128, 128, 128, 0.4);
+  border-radius: 0.5rem;
 }

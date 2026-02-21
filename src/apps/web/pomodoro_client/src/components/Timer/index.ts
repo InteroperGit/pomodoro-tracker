@@ -1,5 +1,6 @@
 import styles from "./Timer.module.scss";
 import globalStyles from "../global.module.scss";
+import {EmptyState} from "../EmptyState/index.ts";
 import {
     type ActivePomodoroTask,
     ActivePomodoroTaskStatus,
@@ -115,9 +116,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     if (planTasks.length === 0) {
         return `
             <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
-                <div class="${styles.timer__empty_icon}">⏰</div>
-                <div class="${styles.timer__empty_title}">Нет задач в плане</div>
-                <div class="${styles.timer__empty_subtitle}">Добавьте задачи в план выше</div>
+                ${EmptyState({
+                    variant: "timer_no_plan",
+                    title: "Нет задач в плане",
+                    subtitle: "Добавьте задачи в план выше",
+                    className: styles.timer__empty_content,
+                })}
             </div>
         `;
     }
@@ -125,9 +129,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     if (!activeTask) {
         return `
             <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
-                <div class="${styles.timer__empty_icon}">⏰</div>
-                <div class="${styles.timer__empty_title}">Нет активной задачи</div>
-                <div class="${styles.timer__empty_subtitle}">Начните помодоро или перерыв</div>
+                ${EmptyState({
+                    variant: "timer_no_active",
+                    title: "Нет активной задачи",
+                    subtitle: "Начните помодоро или перерыв",
+                    className: styles.timer__empty_content,
+                })}
             </div>
         `;
     }

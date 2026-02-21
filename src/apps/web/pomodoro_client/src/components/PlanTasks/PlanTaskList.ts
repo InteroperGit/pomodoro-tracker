@@ -1,6 +1,7 @@
 import {PlanTask} from "./PlanTask.ts";
 import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import styles from "./PlanTaskList.module.scss";
+import {EmptyState} from "../EmptyState/index.ts";
 import taskStyles from "./PlanTask.module.scss";
 import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
@@ -155,11 +156,12 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     });
 
     if (tasks.length === 0) {
-        return `
-            <div class="${styles.plan_tasks__empty}">
-                Список задач пуст
-            </div>
-        `;
+        return EmptyState({
+            variant: "plan",
+            title: "Список задач пуст",
+            subtitle: "Добавьте задачу в план",
+            className: styles.plan_tasks__empty,
+        });
     }
 
     const taskItems = tasks.map((planTask, index) => {

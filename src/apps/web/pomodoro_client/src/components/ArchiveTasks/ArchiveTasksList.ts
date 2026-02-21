@@ -1,6 +1,7 @@
 import {ArchiveTask} from "./ArchiveTask.ts";
 import type {ArchivePomodoroTask} from "../../types/task.ts";
 import styles from "./ArchiveTasksList.module.scss";
+import {EmptyState} from "../EmptyState/index.ts";
 
 /**
  * Компонент `ArchiveTasksList` — отображает список архивных задач.
@@ -46,9 +47,12 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
         return `
             <div class="${styles.archive_tasks__list_container}">
                 ${header}
-                <div class="${styles.archive_tasks__empty}" role="status" aria-live="polite">
-                    Архив пуст
-                </div>
+                ${EmptyState({
+                    variant: "archive",
+                    title: "Архив пуст",
+                    subtitle: "Выполненные задачи появятся здесь",
+                    className: styles.archive_tasks__empty,
+                })}
             </div>
         `;
     }
