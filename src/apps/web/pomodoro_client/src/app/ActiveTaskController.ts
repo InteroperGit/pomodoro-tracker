@@ -13,6 +13,7 @@ const LONG_BREAK_TITLE = "Длинный перерыв";
 
 type NextPhase =
     | { type: "task"; task: PlanPomodoroTask }
+    | { type: "replaceTask", task: PlanPomodoroTask }
     | { type: "shortBreak" }
     | { type: "longBreak" }
     | { type: "idle" }
@@ -164,9 +165,16 @@ export class ActiveTaskController {
                 return { type: "idle" };
             }
 
+            const needsNextTask = this._activeTask 
+                 && this._activeTask.type === ActivePomodoroTaskType.Task
+                 && this._activeTask.task?.id !== planTasks[0].task.id;
+
             const needsLongBreak = this._activeTask.shortBreakCount >= this._configuration.maxShortBreaksSerie;
 
-            if (needsLongBreak) {
+            if (needsNextTask) {
+                return { type: "replaceTask", task: planTasks[0] };
+            }
+            else if (needsLongBreak) {
                 return { type: "longBreak" }
             }
             else {
@@ -177,7 +185,7 @@ export class ActiveTaskController {
         return { type: "idle" }
     }
 
-    private _getTaskFromPlan(task: PlanPomodoroTask): ActivePomodoroTask {
+    private _getActiveTask(task: PlanPomodoroTask): ActivePomodoroTask {
         return {
             type: ActivePomodoroTaskType.Task,
             task: task.task,
@@ -229,8 +237,16 @@ export class ActiveTaskController {
 
         switch (nextPhase.type) {
             case "task":
-                this._activeTask = this._getTaskFromPlan(nextPhase.task);
+                this._activeTask = this._getActiveTask(nextPhase.task);
                 break;
+            case "replaceTask": {
+                const replacedActiveTask = this._getActiveTask(nextPhase.task);
+                this._activeTask = {
+                    ...this._activeTask,
+                    task: replacedActiveTask.task
+                } as ActivePomodoroTask;
+                break;
+            }
             case "shortBreak":
                 this._activeTask = this._getShortBreakTask();
                 this._startTimer();
