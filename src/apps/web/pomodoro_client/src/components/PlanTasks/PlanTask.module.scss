@@ -1,19 +1,19 @@
+/* Сетка как у PlanTasksAdd: категория | описание | действия */
 .plan_task {
-  display: flex;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
   align-items: center;
   gap: 0.5rem;
   border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
   padding: var(--task-row-padding) var(--task-row-padding) var(--task-row-padding) 0;
   cursor: grab;
 
-  // Плавный hover
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05);  // лёгкий серый
+    background-color: rgba(0, 0, 0, 0.05);
   }
 
-  /* Тёмная тема: glassmorphism + заметный фон при наведении */
   :global(html.theme-dark) & {
     border-top-color: transparent;
   }
@@ -26,33 +26,32 @@
   }
 
   &_mobile {
-    display: flex;
-    align-items: flex-end;
-    flex-direction: column;
-    border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-    padding: var(--task-row-padding) var(--task-row-padding) var(--task-row-padding) 0;
-    gap: 0.5rem;
+    padding: 0.35rem var(--task-row-padding) 0.35rem 0;
 
     :global(html.theme-dark) &:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
+
+    @media (max-width: 400px) {
+      grid-template-columns: 80px 1fr auto;
+    }
+
+    @media (max-width: 359px) {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+
+      .plan_task__actions {
+        justify-self: flex-end;
+      }
+    }
   }
 }
 
-.plan_task__task {
+.plan_task__actions {
   display: flex;
   gap: 0.5rem;
-  width: 100%;
-  align-items: flex-start;
-}
-
-.plan_task__toolbar {
-  display: flex;
-  align-self: center;
-  gap: 1rem;
-  border: 2px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-  border-radius: 0.2rem;
-  padding: 0.5rem;
+  align-items: center;
+  justify-self: end;
 }
 
 .plan_task__dragging {
@@ -82,14 +81,15 @@
 }
 
 .plan_task__category {
-  width: 120px;
+  min-width: 0;
   opacity: 0.7;
   padding: 0 0.5rem;
   line-height: 1.5;
 
   &_mobile {
-    border: 2px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-    border-radius: 0.2rem;
+    opacity: 1;
+    text-wrap: wrap;
+    word-break: break-word;
   }
 }
 
@@ -100,9 +100,11 @@
   line-height: 1.5;
 
   &_mobile {
-    border: 2px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-    border-radius: 0.2rem;
+    min-width: 0;
+    opacity: 1;
     text-wrap: wrap;
+    word-break: break-word;
+    line-height: 1.5;
   }
 }
 
@@ -143,6 +145,14 @@
             rgba(255, 255, 255, 0.2) 100%);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
   }
+
+  &_mobile {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
 }
 
 .plan_task__menu_wrap {
@@ -156,4 +166,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  .plan_task_mobile & {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
