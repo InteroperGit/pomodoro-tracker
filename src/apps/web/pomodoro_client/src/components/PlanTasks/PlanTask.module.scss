@@ -3,7 +3,7 @@
   align-items: center;
   gap: 0.5rem;
   border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-  padding: 0.85rem 0.85rem 0.85rem 0;
+  padding: var(--task-row-padding) var(--task-row-padding) var(--task-row-padding) 0;
   cursor: grab;
 
   // Плавный hover
@@ -13,9 +13,12 @@
     background-color: rgba(0, 0, 0, 0.05);  // лёгкий серый
   }
 
-  /* Тёмная тема: заметный фон при наведении на строку задачи */
+  /* Тёмная тема: glassmorphism + заметный фон при наведении */
+  :global(html.theme-dark) & {
+    border-top-color: transparent;
+  }
   :global(html.theme-dark) &:hover {
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   &:active {
@@ -27,11 +30,11 @@
     align-items: flex-end;
     flex-direction: column;
     border-top: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-    padding: 0.85rem 0.85rem 0.85rem 0;
+    padding: var(--task-row-padding) var(--task-row-padding) var(--task-row-padding) 0;
     gap: 0.5rem;
 
     :global(html.theme-dark) &:hover {
-      background-color: rgba(255, 255, 255, 0.08);
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 }
@@ -65,7 +68,10 @@
   transform: rotate(-2deg);
 
   :global(html.theme-dark) & {
-    background: var(--bg-primary);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
   }
 }
