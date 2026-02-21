@@ -12,6 +12,7 @@ import {LocalStorage} from "../utils/localStorage.ts";
 import { throttle } from "../utils/throttle.ts";
 import { getInitArchiveTasks, getInitPlanTasks } from "../constants/initialState.ts";
 import { sanitizeActiveTask } from "../utils/activeTask.ts";
+import { updateTabTitle } from "../utils/updateTabTitle.ts";
 
 const STORAGE_PREFIX = "pomodoro";
 const STATE_ITEM_KEY = "state";
@@ -53,9 +54,10 @@ const initApp = (root: HTMLElement) => {
         storage.setItem<AppState>(STATE_ITEM_KEY, s);
     }, THROTTLE_DELAY);
 
-    const onTickHandler = (s: AppState)=> {
+    const onTickHandler = (s: AppState) => {
         saveStateThrottle(s);
-    }
+        updateTabTitle(s.activeTask);
+    };
 
     const ctx = createContext(initialState, onTickHandler);
     registerContext(ctx);
@@ -63,6 +65,7 @@ const initApp = (root: HTMLElement) => {
     ctx.store.subscribe(() => {
         const s = ctx.store.getState();
         saveStateThrottle(s);
+        updateTabTitle(s.activeTask);
         render(root, App, ctx);
     });
 
@@ -70,6 +73,7 @@ const initApp = (root: HTMLElement) => {
         render(root, App, ctx);
     });
 
+    updateTabTitle(initialState.activeTask ?? null);
     render(root, App, ctx);
 }
 
