@@ -11,6 +11,7 @@ export type PlanTaskProps = {
     isMobile: boolean;
     planTaskIndex: number;
     planTask: PlanPomodoroTask;
+    completingClass?: string;
     actions: {
         getEditingPlanTaskIndex: () => number | null | undefined;
         startEditTask: (index: number) => void;
@@ -22,7 +23,7 @@ export type PlanTaskProps = {
     }
 }
 
-export function PlanTask({ isMobile, planTaskIndex, planTask, actions } : PlanTaskProps) {
+export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();
     const taskCountId = generateId();
@@ -70,7 +71,25 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, actions } : PlanTa
             itemHandlers: {
                 [menuIncId]: () => actions.incTask(task.id),
                 [menuDecId]: () => actions.decTask(task.id),
-                [menuArchiveId]: () => actions.archiveTask(task.id),
+                [menuArchiveId]: () => {
+                    const willRemove = count === 1;
+                    const li = planTaskDiv.closest("li[data-index]") as HTMLLIElement | null;
+                    if (willRemove && li && completingClass) {
+                        li.classList.add(completingClass);
+                        let done = false;
+                        const doArchive = () => {
+                            if (done) return;
+                            done = true;
+                            li.removeEventListener("transitionend", onEnd);
+                            actions.archiveTask(task.id);
+                        };
+                        const onEnd = () => doArchive();
+                        li.addEventListener("transitionend", onEnd);
+                        setTimeout(doArchive, 1100);
+                    } else {
+                        actions.archiveTask(task.id);
+                    }
+                },
             },
         });
 
