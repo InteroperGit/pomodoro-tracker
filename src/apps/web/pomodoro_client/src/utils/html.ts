@@ -1,6 +1,8 @@
 /**
- * Экранирует HTML-символы для безопасного отображения пользовательского контента
- * Защищает от XSS-атак
+ * Экранирует HTML-символы для безопасного отображения
+ * Защищает от XSS-атак при выводе пользовательского контента
+ * @param {string|null|undefined} text - текст для экранирования
+ * @returns {string} экранированный текст
  */
 export function escapeHtml(text: string | null | undefined): string {
     if (text == null) {

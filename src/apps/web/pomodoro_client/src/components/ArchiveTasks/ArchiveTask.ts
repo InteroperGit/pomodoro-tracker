@@ -8,22 +8,6 @@ import {escapeHtml} from "../../utils/html.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
 
-/**
- * Компонент `ArchiveTask` — отображает одну архивную задачу в списке выполненных задач.
- *
- * Показывает категорию, описание, время выполнения задачи и время завершения.
- * Поддерживает подменю с кнопкой «Удалить» для удаления задачи из архива.
- * Поддерживает мобильную и десктопную версии с разной разметкой.
- *
- * @module ArchiveTask
- *
- * @param {ArchiveTaskProps} props - Пропсы компонента
- * @param {boolean} props.isMobile - Флаг мобильной версии
- * @param {ArchivePomodoroTask} props.archiveTask - Данные архивной задачи
- * @param {ArchiveTaskActions} props.actions - Действия (удаление из архива)
- *
- * @returns {string} HTML-разметка архивной задачи
- */
 export type ArchiveTaskProps = {
     isMobile: boolean;
     archiveTask: ArchivePomodoroTask;
@@ -34,6 +18,23 @@ export type ArchiveTaskProps = {
     };
 };
 
+/**
+ * Компонент `ArchiveTask` — отображает одну архивную задачу в списке выполненных задач.
+ *
+ * Показывает категорию, описание, время выполнения задачи и время завершения.
+ * Поддерживает подменю с кнопкой «Удалить» для удаления задачи из архива и кнопку обновления.
+ * Поддерживает мобильную и десктопную версии с разной разметкой.
+ *
+ * @param {ArchiveTaskProps} props - Пропсы компонента.
+ * @param {boolean} props.isMobile - Флаг мобильной версии.
+ * @param {ArchivePomodoroTask} props.archiveTask - Данные архивной задачи.
+ * @param {number} props.index - Индекс задачи в списке архива.
+ * @param {Object} props.actions - Действия, доступные для задачи.
+ * @param {function(number): void} props.actions.deleteArchiveTask - Функция для удаления задачи из архива.
+ * @param {function(PomodoroTask): void} props.actions.refreshTask - Функция для обновления или восстановления задачи.
+ *
+ * @returns {string} HTML-разметка архивной задачи.
+ */
 export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTaskProps) {
     const { task, taskTime, completedAt } = archiveTask;
     const { category, description } = task;

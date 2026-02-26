@@ -23,6 +23,30 @@ export type PlanTaskProps = {
     }
 }
 
+/**
+ * Компонент `PlanTask` — отображает запланированную задачу в списке.
+ *
+ * Поддерживает два состояния: режим просмотра и режим встроенного (inline) редактирования.
+ * Включает выпадающее меню для управления количеством "помидоров" (добавить/убавить) 
+ * и переноса задачи в архив. Поддерживает анимацию перед удалением/архивацией 
+ * и адаптивную разметку (мобильная и десктопная версии).
+ *
+ * @param {PlanTaskProps} props - Пропсы компонента.
+ * @param {boolean} props.isMobile - Флаг мобильной версии для изменения разметки.
+ * @param {number} props.planTaskIndex - Индекс задачи в текущем списке.
+ * @param {PlanPomodoroTask} props.planTask - Данные задачи (информация о задаче и счетчик "помидоров").
+ * @param {string} [props.completingClass] - CSS-класс, применяемый для анимации перед архивацией задачи.
+ * @param {Object} props.actions - Объект с функциями-обработчиками действий над задачей.
+ * @param {function(): (number|null|undefined)} props.actions.getEditingPlanTaskIndex - Функция для получения индекса текущей редактируемой задачи.
+ * @param {function(number): void} props.actions.startEditTask - Включает режим редактирования для данной задачи.
+ * @param {function(PomodoroTask): void} props.actions.completeEditTask - Сохраняет изменённые данные задачи.
+ * @param {function(): void} props.actions.cancelEditTask - Отменяет режим редактирования без сохранения.
+ * @param {function(string): void} props.actions.incTask - Увеличивает количество "помидоров" (оценочное время) задачи.
+ * @param {function(string): void} props.actions.decTask - Уменьшает количество "помидоров" задачи.
+ * @param {function(string): void} props.actions.archiveTask - Отправляет задачу в архив (помечает как выполненную).
+ *
+ * @returns {string} HTML-разметка компонента запланированной задачи.
+ */
 export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, actions } : PlanTaskProps) {
     const { task, count } = planTask;
     const planTaskDivId = generateId();

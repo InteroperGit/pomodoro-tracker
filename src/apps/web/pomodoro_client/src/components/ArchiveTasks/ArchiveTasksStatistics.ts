@@ -4,21 +4,19 @@ import {escapeHtml} from "../../utils/html.ts";
 import {toHumanHourMinutesSecondsTime} from "../../utils/time.ts";
 
 /**
- * Компонент `ArchiveTasksStatistics` — статистика по архивным задачам.
- *
- * Отображает количество выполненных помидоров, общее время и распределение по категориям.
- *
- * @module ArchiveTasksStatistics
- *
- * @param {ArchiveTasksStatisticsProps} props - Пропсы компонента
- * @param {ArchivePomodoroTasksStatistics} props.statistics - Статистика архивных задач
- *
- * @returns {string} HTML-разметка статистики
+ * Свойства компонента статистики архива
+ * @typedef {Object} ArchiveTasksStatisticsProps
+ * @property {ArchivePomodoroTasksStatistics} statistics - статистика архивных задач
  */
 export type ArchiveTasksStatisticsProps = {
     statistics: ArchivePomodoroTasksStatistics;
 };
 
+/**
+ * Компонент статистики архива с информацией о выполненных задачах и категориях
+ * @param {ArchiveTasksStatisticsProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsProps) {
     const { tasksCount, tasksTime, categories } = statistics;
     const tasksTimeText = toHumanHourMinutesSecondsTime(tasksTime);

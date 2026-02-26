@@ -1,10 +1,27 @@
 import styles from "./Dropdown.module.scss";
 
+/**
+ * Элемент выпадающего меню
+ * @typedef {Object} DropdownItem
+ * @property {string} id - уникальный идентификатор элемента
+ * @property {string} content - HTML содержимое элемента
+ */
 export type DropdownItem = {
     id: string;
     content: string;
 };
 
+/**
+ * Свойства для создания разметки выпадающего меню
+ * @typedef {Object} DropdownMarkupProps
+ * @property {string} wrapClass - CSS класс для обертки
+ * @property {string} buttonId - ID кнопки-триггера
+ * @property {string} buttonClass - CSS класс кнопки
+ * @property {string} buttonContent - HTML содержимое кнопки
+ * @property {string} buttonAriaLabel - aria-label для кнопки
+ * @property {string} dropdownId - ID выпадающей панели
+ * @property {DropdownItem[]} items - массив элементов меню
+ */
 export type DropdownMarkupProps = {
     wrapClass: string;
     buttonId: string;
@@ -16,7 +33,9 @@ export type DropdownMarkupProps = {
 };
 
 /**
- * Возвращает HTML-разметку выпадающего меню: обёртка, кнопка-триггер и панель с пунктами.
+ * Создает HTML-разметку выпадающего меню с кнопкой и панелью
+ * @param {DropdownMarkupProps} props - свойства меню
+ * @returns {string} HTML-строка выпадающего меню
  */
 export function dropdownMarkup(props: DropdownMarkupProps): string {
     const {
@@ -58,25 +77,35 @@ export function dropdownMarkup(props: DropdownMarkupProps): string {
     `;
 }
 
+/**
+ * Конфигурация для подключения поведения выпадающего меню
+ * @typedef {Object} DropdownConfig
+ * @property {string} buttonId - ID кнопки-триггера
+ * @property {string} dropdownId - ID выпадающей панели
+ * @property {string} openClass - CSS класс для открытого меню
+ * @property {"left"|"right"} [align="left"] - выравнивание меню относительно кнопки
+ * @property {Record<string, Function>} itemHandlers - обработчики клика по элементам меню
+ */
 export type DropdownConfig = {
     buttonId: string;
     dropdownId: string;
     openClass: string;
-    /** Выравнивание панели относительно кнопки: по левому краю кнопки или по правому */
     align?: "left" | "right";
-    /** Обработчики клика по пунктам: ключ — id пункта */
     itemHandlers: Record<string, () => void>;
 };
 
+/** Отступ для позиционирования выпадающего меню (пиксели) */
 const MARGIN = 8;
 
-/** Реестр открытых выпадающих меню: при открытии одного закрываются остальные (PlanTasks, ArchiveTasks). */
+/** Реестр открытых выпадающих меню для синхронизации открытия/закрытия */
 const openDropdowns = new Map<string, () => void>();
 
 /**
- * Подключает поведение выпадающего меню: портал в body, позиционирование, закрытие по клику снаружи и Escape.
- * При открытии меню все остальные открытые выпадающие меню в приложении закрываются.
- * Возвращает функцию очистки для использования в useEffect.
+ * Подключает поведение выпадающего меню
+ * Включает: позиционирование, закрытие по клику снаружи, обработку Escape
+ * При открытии одного меню остальные закрываются автоматически
+ * @param {DropdownConfig} config - конфигурация меню
+ * @returns {Function} функция очистки для использования в useEffect
  */
 export function useDropdown(config: DropdownConfig): () => void {
     const {

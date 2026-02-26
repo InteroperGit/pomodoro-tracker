@@ -1,3 +1,7 @@
+/**
+ * Генерирует UUID версии 4 (fallback для браузеров без crypto.randomUUID)
+ * @returns {string} UUID строка
+ */
 function fallbackUUID(): string {
     const bytes = new Uint8Array(16);
     crypto.getRandomValues(bytes);
@@ -8,6 +12,11 @@ function fallbackUUID(): string {
         .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
 }
 
+/**
+ * Генерирует уникальный идентификатор
+ * @param {string} [prefix=''] - префикс для ID
+ * @returns {string} уникальный ID (макс 20 символов)
+ */
 export function generateId(prefix = ''): string {
     const uuid = typeof crypto.randomUUID === 'function'
         ? crypto.randomUUID()

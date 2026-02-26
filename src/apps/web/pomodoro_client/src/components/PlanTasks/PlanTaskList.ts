@@ -21,6 +21,28 @@ export type PlanTasksListProps = {
     }
 };
 
+/**
+ * Компонент `PlanTaskList` — отображает список запланированных задач.
+ *
+ * Реализует функциональность Drag-and-Drop (Native HTML5) для визуального 
+ * изменения порядка задач (сортировки) путем перетаскивания. 
+ * Если массив задач пуст, выводит компонент состояния-заглушки (EmptyState).
+ *
+ * @param {PlanTasksListProps} props - Пропсы компонента.
+ * @param {boolean} props.isMobile - Флаг мобильной версии для адаптивной разметки.
+ * @param {PlanPomodoroTask[]} props.tasks - Массив запланированных задач для отображения.
+ * @param {Object} props.actions - Объект с функциями-обработчиками для управления задачами.
+ * @param {function(): (number|null|undefined)} props.actions.getEditingPlanTaskIndex - Возвращает индекс текущей редактируемой задачи.
+ * @param {function(number): void} props.actions.startEditTask - Включает режим редактирования для задачи по индексу.
+ * @param {function(PomodoroTask): void} props.actions.completeEditTask - Сохраняет изменения отредактированной задачи.
+ * @param {function(): void} props.actions.cancelEditTask - Отменяет режим редактирования (закрывает инпуты без сохранения).
+ * @param {function(string): void} props.actions.incTask - Увеличивает оценку задачи (количество "помидоров").
+ * @param {function(string): void} props.actions.decTask - Уменьшает оценку задачи (количество "помидоров").
+ * @param {function(string): void} props.actions.archiveTask - Выполняет задачу (переносит в архив).
+ * @param {function(number, number): void} props.actions.reorderTasks - Обновляет порядок задач после завершения перетаскивания (Drag-and-Drop). Передает индексы: `fromIndex` и `toIndex`.
+ *
+ * @returns {string} HTML-разметка списка запланированных задач.
+ */
 export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     const ulId = generateId();
 

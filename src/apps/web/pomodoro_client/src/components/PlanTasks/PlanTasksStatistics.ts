@@ -3,10 +3,20 @@ import type {PlanPomodoroTasksStatistics} from "../../types/statistics.ts";
 import {escapeHtml} from "../../utils/html.ts";
 import {formatDateTime as formatDateTime} from "../../utils/time.ts";
 
+/**
+ * Свойства компонента статистики плана
+ * @typedef {Object} PlanTasksStatisticsProps
+ * @property {PlanPomodoroTasksStatistics} statistics - статистика плановых задач
+ */
 export type PlanTasksStatisticsProps = {
     statistics: PlanPomodoroTasksStatistics;
 };
 
+/**
+ * Компонент статистики плана с информацией о перерывах и категориях
+ * @param {PlanTasksStatisticsProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
     const { nextLongBreak, finishTime, categories } = statistics;
 

@@ -9,14 +9,20 @@ import {
 } from "../../types/task.ts";
 import { useEffect } from "../../utils/render.ts";
 
+/** Переменная для отслеживания типа таймера */
 let _prevTimerType: ActivePomodoroTaskType | undefined;
 
-/** Стабильные id элементов таймера (одно приложение на странице). */
+/** ID левой кнопки управления таймером */
 const TIMER_LEFT_BUTTON_ID = "timer-left-btn";
+/** ID правой кнопки управления таймером */
 const TIMER_RIGHT_BUTTON_ID = "timer-right-btn";
+/** ID элемента с обратным отсчетом */
 const TIMER_COUNTDOWN_ID = "timer-countdown";
 
-/** Подписи кнопок управления таймером. */
+/**
+ * Подписи кнопок управления таймером
+ * @enum {string}
+ */
 const BUTTON_TITLES = {
     START: "СТАРТ",
     STOP: "СТОП",
@@ -27,7 +33,7 @@ const BUTTON_TITLES = {
 } as const;
 
 /**
- * Пропсы компонента таймера.
+ * Свойства компонента таймера
  * @property {boolean} isMobile - признак мобильного вида.
  * @property {ActivePomodoroTask | null | undefined} [activeTask] - текущая активная задача или перерыв.
  * @property {PlanPomodoroTask[]} planTasks - задачи в плане.

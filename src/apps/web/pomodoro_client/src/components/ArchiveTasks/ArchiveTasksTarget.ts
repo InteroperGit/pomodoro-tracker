@@ -6,8 +6,16 @@ export type ArchiveTasksTargetProps = {
 };
 
 /**
- * Строка цели на день: осталось X из goal.
- * Перечёркивается как итоги.
+ * Компонент `ArchiveTasksTarget` — отображает прогресс выполнения дневной цели по задачам.
+ *
+ * Показывает, сколько задач осталось до выполнения цели или сообщает об её достижении.
+ * Если цель достигнута, меняет текст и применяет специальный класс для стилизации.
+ *
+ * @param {ArchiveTasksTargetProps} props - Пропсы компонента.
+ * @param {number} props.tasksCount - Текущее количество выполненных (архивных) задач.
+ * @param {number} [props.goal=10] - Дневная цель по количеству задач (по умолчанию 10).
+ *
+ * @returns {string} HTML-разметка статуса выполнения цели.
  */
 export function ArchiveTasksTarget({ tasksCount, goal = 10 }: ArchiveTasksTargetProps) {
     const achieved = tasksCount >= goal;

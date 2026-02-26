@@ -15,11 +15,22 @@ import {
     useStartEditTask
 } from "../../app/appContext.ts";
 
+/**
+ * Свойства компонента плановых задач
+ * @typedef {Object} PlanTasksProps
+ * @property {boolean} isMobile - мобильное ли представление
+ * @property {PlanPomodoroTasksState} data - данные плана задач
+ */
 export type PlanTasksProps = {
     isMobile: boolean;
     data: PlanPomodoroTasksState;
 }
 
+/**
+ * Компонент списка плановых задач со статистикой
+ * @param {PlanTasksProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function PlanTasks({ isMobile, data }: PlanTasksProps) {
     const { tasks, statistics } = data;
     const { tasksCount, tasksTime } = statistics;

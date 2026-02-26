@@ -1,3 +1,8 @@
+/**
+ * Форматирует длительность (мс) в вид «X ч Y мин»
+ * @param {number} time - время в миллисекундах
+ * @returns {string} отформатированное время
+ */
 export function toHumanHourMinutesTime(time: number) {
     const timeSec = time / 1000;
     const hours = Math.floor(timeSec / 3600 );
@@ -6,6 +11,11 @@ export function toHumanHourMinutesTime(time: number) {
     return hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
 }
 
+/**
+ * Форматирует длительность (мс) в вид «X мин Y сек»
+ * @param {number} time - время в миллисекундах
+ * @returns {string} отформатированное время
+ */
 export function toHumanMinutesSecondsTime(time: number) {
     const timeSec = time / 1000;
     const minutes = Math.floor(timeSec / 60 );
@@ -19,8 +29,10 @@ export function toHumanMinutesSecondsTime(time: number) {
 }
 
 /**
- * Форматирует длительность (мс) в вид «X ч Y мин Z сек».
- * Секунды выводятся только при необходимости (если не ноль).
+ * Форматирует длительность (мс) в вид «X ч Y мин Z сек»
+ * Секунды выводятся только при необходимости
+ * @param {number} time - время в миллисекундах
+ * @returns {string} отформатированное время
  */
 export function toHumanHourMinutesSecondsTime(time: number): string {
     const timeSec = time / 1000;
@@ -36,11 +48,10 @@ export function toHumanHourMinutesSecondsTime(time: number): string {
 }
 
 /**
- * Форматирует timestamp в читаемое время с учетом даты.
- * Если задача выполнена сегодня - показывает только время.
- * Если задача выполнена в другой день - показывает дату и время.
- * @param time - timestamp в миллисекундах
- * @returns объект с отформатированным временем и ISO строкой для атрибута datetime
+ * Форматирует timestamp в читаемое время с учетом даты
+ * Сегодня - только время, другой день - дата и время
+ * @param {number} time - timestamp в миллисекундах
+ * @returns {Object} объект с display (читаемое время) и iso (ISO строка)
  */
 export function formatDateTime(time: number): { display: string; iso: string } {
     try {

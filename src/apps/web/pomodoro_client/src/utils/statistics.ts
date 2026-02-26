@@ -4,6 +4,14 @@ import type {
     PlanPomodoroTasksStatistics,
 } from "../types/statistics.ts";
 
+/**
+ * Конфигурация для расчета статистики плана
+ * @typedef {Object} PlanStatisticsConfig
+ * @property {number} taskTime - время на один помидор (мс)
+ * @property {number} shortBreakTime - время короткого перерыва (мс)
+ * @property {number} longBreakTime - время длинного перерыва (мс)
+ * @property {number} longBreakAfter - после скольких помидоров идет длинный перерыв
+ */
 export type PlanStatisticsConfig = {
     taskTime: number;
     shortBreakTime: number;
@@ -11,6 +19,11 @@ export type PlanStatisticsConfig = {
     longBreakAfter: number;
 };
 
+/**
+ * Получить статистику по категориям из плана
+ * @param {PlanPomodoroTask[]} tasks - массив плановых задач
+ * @returns {Object[]} статистика по категориям
+ */
 function getPlanCategories(tasks: PlanPomodoroTask[]) {
     const map = new Map<string, number>();
     tasks.forEach(({ task, count }) => {
@@ -23,6 +36,12 @@ function getPlanCategories(tasks: PlanPomodoroTask[]) {
     }));
 }
 
+/**
+ * Рассчитать статистику плана с учетом перерывов
+ * @param {PlanPomodoroTask[]} tasks - массив плановых задач
+ * @param {PlanStatisticsConfig} config - конфигурация времени
+ * @returns {PlanPomodoroTasksStatistics} полная статистика плана
+ */
 export function getPlanTasksStatistics(
     tasks: PlanPomodoroTask[],
     config: PlanStatisticsConfig
@@ -53,6 +72,11 @@ export function getPlanTasksStatistics(
     };
 }
 
+/**
+ * Получить статистику по категориям из архива
+ * @param {ArchivePomodoroTask[]} tasks - массив выполненных задач
+ * @returns {Object[]} статистика по категориям
+ */
 function getArchiveCategories(tasks: ArchivePomodoroTask[]) {
     const map = new Map<string, number>();
     tasks.forEach(({ task }) => {
@@ -65,6 +89,11 @@ function getArchiveCategories(tasks: ArchivePomodoroTask[]) {
     }));
 }
 
+/**
+ * Рассчитать статистику архива выполненных задач
+ * @param {ArchivePomodoroTask[]} tasks - массив выполненных задач
+ * @returns {ArchivePomodoroTasksStatistics} статистика архива
+ */
 export function getArchiveTasksStatistics(
     tasks: ArchivePomodoroTask[]
 ): ArchivePomodoroTasksStatistics {

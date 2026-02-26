@@ -4,20 +4,6 @@ import type {ArchivePomodoroTask, PomodoroTask} from "../../types/task.ts";
 import styles from "./ArchiveTasksList.module.scss";
 import {EmptyState} from "../EmptyState/index.ts";
 
-/**
- * Компонент `ArchiveTasksList` — отображает список архивных задач.
- * 
- * Включает заголовок с названиями колонок и список выполненных задач.
- * Поддерживает мобильную и десктопную версии с разной разметкой заголовка.
- * 
- * @module ArchiveTasksList
- * 
- * @param {ArchiveTasksListProps} props - Пропсы компонента
- * @param {boolean} props.isMobile - Флаг мобильной версии
- * @param {ArchivePomodoroTask[]} props.tasks - Массив архивных задач
- * 
- * @returns {string} HTML-разметка списка архивных задач
- */
 export type ArchiveTasksListProps = {
     isMobile: boolean;
     tasks: ArchivePomodoroTask[];
@@ -27,6 +13,22 @@ export type ArchiveTasksListProps = {
     };
 }
 
+/**
+ * Компонент `ArchiveTasksList` — отображает список архивных (выполненных) задач.
+ *
+ * Включает заголовок таблицы, компонент с количеством задач и сам список.
+ * Если массив задач пуст, отображает состояние-заглушку (EmptyState).
+ * Поддерживает адаптивность для мобильных и десктопных устройств.
+ *
+ * @param {ArchiveTasksListProps} props - Пропсы компонента.
+ * @param {boolean} props.isMobile - Флаг мобильной версии для изменения разметки.
+ * @param {ArchivePomodoroTask[]} props.tasks - Массив архивных задач для отображения.
+ * @param {Object} props.actions - Действия, передаваемые в каждую задачу списка.
+ * @param {function(number): void} props.actions.deleteArchiveTask - Функция для удаления задачи из архива по её индексу.
+ * @param {function(PomodoroTask): void} props.actions.refreshTask - Функция для восстановления или повторного запуска задачи.
+ *
+ * @returns {string} HTML-разметка компонента списка архивных задач.
+ */
 export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListProps) {
     // Общий заголовок для обеих версий
     const headerClasses = isMobile

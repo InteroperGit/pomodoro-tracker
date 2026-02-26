@@ -14,11 +14,20 @@ import { updateTabTitle } from "../utils/updateTabTitle.ts";
 import { showToast } from "../components/Toast";
 import { hasActiveInput } from "../utils/input.ts";
 
+/** Префикс для ключей localStorage */
 const STORAGE_PREFIX = "pomodoro";
+/** Ключ для хранения состояния */
 const STATE_ITEM_KEY = "state";
+/** Задержка throttle при сохранении состояния (мс) */
 const THROTTLE_DELAY = 1000;
+/** ID корневого DOM элемента */
 const ROOT_ELEMENT_ID = "root";
 
+/**
+ * Инициализирует приложение в корневом элементе
+ * Загружает сохраненное состояние, создает контекст и запускает рендер
+ * @param {HTMLElement} root - корневой DOM элемент
+ */
 const initApp = (root: HTMLElement) => {
     const storage = new LocalStorage(STORAGE_PREFIX);
     

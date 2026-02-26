@@ -6,29 +6,13 @@ import type {ArchivePomodoroTasksState} from "../../types/context.ts";
 import type { PomodoroTask } from "../../types/task.ts";
 
 /**
- * Компонент `ArchiveTasks` — главный компонент раздела архивных задач.
- * 
- * Объединяет заголовок со статистикой, список выполненных задач и детальную статистику.
- * Поддерживает мобильную и десктопную версии с адаптивной разметкой.
- * 
- * @module ArchiveTasks
- * 
- * @param {ArchiveTasksProps} props - Пропсы компонента
- * @param {boolean} props.isMobile - Флаг мобильной версии
- * @param {ArchivePomodoroTasksState} props.data - Состояние архивных задач (задачи и статистика)
- * 
- * @returns {string} HTML-разметка раздела архивных задач
- * 
- * @example
- * ```ts
- * const archiveTasks = ArchiveTasks({
- *     isMobile: false,
- *     data: {
- *         tasks: [...],
- *         statistics: { tasksCount: 10, tasksTime: 3600000, categories: [...] }
- *     }
- * });
- * ```
+ * Свойства компонента архива задач
+ * @typedef {Object} ArchiveTasksProps
+ * @property {boolean} isMobile - мобильное ли представление
+ * @property {ArchivePomodoroTasksState} data - состояние архива (задачи и статистика)
+ * @property {Object} actions - объект действий
+ * @property {Function} actions.deleteArchiveTask - удалить задачу из архива по индексу
+ * @property {Function} actions.refreshTask - повторно добавить выполненную задачу
  */
 export type ArchiveTasksProps = {
     isMobile: boolean;
@@ -39,6 +23,12 @@ export type ArchiveTasksProps = {
     };
 }
 
+/**
+ * Компонент архива выполненных задач
+ * Отображает список выполненных задач со статистикой
+ * @param {ArchiveTasksProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function ArchiveTasks({ isMobile, data, actions }: ArchiveTasksProps) {
     const { tasks, statistics } = data;
     const { tasksCount, tasksTime } = statistics;

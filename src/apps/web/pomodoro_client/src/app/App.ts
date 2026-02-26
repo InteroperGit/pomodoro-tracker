@@ -24,8 +24,15 @@ import {useIsMobile} from "../utils/layout.ts";
 import {PlanTasks} from "../components/PlanTasks";
 import {ArchiveTasks} from "../components/ArchiveTasks";
 
+/** ID контейнера приложения */
 const APP_CONTAINER_ID = "pomodoro-app";
 
+/**
+ * Главный компонент приложения Pomodoro
+ * Рендерит UI с таймером, списком задач и архивом
+ * @param {AppContext} ctx - контекст приложения
+ * @returns {string} HTML-строка компонента
+ */
 export function App(ctx: AppContext) {
     const state = ctx.store.getState();
     const isMobile = useIsMobile();

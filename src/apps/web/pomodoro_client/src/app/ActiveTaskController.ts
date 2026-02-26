@@ -7,10 +7,14 @@ import {
 import {generateId} from "../utils/idGenerator.ts";
 import {EventBus} from "../utils/eventBus.ts";
 
+/** Период отправки тиков таймера (мс) */
 const TICK_PERIOD = 1000;
+/** Название для коротких перерывов */
 const SHORT_BREAK_TITLE = "Короткий перерыв";
+/** Название для длинных перерывов */
 const LONG_BREAK_TITLE = "Длинный перерыв";
 
+/** Варианты следующей фазы работы */
 type NextPhase =
     | { type: "task"; task: PlanPomodoroTask }
     | { type: "replaceTask", task: PlanPomodoroTask }
@@ -18,14 +22,26 @@ type NextPhase =
     | { type: "longBreak" }
     | { type: "idle" }
 
+/**
+ * Типы событий контроллера и их данные
+ */
 export type ActiveTaskControllerPayloads = {
     tick: number;
     completed: void;
     idle: void;
 }
 
+/** События контроллера */
 export type ActiveTaskControllerEvents = keyof ActiveTaskControllerPayloads;
 
+/**
+ * Конфигурация контроллера активной задачи
+ * @typedef {Object} ActiveTaskControllerConfiguration
+ * @property {number} taskTime - длительность одного помидора (мс)
+ * @property {number} shortBreakTime - длительность короткого перерыва (мс)
+ * @property {number} longBreakTime - длительность длинного перерыва (мс)
+ * @property {number} maxShortBreaksSerie - после скольких помидоров идет длинный перерыв
+ */
 export type ActiveTaskControllerConfiguration = {
     taskTime: number;
     shortBreakTime: number;
@@ -33,6 +49,10 @@ export type ActiveTaskControllerConfiguration = {
     maxShortBreaksSerie: number;
 }
 
+/**
+ * Контроллер для управления текущей активной задачей и таймером
+ * Отвечает за запуск/паузу/остановку таймера и управление фазами (задача/перерыв)
+ */
 export class ActiveTaskController {
     private _configuration: ActiveTaskControllerConfiguration;
     private _activeTask: ActivePomodoroTask = {
@@ -45,6 +65,9 @@ export class ActiveTaskController {
     private _lastTime: number = 0;
     private _eventBus: EventBus<ActiveTaskControllerPayloads>;
 
+    /**
+     * @param {ActiveTaskControllerConfiguration} configuration - конфигурация с времеными параметрами
+     */
     constructor(configuration: ActiveTaskControllerConfiguration) {
         if (!configuration) {
             throw new Error("No configuration found.");
@@ -54,19 +77,35 @@ export class ActiveTaskController {
         this._eventBus = new EventBus<ActiveTaskControllerPayloads>();
     }
 
+    /**
+     * Получить текущую активную задачу
+     * @returns {ActivePomodoroTask} текущая задача
+     */
     get activeTask(): ActivePomodoroTask {
         return this._activeTask;
     }
 
+    /**
+     * Проверить, активна ли задача
+     * @returns {boolean} true если активна или на паузе
+     */
     get isActive(): boolean {
         return this._activeTask.status === ActivePomodoroTaskStatus.Active
             || this._activeTask.status === ActivePomodoroTaskStatus.Paused;
     }
 
+    /**
+     * Получить статус текущей задачи
+     * @returns {ActivePomodoroTaskStatus} статус
+     */
     get status() {
         return this._activeTask.status;
     }
 
+    /**
+     * Получить оставшееся время текущей задачи
+     * @returns {number} оставшееся время (мс)
+     */
     get restTime() {
         return this._activeTask.restTime;
     }

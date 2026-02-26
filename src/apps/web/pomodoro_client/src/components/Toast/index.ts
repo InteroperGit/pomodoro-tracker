@@ -1,8 +1,14 @@
 import styles from "./Toast.module.scss";
 
+/** ID контейнера для тостов */
 const TOAST_CONTAINER_ID = "toast-container";
+/** Длительность отображения тоста (мс) */
 const TOAST_DURATION = 4000;
 
+/**
+ * Получает или создает контейнер для тостов в body
+ * @returns {HTMLDivElement} элемент контейнера
+ */
 function getContainer(): HTMLDivElement {
     let el = document.getElementById(TOAST_CONTAINER_ID);
     if (!el) {
@@ -14,6 +20,11 @@ function getContainer(): HTMLDivElement {
     return el as HTMLDivElement;
 }
 
+/**
+ * Показать всплывающее уведомление (тост)
+ * @param {string} message - текст сообщения
+ * @param {"info"|"success"} [type="info"] - тип тоста (влияет на стилизацию)
+ */
 export function showToast(message: string, type: "info" | "success" = "info"): void {
     const container = getContainer();
     const toast = document.createElement("div");

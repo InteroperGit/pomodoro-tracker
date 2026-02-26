@@ -1,11 +1,22 @@
 import styles from "./PlanTasksTitle.module.scss";
 import {toHumanHourMinutesTime} from "../../utils/time.ts";
 
+/**
+ * Свойства заголовка плановых задач
+ * @typedef {Object} PlanTasksTitleProps
+ * @property {number} tasksCount - количество плановых помидоров
+ * @property {number} tasksTime - общее время всех задач (мс)
+ */
 export type PlanTasksTitleProps = {
     tasksCount: number;
     tasksTime: number;
 }
 
+/**
+ * Компонент заголовка с статистикой плановых задач
+ * @param {PlanTasksTitleProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function PlanTasksTitle({ tasksCount, tasksTime }: PlanTasksTitleProps) {
     const humanTime = toHumanHourMinutesTime(tasksTime);
 

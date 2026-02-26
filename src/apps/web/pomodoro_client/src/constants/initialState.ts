@@ -3,6 +3,10 @@ import type {
     PlanPomodoroTasksState,
 } from "../types/context.ts";
 
+/**
+ * Инициализирует начальное состояние плановых задач
+ * @returns {PlanPomodoroTasksState} пустое состояние плана
+ */
 export const getInitPlanTasks = (): PlanPomodoroTasksState => ({
     tasks: [],
     statistics: {
@@ -14,6 +18,10 @@ export const getInitPlanTasks = (): PlanPomodoroTasksState => ({
     },
 });
 
+/**
+ * Инициализирует начальное состояние архива задач
+ * @returns {ArchivePomodoroTasksState} пустое состояние архива
+ */
 export const getInitArchiveTasks = (): ArchivePomodoroTasksState => ({
     tasks: [],
     statistics: {

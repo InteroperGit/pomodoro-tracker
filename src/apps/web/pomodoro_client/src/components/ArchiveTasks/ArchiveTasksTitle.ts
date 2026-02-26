@@ -2,23 +2,21 @@ import styles from "./ArchiveTasksTitle.module.scss";
 import {toHumanHourMinutesSecondsTime} from "../../utils/time.ts";
 
 /**
- * Компонент `ArchiveTasksTitle` — заголовок раздела архивных задач.
- * 
- * Отображает общую статистику выполненных задач: количество задач и общее время.
- * 
- * @module ArchiveTasksTitle
- * 
- * @param {ArchiveTasksTitleProps} props - Пропсы компонента
- * @param {number} props.tasksCount - Количество выполненных задач
- * @param {number} props.tasksTime - Общее время выполнения всех задач в миллисекундах
- * 
- * @returns {string} HTML-разметка заголовка с статистикой
+ * Свойства заголовка архива задач
+ * @typedef {Object} ArchiveTasksTitleProps
+ * @property {number} tasksCount - количество выполненных задач
+ * @property {number} tasksTime - общее время выполнения (мс)
  */
 export type ArchiveTasksTitleProps = {
     tasksCount: number;
     tasksTime: number;
 }
 
+/**
+ * Компонент заголовка архива с статистикой выполненных задач
+ * @param {ArchiveTasksTitleProps} props - свойства компонента
+ * @returns {string} HTML-строка компонента
+ */
 export function ArchiveTasksTitle({ tasksCount, tasksTime }: ArchiveTasksTitleProps) {
     const humanTime = toHumanHourMinutesSecondsTime(tasksTime);
 

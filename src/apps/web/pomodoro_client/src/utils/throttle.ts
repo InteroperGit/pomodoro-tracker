@@ -1,3 +1,10 @@
+/**
+ * Создает throttled функцию, вызывающуюся не чаще чем раз в `delay` мс
+ * @template F
+ * @param {Function} fn - функция для throttle
+ * @param {number} delay - минимальный интервал между вызовами (мс)
+ * @returns {Function} throttled функция
+ */
 export function throttle<F extends unknown[]>(
     fn: (...args: F) => void, 
     delay: number): (...args: F) => void {
