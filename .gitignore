@@ -33,6 +33,8 @@ Thumbs.db
 .idea/
 
 # Misc
+_tmp
+_tmp*
 *.log
 *.pid
 *.seed
