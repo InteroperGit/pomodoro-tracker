@@ -49,7 +49,7 @@ export type TimerProps = {
         pauseTask: () => void;
         resumeTask: () => void;
         completeTask: () => void;
-        registerActiveTaskTimerTick: (handler: (restTime: number) => void) => void;
+        registerActiveTaskTimerTick: (handler: (restTime: number) => void) => () => void;
     };
 };
 
@@ -173,7 +173,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
             return;
         }
 
-        actions.registerActiveTaskTimerTick((restTime) => {
+        const unsubscribeTimerTick = actions.registerActiveTaskTimerTick((restTime) => {
             const { minutes, seconds } = getTime(restTime);
             const timerCountdown = document.getElementById(TIMER_COUNTDOWN_ID);
             if (timerCountdown) {
@@ -223,6 +223,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
         rightButton.addEventListener("click", handleRightClick);
 
         return () => {
+            unsubscribeTimerTick();
             leftButton.removeEventListener("click", handleLeftClick);
             rightButton.removeEventListener("click", handleRightClick);
         };

@@ -91,6 +91,6 @@ export type AppActions = {
     resumeTask(): void;
     /** Завершить текущую задачу */
     completeTask(): void;
-    /** Подписать на события тика таймера */
-    registerTimerTickEventListener(handler: (restTime: number) => void): void;
+    /** Подписать на события тика таймера, возвращает функцию отписки */
+    registerTimerTickEventListener(handler: (restTime: number) => void): () => void;
 }

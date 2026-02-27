@@ -534,7 +534,7 @@ export function createContext(
 
             taskController.complete();
         },
-        registerTimerTickEventListener(handler: (restTime: number) => void): void {
+        registerTimerTickEventListener(handler: (restTime: number) => void): () => void {
             if (!handler) {
                 throw new Error("Handler is not initialized");
             }
@@ -545,7 +545,7 @@ export function createContext(
                 }
             };
 
-            taskController.addEventListener("tick", wrappedHandler);
+            return taskController.addEventListener("tick", wrappedHandler);
         }
     }
 
@@ -731,8 +731,8 @@ export function useCompleteTask() {
  * Подписать на события тика таймера
  * @param {Function} handler - обработчик с оставшимся временем
  */
-export function useActiveTaskTimerTick(handler: (restTime: number) => void) {
-    context.actions.registerTimerTickEventListener(handler);
+export function useActiveTaskTimerTick(handler: (restTime: number) => void): () => void {
+    return context.actions.registerTimerTickEventListener(handler);
 }
 
 /**

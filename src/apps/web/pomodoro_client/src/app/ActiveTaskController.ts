@@ -391,9 +391,10 @@ export class ActiveTaskController {
     }
 
     addEventListener<T extends ActiveTaskControllerEvents>(
-        event: T, 
+        event: T,
         handler: (args?: ActiveTaskControllerPayloads[T]) => void
-    ): void  {
+    ): () => void {
         this._eventBus.addEventListener(event, handler);
+        return () => this._eventBus.removeEventListener(event, handler);
     }
 }
