@@ -5,15 +5,16 @@ import {PlanTasksStatistics} from "./PlanTasksStatistics";
 import {PlanTaskList} from "./PlanTaskList.ts";
 import type {PlanPomodoroTasksState} from "../../types/context.ts";
 import {
-    useAddTask, useArchiveTask,
+    useAddTask,
+    useArchiveTask,
     useCancelEditTask,
     useCompleteEditTask,
     useDecTask,
     useGetEditingPlanTaskIndex,
     useIncTask,
     useReorderTasks,
-    useStartEditTask
-} from "../../app/appContext.ts";
+    useStartEditTask,
+} from "../../app/hooks.ts";
 
 /**
  * Свойства компонента плановых задач

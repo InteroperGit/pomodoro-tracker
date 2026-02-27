@@ -4,8 +4,8 @@ import { Toolbar, TOOLBAR_DROPDOWN_ID, TOOLBAR_MENU_BTN_ID, TOOLBAR_THEME_TOGGLE
 import { useDropdown, dropdownStyles } from '../components/Dropdown';
 import { Timer } from '../components/Timer';
 import { Footer } from "../components/Footer";
+import { type AppContext } from "./appContext.ts";
 import {
-    type AppContext,
     useActiveTaskTimerTick,
     useCancelEditTask,
     useCompleteTask,
@@ -17,7 +17,7 @@ import {
     useSetTheme,
     useStartTask,
     useStopTask,
-} from "./appContext.ts";
+} from "./hooks.ts";
 import {useEffect} from "../utils/render.ts";
 import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
 import {useIsMobile} from "../utils/layout.ts";

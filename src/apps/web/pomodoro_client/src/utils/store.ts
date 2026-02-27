@@ -1,6 +1,9 @@
 /** Функция отписки от изменений состояния */
 export type Unsubscribe = () => void;
 
+/** Тип хранилища состояния */
+export type Store<S> = ReturnType<typeof createStore<S>>;
+
 /**
  * Создает простое реактивное хранилище состояния
  * @template S - тип состояния
