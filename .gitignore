@@ -1,3 +1,24 @@
+# AI Tools
+# Claude Code
+.claude/
+.claudeignore
+
+# Cursor AI
+.cursor/
+.cursorignore
+.cursorindex/
+
+# GitHub Copilot / VS Code AI
+.vscode/copilot*
+.copilot*
+.github/copilot/
+
+# Общие AI-кэши
+*.aiindex
+ai-cache/
+llm-cache/
+embeddings/
+
 # Dependencies
 node_modules/
 .pnp/
