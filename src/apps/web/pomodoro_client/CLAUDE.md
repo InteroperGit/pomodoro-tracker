@@ -101,7 +101,12 @@ Components are pure render functions — they do not hold internal state. State 
 
 ### Code Style
 
-- Always use curly braces for `if`, `else`, `for`, and `while` blocks — even single-line bodies. Never write braceless one-liners like `if (x) return;`.
+- Always use curly braces for `if`, `else`, `for`, and `while` blocks. Always place the body on the next line — never inline. Example: `if (x) { return; }` is wrong; use:
+  ```ts
+  if (x) {
+      return;
+  }
+  ```
 
 ### TypeScript Config
 

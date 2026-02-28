@@ -66,9 +66,13 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
 
             const handleDragStart = (e: DragEvent) => {
                 const li = (e.target as HTMLElement).closest("li[data-index]") as HTMLLIElement | null;
-                if (!li) return;
+                if (!li) {
+                    return;
+                }
                 const inner = li.firstElementChild as HTMLElement;
-                if (!inner) return;
+                if (!inner) {
+                    return;
+                }
 
                 dragFromIndex = Number(li.dataset.index);
                 draggedElement = li;

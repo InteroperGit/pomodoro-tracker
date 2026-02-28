@@ -41,9 +41,15 @@ export function toHumanHourMinutesSecondsTime(time: number): string {
     const seconds = Math.floor(timeSec % 60);
 
     const parts: string[] = [];
-    if (hours > 0) parts.push(`${hours} ч`);
-    if (minutes > 0) parts.push(`${minutes} мин`);
-    if (seconds > 0) parts.push(`${seconds} сек`);
+    if (hours > 0) {
+        parts.push(`${hours} ч`);
+    }
+    if (minutes > 0) {
+        parts.push(`${minutes} мин`);
+    }
+    if (seconds > 0) {
+        parts.push(`${seconds} сек`);
+    }
     return parts.length > 0 ? parts.join(" ") : "0 сек";
 }
 

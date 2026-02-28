@@ -102,7 +102,9 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
                         li.classList.add(completingClass);
                         let done = false;
                         const doArchive = () => {
-                            if (done) return;
+                            if (done) {
+                                return;
+                            }
                             done = true;
                             li.removeEventListener("transitionend", onEnd);
                             actions.archiveTask(task.id);
