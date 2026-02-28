@@ -5,18 +5,7 @@ import { ActiveTaskController, type ActiveTaskControllerConfiguration } from "./
 import { createTaskActions } from "./actions/taskActions.ts";
 import { createTimerActions } from "./actions/timerActions.ts";
 import { createThemeActions } from "./actions/themeActions.ts";
-
-const POMODORO_TASK_TIME = 25 * 60 * 1000;
-const POMODORO_SHORT_BREAK_TIME = 5 * 60 * 1000;
-const POMODORO_LONG_BREAK_TIME = 15 * 60 * 1000;
-const LONG_BREAK_AFTER = 4;
-
-export const planStatisticsConfig = {
-    taskTime: POMODORO_TASK_TIME,
-    shortBreakTime: POMODORO_SHORT_BREAK_TIME,
-    longBreakTime: POMODORO_LONG_BREAK_TIME,
-    longBreakAfter: LONG_BREAK_AFTER,
-};
+import { appConfig } from "./config.ts";
 
 let context: AppContext;
 
@@ -33,10 +22,10 @@ export function createContext(
     onPomodoroCallback?: (event: PomodoroEvent) => void
 ) {
     const configuration: ActiveTaskControllerConfiguration = {
-        taskTime: POMODORO_TASK_TIME,
-        shortBreakTime: POMODORO_SHORT_BREAK_TIME,
-        longBreakTime: POMODORO_LONG_BREAK_TIME,
-        maxShortBreaksSerie: LONG_BREAK_AFTER,
+        taskTime: appConfig.taskTime,
+        shortBreakTime: appConfig.shortBreakTime,
+        longBreakTime: appConfig.longBreakTime,
+        maxShortBreaksSerie: appConfig.longBreakAfter,
     };
 
     if (initialState.activeTask
@@ -57,7 +46,7 @@ export function createContext(
 
     const store = createStore<AppState>(initialState);
 
-    const taskActions = createTaskActions(store, taskController, planStatisticsConfig);
+    const taskActions = createTaskActions(store, taskController, appConfig);
     const timerActions = createTimerActions(store, taskController, onPomodoroCallback);
     const themeActions = createThemeActions(store);
 

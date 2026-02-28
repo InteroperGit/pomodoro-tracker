@@ -2,7 +2,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { findById } from "../utils/dom";
 import { App } from "./App";
 import { type AppState, type PomodoroEvent } from "../types/context.ts";
-import {createContext, planStatisticsConfig, registerContext} from "./appContext.ts";
+import {createContext, registerContext} from "./appContext.ts";
+import {appConfig} from "./config.ts";
 import {applyTheme} from "../utils/theme.ts";
 import {getPlanTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
@@ -43,7 +44,7 @@ const initApp = (root: HTMLElement) => {
     const activeTask = sanitizeActiveTask(state?.activeTask);
     let planTasks = state?.planTasks ?? getInitPlanTasks();
     if (planTasks.tasks.length > 0) {
-        planTasks = { ...planTasks, statistics: getPlanTasksStatistics(planTasks.tasks, planStatisticsConfig) };
+        planTasks = { ...planTasks, statistics: getPlanTasksStatistics(planTasks.tasks, appConfig) };
     }
     const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
 
