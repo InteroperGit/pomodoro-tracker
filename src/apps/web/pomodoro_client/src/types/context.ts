@@ -52,6 +52,7 @@ export type AppState = {
     planTasks: PlanPomodoroTasksState;
     archiveTasks: ArchivePomodoroTasksState;
     theme: ThemeId;
+    isMobile: boolean;
 }
 
 /**

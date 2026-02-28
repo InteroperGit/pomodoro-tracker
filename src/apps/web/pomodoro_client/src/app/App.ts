@@ -20,7 +20,6 @@ import {
 } from "./hooks.ts";
 import {useEffect} from "../utils/render.ts";
 import {useGetPlanTaskControlSelector} from "../utils/hooks.ts";
-import {useIsMobile} from "../utils/layout.ts";
 import {PlanTasks} from "../components/PlanTasks";
 import {ArchiveTasks} from "../components/ArchiveTasks";
 
@@ -35,7 +34,7 @@ const APP_CONTAINER_ID = "pomodoro-app";
  */
 export function App(ctx: AppContext) {
     const state = ctx.store.getState();
-    const isMobile = useIsMobile();
+    const { isMobile } = state;
 
     const toolbar = Toolbar({ isMobile, theme: state.theme });
     const timer = Timer({

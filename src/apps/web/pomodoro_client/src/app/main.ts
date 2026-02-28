@@ -7,7 +7,7 @@ import {appConfig} from "./config.ts";
 import {applyTheme} from "../utils/theme.ts";
 import {getPlanTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
-import {onLayoutChanged} from "../utils/layout.ts";
+import {onLayoutChanged, useIsMobile} from "../utils/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
 import { throttle } from "../utils/throttle.ts";
 import { getInitArchiveTasks, getInitPlanTasks } from "../constants/initialState.ts";
@@ -15,7 +15,6 @@ import { sanitizeActiveTask } from "../utils/activeTask.ts";
 import { updateTabTitle } from "../utils/updateTabTitle.ts";
 import { validateAppState } from "../utils/stateSchema.ts";
 import { showToast } from "../components/Toast";
-import { hasActiveInput } from "../utils/input.ts";
 import { requestNotificationPermission, sendNotification } from "../utils/notifications.ts";
 
 /** Префикс для ключей localStorage */
@@ -59,6 +58,7 @@ const initApp = (root: HTMLElement) => {
         planTasks,
         archiveTasks,
         theme,
+        isMobile: useIsMobile(),
     };
 
     const saveStateThrottle: (s: AppState) => void = throttle((s: AppState) => {
@@ -117,12 +117,8 @@ const initApp = (root: HTMLElement) => {
         render(root, App, ctx);
     });
 
-    onLayoutChanged(() => {
-        if (hasActiveInput()) {
-            return;
-        }
-
-        render(root, App, ctx);
+    onLayoutChanged((isMobile: boolean) => {
+        ctx.store.setState({ ...ctx.store.getState(), isMobile });
     });
 
     document.addEventListener("visibilitychange", () => {

@@ -168,3 +168,11 @@ export function useActiveTaskTimerTick(handler: (restTime: number) => void): () 
 export function useSetTheme(theme: ThemeId) {
     useContext().actions.setTheme(theme);
 }
+
+/**
+ * Получить флаг мобильного представления из состояния
+ * @returns {boolean} true если мобильный viewport
+ */
+export function useIsMobile(): boolean {
+    return useContext().store.getState().isMobile;
+}
