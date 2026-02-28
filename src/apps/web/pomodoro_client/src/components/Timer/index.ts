@@ -11,6 +11,10 @@ import { useEffect } from "../../utils/render.ts";
 
 /** Переменная для отслеживания типа таймера */
 let _prevTimerType: ActivePomodoroTaskType | undefined;
+/** Переменная для отслеживания статуса таймера (для объявлений screen reader) */
+let _prevTimerStatus: ActivePomodoroTaskStatus | undefined;
+/** Последнее объявлённое пятиминутное значение (для screen reader) */
+let _lastAnnouncedFiveMinuteMark: number = -1;
 
 /** ID левой кнопки управления таймером */
 const TIMER_LEFT_BUTTON_ID = "timer-left-btn";
@@ -18,6 +22,10 @@ const TIMER_LEFT_BUTTON_ID = "timer-left-btn";
 const TIMER_RIGHT_BUTTON_ID = "timer-right-btn";
 /** ID элемента с обратным отсчетом */
 const TIMER_COUNTDOWN_ID = "timer-countdown";
+/** ID скрытого live-региона для screen reader */
+const TIMER_ANNOUNCER_ID = "timer-announcer";
+/** Интервал объявлений таймера (мс) */
+const ANNOUNCE_INTERVAL = 5 * 60 * 1000;
 
 /**
  * Подписи кнопок управления таймером
@@ -138,7 +146,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                 ${EmptyState({
                     variant: "timer_no_active",
                     title: "Нет активной задачи",
-                    subtitle: "Начните помодоро или перерыв",
+                    subtitle: "Начните помидоро или перерыв",
                     className: styles.timer__empty_content,
                 })}
             </div>
@@ -150,8 +158,31 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     const { minutes, seconds } = getTime(restTime);
     const [leftButtonTitle, rightButtonTitle] = getButtonTitles(activeTask);
 
-    const modeChanged = _prevTimerType !== undefined && _prevTimerType !== activeTask.type;
+    const isFirstRender = _prevTimerType === undefined;
+    const modeChanged = !isFirstRender && _prevTimerType !== activeTask.type;
     _prevTimerType = activeTask.type;
+
+    const fiveMinuteMark = Math.floor(restTime / ANNOUNCE_INTERVAL);
+    if (isFirstRender || modeChanged) {
+        _prevTimerStatus = undefined;
+        _lastAnnouncedFiveMinuteMark = fiveMinuteMark;
+    }
+
+    const prevStatus = _prevTimerStatus;
+    _prevTimerStatus = activeTask.status;
+
+    let pendingAnnouncement = "";
+    if (prevStatus !== undefined && prevStatus !== activeTask.status) {
+        if (activeTask.status === ActivePomodoroTaskStatus.Active
+                && prevStatus === ActivePomodoroTaskStatus.Pending) {
+            pendingAnnouncement = `Таймер запущен. Осталось ${minutes} минут.`;
+        } else if (activeTask.status === ActivePomodoroTaskStatus.Active
+                && prevStatus === ActivePomodoroTaskStatus.Paused) {
+            pendingAnnouncement = "Таймер возобновлён.";
+        } else if (activeTask.status === ActivePomodoroTaskStatus.Paused) {
+            pendingAnnouncement = "Таймер поставлен на паузу.";
+        }
+    }
 
     const timerTypeStyle = activeTask.type === ActivePomodoroTaskType.Task
         ? styles.timer__task
@@ -173,11 +204,27 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
             return;
         }
 
+        if (pendingAnnouncement) {
+            const announcer = document.getElementById(TIMER_ANNOUNCER_ID);
+            if (announcer) {
+                announcer.textContent = pendingAnnouncement;
+            }
+        }
+
         const unsubscribeTimerTick = actions.registerActiveTaskTimerTick((restTime) => {
             const { minutes, seconds } = getTime(restTime);
             const timerCountdown = document.getElementById(TIMER_COUNTDOWN_ID);
             if (timerCountdown) {
                 timerCountdown.textContent = `${minutes}:${seconds}`;
+            }
+
+            const mark = Math.floor(restTime / ANNOUNCE_INTERVAL);
+            if (mark !== _lastAnnouncedFiveMinuteMark && mark > 0) {
+                _lastAnnouncedFiveMinuteMark = mark;
+                const announcer = document.getElementById(TIMER_ANNOUNCER_ID);
+                if (announcer) {
+                    announcer.textContent = `Осталось ${mark * 5} минут.`;
+                }
             }
         });
 
@@ -237,8 +284,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                 <div
                     id="${TIMER_COUNTDOWN_ID}"
                     class="${styles.timer__countdown}"
-                    role="status"
-                    aria-live="polite"
+                    role="timer"
                     aria-label="${countdownAriaLabel}">
                     ${minutes}:${seconds}
                 </div>
@@ -261,6 +307,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                         ${rightButtonTitle}
                     </button>
                 </div>
+                <span
+                    id="${TIMER_ANNOUNCER_ID}"
+                    class="${globalStyles.sr_only}"
+                    aria-live="polite"
+                    aria-atomic="true">
+                </span>
             </div>
         `
         : `
@@ -268,8 +320,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                 <div
                     id="${TIMER_COUNTDOWN_ID}"
                     class="${styles.timer__countdown}"
-                    role="status"
-                    aria-live="polite"
+                    role="timer"
                     aria-label="${countdownAriaLabel}">
                     ${minutes}:${seconds}
                 </div>
@@ -292,6 +343,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                         ${rightButtonTitle}
                     </button>
                 </div>
+                <span
+                    id="${TIMER_ANNOUNCER_ID}"
+                    class="${globalStyles.sr_only}"
+                    aria-live="polite"
+                    aria-atomic="true">
+                </span>
             </div>
         `;
 }

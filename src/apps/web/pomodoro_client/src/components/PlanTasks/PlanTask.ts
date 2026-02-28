@@ -262,7 +262,7 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
                     id="${taskCountId}"
                     class="${styles.plan_task__count} ${styles.plan_task__count_mobile}"
                     role="status"
-                    aria-label="Количество помодоро">
+                    aria-label="Количество помидоро">
                     ${count}
                 </div>
                 ${planTaskMenuMarkup}
@@ -286,7 +286,7 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
                     id="${taskCountId}"
                     class="${styles.plan_task__count}"
                     role="status"
-                    aria-label="Количество помодоро">
+                    aria-label="Количество помидоро">
                     ${count}
                 </div>
                 ${planTaskMenuMarkup}
