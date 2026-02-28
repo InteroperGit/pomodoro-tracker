@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/apps/web/pomodoro_client/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/apps/web/pomodoro_client/**'
+
+jobs:
+  pomodoro_client:
+    name: Pomodoro client
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/apps/web/pomodoro_client
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: src/apps/web/pomodoro_client/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
