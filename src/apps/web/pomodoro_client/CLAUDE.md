@@ -99,6 +99,10 @@ Components are pure render functions — they do not hold internal state. State 
 - Global CSS custom properties define the design tokens in `src/css/default_theme.css` and `src/css/dark_theme.css`.
 - Dark mode is toggled by adding/removing the `theme-dark` class on `<html>`.
 
+### Code Style
+
+- Always use curly braces for `if`, `else`, `for`, and `while` blocks — even single-line bodies. Never write braceless one-liners like `if (x) return;`.
+
 ### TypeScript Config
 
 Strict mode is on with `noUnusedLocals`, `noUnusedParameters`, `noImplicitAny`, and `erasableSyntaxOnly`. Import paths must include the `.ts` extension (`allowImportingTsExtensions: true`). No `any` types allowed (ESLint rule `@typescript-eslint/no-explicit-any: error`).
