@@ -1,7 +1,7 @@
 import type {ArchivePomodoroTask, PlanPomodoroTask} from "../types/task.ts";
 import type {
     ArchivePomodoroTasksStatistics,
-    PlanPomodoroTasksStatistics,
+    PlanPomodoroTasksStatistics, PomodoroTaskCategoryStatistics,
 } from "../types/statistics.ts";
 
 /**
@@ -22,9 +22,9 @@ export type PlanStatisticsConfig = {
 /**
  * Получить статистику по категориям из плана
  * @param {PlanPomodoroTask[]} tasks - массив плановых задач
- * @returns {Object[]} статистика по категориям
+ * @returns {PomodoroTaskCategoryStatistics[]} статистика по категориям
  */
-function getPlanCategories(tasks: PlanPomodoroTask[]) {
+function getPlanCategoriesStatistics(tasks: PlanPomodoroTask[]): PomodoroTaskCategoryStatistics[] {
     const map = new Map<string, number>();
     tasks.forEach(({ task, count }) => {
         const key = task.category.name;
@@ -68,16 +68,16 @@ export function getPlanTasksStatistics(
         tasksTime: tasksCount * taskTime,
         nextLongBreak,
         finishTime,
-        categories: getPlanCategories(tasks),
+        categories: getPlanCategoriesStatistics(tasks),
     };
 }
 
 /**
  * Получить статистику по категориям из архива
  * @param {ArchivePomodoroTask[]} tasks - массив выполненных задач
- * @returns {Object[]} статистика по категориям
+ * @returns {PomodoroTaskCategoryStatistics[]} статистика по категориям
  */
-function getArchiveCategories(tasks: ArchivePomodoroTask[]) {
+function getArchiveCategoriesStatistics(tasks: ArchivePomodoroTask[]): PomodoroTaskCategoryStatistics[] {
     const map = new Map<string, number>();
     tasks.forEach(({ task }) => {
         const key = task.category.name;
@@ -102,6 +102,6 @@ export function getArchiveTasksStatistics(
     return {
         tasksCount,
         tasksTime,
-        categories: getArchiveCategories(tasks),
+        categories: getArchiveCategoriesStatistics(tasks),
     };
 }

@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
 
@@ -7,4 +8,7 @@ export default defineConfig({
             include: ['src/**/*.ts', 'src/**/*.js'],
         }),
     ],
+    test: {
+        environment: 'jsdom',
+    },
 })
