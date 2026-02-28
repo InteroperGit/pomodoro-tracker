@@ -130,6 +130,10 @@ export function createTimerActions(
             taskController.complete();
         },
 
+        snapTick(): void {
+            taskController.snapTick();
+        },
+
         registerTimerTickEventListener(handler: (restTime: number) => void): () => void {
             if (!handler) {
                 throw new Error("Handler is not initialized");

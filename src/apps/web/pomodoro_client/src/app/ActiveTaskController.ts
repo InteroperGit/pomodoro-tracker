@@ -110,6 +110,33 @@ export class ActiveTaskController {
         return this._activeTask.restTime;
     }
 
+    // Компенсация пропущенных тиков: вычисляет прошедшее время с _lastTime,
+    // обновляет restTime и _lastTime, эмитирует tick (и completed при необходимости).
+    // Возвращает true если был обработан хотя бы один полный тик.
+    private _processTick(now: number): boolean {
+        const delta = now - this._lastTime;
+
+        if (delta < TICK_PERIOD) {
+            return false;
+        }
+
+        const tickPeriodCount = Math.floor(delta / TICK_PERIOD);
+        const timeToSubtract = tickPeriodCount * TICK_PERIOD;
+        this._activeTask.restTime -= timeToSubtract;
+        // Вместо просто now, вычитаем остаток от деления, чтобы не терять точность
+        this._lastTime = now - (delta % TICK_PERIOD);
+
+        this._eventBus.emit("tick", this._activeTask.restTime);
+
+        if (this._activeTask.restTime <= 0) {
+            this._stopTimer();
+            this._activeTask.status = ActivePomodoroTaskStatus.Completed;
+            this._eventBus.emit("completed");
+        }
+
+        return true;
+    }
+
     private _startTimer() {
         // Защита от повторного запуска: если таймер уже запущен, не запускаем снова
         if (this._currentTimer !== 0) {
@@ -120,29 +147,7 @@ export class ActiveTaskController {
         this._lastTime = performance.now();
 
         this._currentTimer = setInterval(() => {
-            const now = performance.now();
-            const delta = now - this._lastTime;
-
-            if (delta >= TICK_PERIOD) {
-                const tickPeriodCount = Math.floor(delta / TICK_PERIOD);
-
-                // Компенсация пропущенных тиков
-                const timeToSubtract = tickPeriodCount * TICK_PERIOD;
-                this._activeTask.restTime -= timeToSubtract;
-
-                // Корректное обновление _lastTime: учитываем точное время вычитания
-                // Вместо просто now, вычитаем остаток от деления, чтобы не терять точность
-                this._lastTime = now - (delta % TICK_PERIOD);
-
-                this._eventBus.emit("tick", this._activeTask.restTime);
-
-                if (this._activeTask.restTime <= 0) {
-                    this._stopTimer();
-                    this._activeTask.status = ActivePomodoroTaskStatus.Completed;
-                    this._eventBus.emit("completed");
-                }
-            }
-
+            this._processTick(performance.now());
         }, TICK_PERIOD);
     }
 
@@ -388,6 +393,23 @@ export class ActiveTaskController {
 
         this._activeTask.status = ActivePomodoroTaskStatus.Active;
         this._startTimer();
+    }
+
+    /**
+     * Немедленно эмитирует тик с учётом прошедшего времени.
+     * Вызывается при возврате на вкладку, чтобы сразу обновить отображение таймера,
+     * не дожидаясь следующего тика setInterval.
+     */
+    snapTick(): void {
+        if (this._activeTask.status !== ActivePomodoroTaskStatus.Active) {
+            return;
+        }
+
+        // If a full tick (or more) has elapsed, process it; otherwise just refresh
+        // the display with the current restTime so it's never stale on tab focus.
+        if (!this._processTick(performance.now())) {
+            this._eventBus.emit("tick", this._activeTask.restTime);
+        }
     }
 
     addEventListener<T extends ActiveTaskControllerEvents>(

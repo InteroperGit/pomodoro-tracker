@@ -16,6 +16,7 @@ import { updateTabTitle } from "../utils/updateTabTitle.ts";
 import { validateAppState } from "../utils/stateSchema.ts";
 import { showToast } from "../components/Toast";
 import { hasActiveInput } from "../utils/input.ts";
+import { requestNotificationPermission, sendNotification } from "../utils/notifications.ts";
 
 /** Префикс для ключей localStorage */
 const STORAGE_PREFIX = "pomodoro";
@@ -75,12 +76,30 @@ const initApp = (root: HTMLElement) => {
     const onPomodoroHandler = (event: PomodoroEvent) => {
         switch (event.type) {
             case "started":
-                if (event.taskType === "task") showToast("Помидор начат!", "info");
-                else showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                if (event.taskType === "task") {
+                    showToast("Помидор начат!", "info");
+                    void requestNotificationPermission();
+                } else {
+                    showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                }
                 break;
             case "completed":
-                if (event.taskType === "task") showToast("Помидор завершён!", "success");
-                else showToast(event.taskType === "shortBreak" ? "Короткий перерыв окончен" : "Длинный перерыв окончен", "success");
+                if (event.taskType === "task") {
+                    showToast("Помидор завершён!", "success");
+                    if (document.hidden) {
+                        sendNotification("Помидор завершён! Время для перерыва.");
+                    }
+                } else if (event.taskType === "shortBreak") {
+                    showToast("Короткий перерыв окончен", "success");
+                    if (document.hidden) {
+                        sendNotification("Короткий перерыв окончен. Время работать!");
+                    }
+                } else {
+                    showToast("Длинный перерыв окончен", "success");
+                    if (document.hidden) {
+                        sendNotification("Длинный перерыв окончен. Время работать!");
+                    }
+                }
                 break;
             case "breakStarted":
                 showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
@@ -104,6 +123,12 @@ const initApp = (root: HTMLElement) => {
         }
 
         render(root, App, ctx);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            ctx.actions.snapTick();
+        }
     });
 
     updateTabTitle(initialState.activeTask ?? null);

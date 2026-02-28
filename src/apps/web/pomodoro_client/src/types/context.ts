@@ -93,4 +93,6 @@ export type AppActions = {
     completeTask(): void;
     /** Подписать на события тика таймера, возвращает функцию отписки */
     registerTimerTickEventListener(handler: (restTime: number) => void): () => void;
+    /** Обновить отображение таймера при возврате на вкладку */
+    snapTick(): void;
 }

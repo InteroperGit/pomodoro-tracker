@@ -221,6 +221,98 @@ describe('ActiveTaskController — timer events', () => {
     });
 });
 
+describe('ActiveTaskController — snapTick', () => {
+    afterEach(() => {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+    });
+
+    it('does nothing when task is Pending', () => {
+        vi.useFakeTimers();
+        const ctrl = new ActiveTaskController(config);
+        ctrl.activateNextTask([makeTask('t1')]);
+        // status is Pending, not Active
+
+        const handler = vi.fn();
+        ctrl.addEventListener('tick', handler);
+        ctrl.snapTick();
+
+        expect(handler).not.toHaveBeenCalled();
+    });
+
+    it('does nothing when task is Paused', () => {
+        vi.useFakeTimers();
+        const ctrl = new ActiveTaskController(config);
+        ctrl.activateNextTask([makeTask('t1')]);
+        ctrl.start();
+        ctrl.pause();
+
+        const handler = vi.fn();
+        ctrl.addEventListener('tick', handler);
+        ctrl.snapTick();
+
+        expect(handler).not.toHaveBeenCalled();
+    });
+
+    it('emits tick with current restTime when less than 1 s has elapsed', () => {
+        vi.useFakeTimers();
+        const ctrl = new ActiveTaskController(config);
+        ctrl.activateNextTask([makeTask('t1')]);
+        ctrl.start(); // _lastTime = performance.now() = 0
+
+        // Simulate 500 ms elapsed without the interval firing
+        vi.spyOn(performance, 'now').mockReturnValue(500);
+
+        const ticks: number[] = [];
+        ctrl.addEventListener('tick', r => {
+            if (r !== undefined) {
+                ticks.push(r);
+            }
+        });
+        ctrl.snapTick();
+
+        expect(ticks).toHaveLength(1);
+        expect(ticks[0]).toBe(config.taskTime); // restTime unchanged, < 1 full tick
+    });
+
+    it('processes multiple elapsed ticks when tab was throttled', () => {
+        vi.useFakeTimers();
+        const ctrl = new ActiveTaskController(config);
+        ctrl.activateNextTask([makeTask('t1')]);
+        ctrl.start(); // _lastTime = 0
+
+        // Simulate 3.5 s elapsed (3 full ticks) without interval firing
+        vi.spyOn(performance, 'now').mockReturnValue(3500);
+
+        const ticks: number[] = [];
+        ctrl.addEventListener('tick', r => {
+            if (r !== undefined) {
+                ticks.push(r);
+            }
+        });
+        ctrl.snapTick();
+
+        expect(ticks).toHaveLength(1);
+        expect(ticks[0]).toBe(config.taskTime - 3000);
+    });
+
+    it('emits completed if timer expired while tab was hidden', () => {
+        vi.useFakeTimers();
+        const ctrl = new ActiveTaskController(config);
+        ctrl.activateNextTask([makeTask('t1')]);
+        ctrl.start(); // _lastTime = 0
+
+        vi.spyOn(performance, 'now').mockReturnValue(config.taskTime + 1000);
+
+        const completed = vi.fn();
+        ctrl.addEventListener('completed', completed);
+        ctrl.snapTick();
+
+        expect(completed).toHaveBeenCalledOnce();
+        expect(ctrl.status).toBe(ActivePomodoroTaskStatus.Completed);
+    });
+});
+
 describe('ActiveTaskController — activateTask (restore from state)', () => {
     afterEach(() => {
         vi.useRealTimers();
