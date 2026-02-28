@@ -13,6 +13,7 @@ import { throttle } from "../utils/throttle.ts";
 import { getInitArchiveTasks, getInitPlanTasks } from "../constants/initialState.ts";
 import { sanitizeActiveTask } from "../utils/activeTask.ts";
 import { updateTabTitle } from "../utils/updateTabTitle.ts";
+import { validateAppState } from "../utils/stateSchema.ts";
 import { showToast } from "../components/Toast";
 import { hasActiveInput } from "../utils/input.ts";
 
@@ -35,8 +36,8 @@ const initApp = (root: HTMLElement) => {
     
     let state: AppState | null = null;
     try {
-        state = storage.getItem<AppState>(STATE_ITEM_KEY);
-    } 
+        state = validateAppState(storage.getItem<unknown>(STATE_ITEM_KEY));
+    }
     catch {
         state = null;
     }
