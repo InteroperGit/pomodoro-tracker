@@ -1,12 +1,26 @@
 :root {
+    /* Layout */
     --task-row-padding: 0.5rem;
+    --divider-line-height: 1px;
+
+    /* Surfaces */
     --background_color: #ffffff;
+    --bg-primary: #ffffff;
+
+    /* Typography */
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --timer_font_color: #ffffff;
+
+    /* Brand */
     --main-color: #d04643;
     --break-color: #00A131;
-    --timer_font_color: #ffffff;
+
+    /* Borders */
     --border-color: #000000;
-    --divider-line-color: #000000;
-    --divider-line-height: 1px;
     --border-subtle: rgba(0, 0, 0, 0.1);
+    --divider-line-color: #000000;
+
+    /* Semantic */
     --target-achieved-color: #0d7a2d;
 }

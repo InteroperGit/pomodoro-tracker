@@ -1,15 +1,28 @@
 /* Тёмная тема: переопределение переменных при классе theme-dark на <html> */
 html.theme-dark {
+    /* Layout */
+    --task-row-padding: 0.5rem;
+    --divider-line-height: 2px;
+
+    /* Surfaces */
     --background_color: #1a1a1a;
-    --main-color: #e85a57;
-    --break-color: #00c238;
-    --timer_font_color: #ffffff;
-    --border-color: #404040;
+    --bg-primary: #2a2a2a;
+
+    /* Typography */
     --text-primary: #ffffff;
     --text-secondary: #ffffff;
-    --divider-line-color: #ffffff;
-    --divider-line-height: 2px;
+    --timer_font_color: #ffffff;
+
+    /* Brand */
+    --main-color: #e85a57;
+    --break-color: #00c238;
+
+    /* Borders */
+    --border-color: #404040;
     --border-subtle: rgba(255, 255, 255, 0.35);
+    --divider-line-color: #ffffff;
+
+    /* Semantic */
     --target-achieved-color: #4ade80;
 }
 
