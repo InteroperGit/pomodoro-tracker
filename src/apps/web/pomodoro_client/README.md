@@ -1,76 +1,132 @@
 # Pomodoro Client
 
-Веб-приложение для управления задачами с использованием техники Pomodoro.
+Веб-приложение для управления задачами с использованием техники Pomodoro. Написано на чистом TypeScript без UI-фреймворков — с собственной минималистичной реактивной системой.
 
-## Структура директорий
+## Возможности
 
-```
-pomodoro_client/
-├── src/
-│   ├── app/              # Основное приложение
-│   │   ├── App.ts        # Главный компонент приложения
-│   │   ├── main.ts       # Точка входа
-│   │   ├── appContext.ts # Контекст приложения
-│   │   └── ActiveTaskController.ts # Контроллер активной задачи
-│   │
-│   ├── components/       # React компоненты
-│   │   ├── Toolbar/      # Панель навигации
-│   │   ├── Timer/        # Таймер Pomodoro
-│   │   ├── PlanTasks/    # Список планируемых задач
-│   │   ├── ArchiveTasks/ # Архив выполненных задач
-│   │   ├── Dropdown/     # Выпадающее меню
-│   │   ├── Toast/        # Уведомления
-│   │   ├── EmptyState/   # Пустое состояние
-│   │   └── Footer/       # Подвал
-│   │
-│   ├── utils/           # Утилиты и вспомогательные функции
-│   │   ├── store.ts      # Управление состоянием
-│   │   ├── localStorage.ts # Работа с локальным хранилищем
-│   │   ├── eventBus.ts   # Шина событий
-│   │   ├── statistics.ts # Расчёт статистики
-│   │   ├── render.ts     # Функции рендеринга
-│   │   ├── dom.ts        # DOM утилиты
-│   │   └── другие...     # Прочие вспомогательные функции
-│   │
-│   ├── types/           # TypeScript типы
-│   │   ├── task.ts       # Тип задачи
-│   │   ├── category.ts   # Тип категории
-│   │   ├── statistics.ts # Тип статистики
-│   │   └── другие...
-│   │
-│   ├── css/             # Глобальные стили и темы
-│   │   ├── default_theme.css  # Светлая тема
-│   │   └── dark_theme.css     # Тёмная тема
-│   │
-│   ├── constants/       # Константы приложения
-│   │   └── initialState.ts # Начальное состояние
-│   │
-│   └── components/global.module.scss # Глобальные стили SCSS
-│
-├── assets/              # Статические ресурсы
-│   └── icons/           # Иконки (SVG)
-│
-├── index.html           # HTML шаблон
-├── package.json         # Зависимости проекта
-├── tsconfig.json        # Конфигурация TypeScript
-├── vite.config.ts       # Конфигурация Vite
-├── eslint.config.js     # Конфигурация ESLint
-└── vite-env.d.ts        # Типы окружения Vite
-```
+- Таймер Pomodoro: 25 мин работа / 5 мин короткий перерыв / 15 мин длинный перерыв (после 4 помидоров)
+- Список запланированных задач с drag-and-drop сортировкой
+- Архив выполненных задач со статистикой
+- Светлая и тёмная тема
+- Сохранение состояния в `localStorage`
+- Web Notifications при завершении помидора или перерыва
+- Адаптивная вёрстка (мобильная / десктопная)
+- Поддержка screen reader (ARIA live-регионы, `role="timer"`)
 
-## Описание ключевых модулей
+## Команды
 
-- **App** - главный компонент, управляет общей логикой приложения
-- **Store** - система управления состоянием (задачи, таймер, настройки)
-- **Components** - переиспользуемые UI компоненты
-- **Utils** - утилиты для работы с DOM, событиями, хранилищем и статистикой
-- **Types** - типизация TypeScript для всех сущностей приложения
-- **CSS/Themes** - поддержка светлой и тёмной тем оформления
-
-## Запуск
+Все команды выполняются из директории `src/apps/web/pomodoro_client/` через pnpm:
 
 ```bash
-pnpm install  # или pnpm install
-pnpm run dev  # разработка
-pnpm run build # продакшн сборка
+pnpm install        # Установить зависимости
+pnpm dev            # Запустить dev-сервер
+pnpm build          # Проверка типов + сборка (tsc && vite build)
+pnpm typecheck      # Только проверка TypeScript (без emit)
+pnpm lint           # ESLint
+pnpm lint:fix       # ESLint с автоисправлением
+pnpm test           # Запустить тесты (vitest)
+pnpm preview        # Предпросмотр production-сборки
+```
+
+## Конфигурация через переменные окружения
+
+Создайте `.env` файл в корне `pomodoro_client/`, если нужно переопределить тайминги:
+
+```env
+VITE_TASK_TIME_MIN=25          # Длительность помидора (мин), по умолчанию 25
+VITE_SHORT_BREAK_TIME_MIN=5    # Короткий перерыв (мин), по умолчанию 5
+VITE_LONG_BREAK_TIME_MIN=15    # Длинный перерыв (мин), по умолчанию 15
+VITE_LONG_BREAK_AFTER=4        # Помидоров до длинного перерыва, по умолчанию 4
+```
+
+## Архитектура
+
+### Кастомная реактивная система
+
+Приложение **не использует** React, Vue или другие UI-фреймворки. Реализована собственная минималистичная реактивная система:
+
+- **Компоненты** — чистые функции `(props) => string`, возвращающие HTML-строку.
+- **`render(root, App, ctx)`** — устанавливает `root.innerHTML`, затем запускает очередь mount-эффектов. Перед следующим рендером вызываются cleanup-функции предыдущего.
+- **`useEffect(fn)`** — регистрирует side-effect после рендера. Возвращаемая функция вызывается как cleanup при следующем рендере.
+- **`createStore<S>(initial)`** — возвращает `{ getState, setState, subscribe }`. Каждый `setState` уведомляет всех подписчиков и запускает полный перерендер.
+
+### Контекст приложения (`src/app/appContext.ts`)
+
+`createContext(initialState, onTickCallback, onPomodoroCallback)` связывает store и `ActiveTaskController`. Возвращает `{ store, actions }`.
+
+Глобальный синглтон регистрируется через `registerContext(ctx)` и доступен компонентам через хук-функции (`useStartTask()`, `useAddTask(task)`, `useSetTheme(theme)` и др.).
+
+### Движок таймера (`src/app/ActiveTaskController.ts`)
+
+Управляет циклом Pomodoro:
+- Использует `setInterval` (1 с тик) с компенсацией пропущенных тиков через `performance.now()`.
+- Генерирует события через `EventBus`: `tick` (остаток мс), `completed`, `idle`.
+- `activateNextTask(planTasks)` управляет переходами: задача → короткий перерыв → длинный перерыв → idle.
+- `snapTick()` — мгновенно синхронизирует таймер при возврате на вкладку (`visibilitychange`).
+
+### Персистентность
+
+Состояние сериализуется в `localStorage` под ключом `pomodoro:state`. Сохранения throttled до 1 с. При загрузке данные проходят валидацию через `stateSchema.ts`.
+
+## Структура проекта
+
+```
+src/
+├── app/
+│   ├── actions/              # Действия: taskActions, timerActions, themeActions
+│   ├── ActiveTaskController.ts  # Движок таймера Pomodoro
+│   ├── App.ts                # Главный компонент
+│   ├── appContext.ts         # Контекст и глобальный store
+│   ├── config.ts             # Тайминги (читает env-переменные)
+│   ├── hooks.ts              # use* хуки для доступа к store и actions
+│   └── main.ts               # Точка входа
+│
+├── components/
+│   ├── ArchiveTasks/         # Архив выполненных задач
+│   ├── Dropdown/             # Выпадающее меню
+│   ├── EmptyState/           # Заглушка пустого состояния
+│   ├── Footer/               # Подвал
+│   ├── PlanTasks/            # Список запланированных задач (с DnD)
+│   ├── Timer/                # Таймер с кнопками управления
+│   ├── Toast/                # Toast-уведомления
+│   └── Toolbar/              # Шапка с навигацией и настройками
+│
+├── constants/
+│   └── initialState.ts       # Начальное состояние store
+│
+├── css/
+│   ├── default_theme.css     # Светлая тема (CSS custom properties)
+│   └── dark_theme.css        # Тёмная тема
+│
+├── types/                    # TypeScript-типы всех сущностей
+│
+└── utils/
+    ├── eventBus.ts           # Типизированная шина событий
+    ├── html.ts               # Экранирование HTML (XSS-защита)
+    ├── layout.ts             # Определение мобильного layout
+    ├── localStorage.ts       # Обёртка над localStorage
+    ├── notifications.ts      # Web Notifications API
+    ├── render.ts             # render() и useEffect()
+    ├── stateSchema.ts        # Валидация состояния из localStorage
+    ├── statistics.ts         # Расчёт статистики задач
+    ├── store.ts              # Реактивный store
+    ├── throttle.ts           # Throttle-утилита
+    ├── time.ts               # Форматирование времени
+    └── theme.ts              # Переключение CSS-темы
+```
+
+## Тесты
+
+Тесты написаны на [Vitest](https://vitest.dev/). Покрывают утилиты и `ActiveTaskController`:
+
+```
+src/utils/store.test.ts
+src/utils/render.test.ts
+src/utils/statistics.test.ts
+src/utils/stateSchema.test.ts
+src/utils/html.test.ts
+src/utils/throttle.test.ts
+src/utils/idGenerator.test.ts
+src/utils/activeTask.test.ts
+src/app/ActiveTaskController.test.ts
 ```
