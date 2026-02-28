@@ -11,7 +11,7 @@ const POMODORO_SHORT_BREAK_TIME = 5 * 60 * 1000;
 const POMODORO_LONG_BREAK_TIME = 15 * 60 * 1000;
 const LONG_BREAK_AFTER = 4;
 
-const planStatisticsConfig = {
+export const planStatisticsConfig = {
     taskTime: POMODORO_TASK_TIME,
     shortBreakTime: POMODORO_SHORT_BREAK_TIME,
     longBreakTime: POMODORO_LONG_BREAK_TIME,

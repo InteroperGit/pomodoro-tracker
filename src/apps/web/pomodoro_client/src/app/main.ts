@@ -2,9 +2,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { findById } from "../utils/dom";
 import { App } from "./App";
 import { type AppState, type PomodoroEvent } from "../types/context.ts";
-import {createContext, registerContext} from "./appContext.ts";
+import {createContext, planStatisticsConfig, registerContext} from "./appContext.ts";
 import {applyTheme} from "../utils/theme.ts";
-import {getArchiveTasksStatistics} from "../utils/statistics.ts";
+import {getPlanTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged} from "../utils/layout.ts";
 import {LocalStorage} from "../utils/localStorage.ts";
@@ -41,11 +41,11 @@ const initApp = (root: HTMLElement) => {
     }
 
     const activeTask = sanitizeActiveTask(state?.activeTask);
-    const planTasks = state?.planTasks ?? getInitPlanTasks();
-    let archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
-    if (archiveTasks.tasks.length > 0) {
-        archiveTasks = { ...archiveTasks, statistics: getArchiveTasksStatistics(archiveTasks.tasks) };
+    let planTasks = state?.planTasks ?? getInitPlanTasks();
+    if (planTasks.tasks.length > 0) {
+        planTasks = { ...planTasks, statistics: getPlanTasksStatistics(planTasks.tasks, planStatisticsConfig) };
     }
+    const archiveTasks = state?.archiveTasks ?? getInitArchiveTasks();
 
     const theme = state?.theme === "dark" ? "dark" : "light";
     applyTheme(theme);
@@ -59,7 +59,9 @@ const initApp = (root: HTMLElement) => {
     };
 
     const saveStateThrottle: (s: AppState) => void = throttle((s: AppState) => {
-        if (s == null) return;
+        if (s == null) {
+            return;
+        }
         storage.setItem<AppState>(STATE_ITEM_KEY, s);
     }, THROTTLE_DELAY);
 
