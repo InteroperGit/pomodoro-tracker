@@ -1,5 +1,6 @@
 import styles from "./ArchiveTasksTitle.module.scss";
 import {toHumanHourMinutesSecondsTime} from "../../utils/time.ts";
+import { t } from '../../i18n';
 
 /**
  * Свойства заголовка архива задач
@@ -23,7 +24,7 @@ export function ArchiveTasksTitle({ tasksCount, tasksTime }: ArchiveTasksTitlePr
     return `
         <div class="${styles.archive_tasks__title}">
             <div class="${styles.archive_tasks__title_desc}">
-                СДЕЛАНО
+                ${t('archive.title')}
             </div>
 
             <div class="${styles.archive_tasks__title_tasks_count}" role="text" aria-label="Количество выполненных задач">

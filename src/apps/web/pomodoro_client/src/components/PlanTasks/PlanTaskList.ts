@@ -5,6 +5,7 @@ import {EmptyState} from "../EmptyState/index.ts";
 import taskStyles from "./PlanTask.module.scss";
 import {generateId} from "../../utils/idGenerator.ts";
 import {useEffect} from "../../utils/render.ts";
+import { t } from '../../i18n';
 
 export type PlanTasksListProps = {
     isMobile: boolean;
@@ -184,8 +185,8 @@ export function PlanTaskList({ isMobile, tasks, actions }: PlanTasksListProps) {
     if (tasks.length === 0) {
         return EmptyState({
             variant: "plan",
-            title: "Список задач пуст",
-            subtitle: "Добавьте задачу в план",
+            title: t('plan.empty.title'),
+            subtitle: t('plan.empty.subtitle'),
             className: styles.plan_tasks__empty,
         });
     }

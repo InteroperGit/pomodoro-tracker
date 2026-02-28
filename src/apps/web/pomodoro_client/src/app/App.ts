@@ -1,6 +1,6 @@
 import globalStyles from "../components/global.module.scss";
 import styles from "./App.module.scss";
-import { Toolbar, TOOLBAR_DROPDOWN_ID, TOOLBAR_MENU_BTN_ID, TOOLBAR_THEME_TOGGLE_ID } from '../components/Toolbar';
+import { Toolbar, TOOLBAR_DROPDOWN_ID, TOOLBAR_MENU_BTN_ID, TOOLBAR_THEME_TOGGLE_ID, TOOLBAR_LOCALE_TOGGLE_ID } from '../components/Toolbar';
 import { useDropdown, dropdownStyles } from '../components/Dropdown';
 import { Timer } from '../components/Timer';
 import { Footer } from "../components/Footer";
@@ -103,6 +103,10 @@ export function App(ctx: AppContext) {
                 [TOOLBAR_THEME_TOGGLE_ID]: () => {
                     const current = ctx.store.getState().theme;
                     useSetTheme(current === "dark" ? "light" : "dark");
+                },
+                [TOOLBAR_LOCALE_TOGGLE_ID]: () => {
+                    const current = ctx.store.getState().locale;
+                    ctx.actions.setLocale(current === 'ru' ? 'en' : 'ru');
                 },
             },
         });

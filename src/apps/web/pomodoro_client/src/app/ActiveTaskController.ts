@@ -6,13 +6,10 @@ import {
 } from "../types/task.ts";
 import {generateId} from "../utils/idGenerator.ts";
 import {EventBus} from "../utils/eventBus.ts";
+import { t } from '../i18n';
 
 /** Период отправки тиков таймера (мс) */
 const TICK_PERIOD = 1000;
-/** Название для коротких перерывов */
-const SHORT_BREAK_TITLE = "Короткий перерыв";
-/** Название для длинных перерывов */
-const LONG_BREAK_TITLE = "Длинный перерыв";
 
 /** Варианты следующей фазы работы */
 type NextPhase =
@@ -246,7 +243,7 @@ export class ActiveTaskController {
             task: {
                 id: generateId(),
                 category: { name: "" },
-                description: SHORT_BREAK_TITLE
+                description: t('break.short')
             },
             restTime: this._configuration.shortBreakTime,
             shortBreakCount: (this._activeTask?.shortBreakCount ?? 0) + 1,
@@ -260,7 +257,7 @@ export class ActiveTaskController {
             task: {
                 id: generateId(),
                 category: { name: "" },
-                description: LONG_BREAK_TITLE,
+                description: t('break.long'),
             },
             restTime: this._configuration.longBreakTime,
             shortBreakCount: 0

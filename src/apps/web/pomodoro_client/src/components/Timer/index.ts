@@ -8,6 +8,7 @@ import {
     type PlanPomodoroTask
 } from "../../types/task.ts";
 import { useEffect } from "../../utils/render.ts";
+import { t } from '../../i18n';
 
 /** Переменная для отслеживания типа таймера */
 let _prevTimerType: ActivePomodoroTaskType | undefined;
@@ -31,14 +32,14 @@ const ANNOUNCE_INTERVAL = 5 * 60 * 1000;
  * Подписи кнопок управления таймером
  * @enum {string}
  */
-const BUTTON_TITLES = {
-    START: "СТАРТ",
-    STOP: "СТОП",
-    PAUSE: "ПАУЗА",
-    RESUME: "ПРОДОЛЖИТЬ",
-    DONE: "СДЕЛАНО",
-    SKIP: "ПРОПУСТИТЬ",
-} as const;
+const getButtonTitlesConst = () => ({
+    START: t('timer.button.start'),
+    STOP: t('timer.button.stop'),
+    PAUSE: t('timer.button.pause'),
+    RESUME: t('timer.button.resume'),
+    DONE: t('timer.button.done'),
+    SKIP: t('timer.button.skip'),
+});
 
 /**
  * Свойства компонента таймера
@@ -86,6 +87,7 @@ const getTime = (time: number): { minutes: string, seconds: string } => {
  * @returns {[string, string]} [leftTitle, rightTitle]
  */
 const getButtonTitles = (task: ActivePomodoroTask): [string, string] => {
+    const BUTTON_TITLES = getButtonTitlesConst();
     switch (task.type) {
         case ActivePomodoroTaskType.Undefined:
             return ["", ""];
@@ -132,8 +134,8 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
             <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
                 ${EmptyState({
                     variant: "timer_no_plan",
-                    title: "Нет задач в плане",
-                    subtitle: "Добавьте задачи в план выше",
+                    title: t('timer.empty.noPlanTitle'),
+                    subtitle: t('timer.empty.noPlanSubtitle'),
                     className: styles.timer__empty_content,
                 })}
             </div>
@@ -145,8 +147,8 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
             <div class="${styles.timer} ${isMobile ? styles.timer_mobile : ""} ${styles.timer__empty}">
                 ${EmptyState({
                     variant: "timer_no_active",
-                    title: "Нет активной задачи",
-                    subtitle: "Начните помидоро или перерыв",
+                    title: t('timer.empty.noActiveTitle'),
+                    subtitle: t('timer.empty.noActiveSubtitle'),
                     className: styles.timer__empty_content,
                 })}
             </div>
@@ -175,12 +177,12 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
     if (prevStatus !== undefined && prevStatus !== activeTask.status) {
         if (activeTask.status === ActivePomodoroTaskStatus.Active
                 && prevStatus === ActivePomodoroTaskStatus.Pending) {
-            pendingAnnouncement = `Таймер запущен. Осталось ${minutes} минут.`;
+            pendingAnnouncement = t('timer.announce.started', { minutes });
         } else if (activeTask.status === ActivePomodoroTaskStatus.Active
                 && prevStatus === ActivePomodoroTaskStatus.Paused) {
-            pendingAnnouncement = "Таймер возобновлён.";
+            pendingAnnouncement = t('timer.announce.resumed');
         } else if (activeTask.status === ActivePomodoroTaskStatus.Paused) {
-            pendingAnnouncement = "Таймер поставлен на паузу.";
+            pendingAnnouncement = t('timer.announce.paused');
         }
     }
 
@@ -223,7 +225,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
                 _lastAnnouncedFiveMinuteMark = mark;
                 const announcer = document.getElementById(TIMER_ANNOUNCER_ID);
                 if (announcer) {
-                    announcer.textContent = `Осталось ${mark * 5} минут.`;
+                    announcer.textContent = t('timer.announce.midway', { minutes: mark * 5 });
                 }
             }
         });
@@ -276,7 +278,7 @@ export function Timer({ isMobile, activeTask, planTasks, actions }: TimerProps) 
         };
     });
 
-    const countdownAriaLabel = `Осталось времени: ${minutes} минут ${seconds} секунд`;
+    const countdownAriaLabel = t('timer.ariaCountdown', { minutes, seconds });
 
     return isMobile
         ? `

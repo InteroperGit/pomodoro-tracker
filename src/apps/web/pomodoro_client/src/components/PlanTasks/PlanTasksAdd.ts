@@ -4,6 +4,7 @@ import styles from "./PlanTasksAdd.module.scss";
 import {useEffect} from "../../utils/render.ts";
 import type {PomodoroTask} from "../../types/task.ts";
 import {generateId} from "../../utils/idGenerator.ts";
+import { t } from '../../i18n';
 
 export type PlanTaskAddProps = {
     actions: {
@@ -93,24 +94,24 @@ export function  PlanTasksAdd(props: PlanTaskAddProps): string {
 
     return `
          <div class="${styles.plan_tasks__add}">
-            <input 
+            <input
                 id="${categoryInputId}"
-                class="${styles.plan_tasks__add_category}" 
-                placeholder="Категория" 
-                aria-label="категория" 
+                class="${styles.plan_tasks__add_category}"
+                placeholder="${t('plan.add.categoryPlaceholder')}"
+                aria-label="${t('plan.add.categoryAriaLabel')}"
             />
-            
-            <input 
+
+            <input
                 id="${descriptionInputId}"
-                class="${styles.plan_tasks__add_description}" 
-                placeholder="Описание" 
-                aria-label="описание" 
+                class="${styles.plan_tasks__add_description}"
+                placeholder="${t('plan.add.descriptionPlaceholder')}"
+                aria-label="${t('plan.add.descriptionAriaLabel')}"
             />
-            
-            <button 
+
+            <button
                 id="${buttonId}"
                 class="${globalStyles.button} ${commonStyles.outline_button}"
-                aria-label="Добавить задачу"
+                aria-label="${t('plan.add.submitAriaLabel')}"
             >
                 +
             </button>

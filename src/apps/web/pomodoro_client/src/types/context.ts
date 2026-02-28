@@ -1,5 +1,6 @@
 import type {ActivePomodoroTask, ArchivePomodoroTask, PlanPomodoroTask, PomodoroTask} from "./task.ts";
 import type {ArchivePomodoroTasksStatistics, PlanPomodoroTasksStatistics} from "./statistics.ts";
+import type { Locale } from '../i18n/types.ts';
 
 /**
  * Состояние плановых задач
@@ -52,6 +53,7 @@ export type AppState = {
     planTasks: PlanPomodoroTasksState;
     archiveTasks: ArchivePomodoroTasksState;
     theme: ThemeId;
+    locale: Locale;
     isMobile: boolean;
 }
 
@@ -62,6 +64,8 @@ export type AppState = {
 export type AppActions = {
     /** Изменить тему приложения */
     setTheme(theme: ThemeId): void;
+    /** Изменить язык интерфейса */
+    setLocale(locale: Locale): void;
     /** Добавить новую задачу в план */
     addTask(task: PomodoroTask): void;
     /** Увеличить количество помидоров задачи */

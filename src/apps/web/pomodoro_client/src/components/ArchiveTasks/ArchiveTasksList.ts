@@ -3,6 +3,7 @@ import {ArchiveTasksTarget} from "./ArchiveTasksTarget.ts";
 import type {ArchivePomodoroTask, PomodoroTask} from "../../types/task.ts";
 import styles from "./ArchiveTasksList.module.scss";
 import {EmptyState} from "../EmptyState/index.ts";
+import { t } from '../../i18n';
 
 export type ArchiveTasksListProps = {
     isMobile: boolean;
@@ -38,10 +39,10 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
     const header = `
         <div class="${headerClasses}" role="rowheader">
             <span class="${styles.archive_tasks__header_category}">
-                КАТЕГОРИЯ
+                ${t('archive.header.category')}
             </span>
             <span class="${styles.archive_tasks__header_description}">
-                ОПИСАНИЕ
+                ${t('archive.header.description')}
             </span>
         </div>
     `;
@@ -56,8 +57,8 @@ export function ArchiveTasksList({ isMobile, tasks, actions }: ArchiveTasksListP
                 ${target}
                 ${EmptyState({
                     variant: "archive",
-                    title: "Архив пуст",
-                    subtitle: "Выполненные задачи появятся здесь",
+                    title: t('archive.empty.title'),
+                    subtitle: t('archive.empty.subtitle'),
                     className: styles.archive_tasks__empty,
                 })}
             </div>

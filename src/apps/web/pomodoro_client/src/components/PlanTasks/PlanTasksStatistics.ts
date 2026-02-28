@@ -2,6 +2,7 @@ import styles from "./PlanTasksStatistics.module.scss";
 import type {PlanPomodoroTasksStatistics} from "../../types/statistics.ts";
 import {escapeHtml} from "../../utils/html.ts";
 import {formatDateTime as formatDateTime} from "../../utils/time.ts";
+import { t } from '../../i18n';
 
 /**
  * Свойства компонента статистики плана
@@ -38,14 +39,14 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
                 <div class="${styles.plan_tasks__statistics_title_row}">
                     <div class="${styles.plan_tasks__statistics_title_label}">
                         <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>
-                        <span>Следующий длинный перерыв</span>
+                        <span>${t('plan.stats.nextLongBreak')}</span>
                     </div>
                     <div class="${styles.plan_tasks__statistics_title_time}">${nextLongBreakText}</div>
                 </div>
                 <div class="${styles.plan_tasks__statistics_title_row}">
                     <div class="${styles.plan_tasks__statistics_title_label}">
                         <i class="fa-solid fa-clock" aria-hidden="true"></i>
-                        <span>Время окончания</span>
+                        <span>${t('plan.stats.finishTime')}</span>
                     </div>
                     <div class="${styles.plan_tasks__statistics_title_time}">${finishTimeText}</div>
                 </div>
@@ -53,7 +54,7 @@ export function PlanTasksStatistics({ statistics }: PlanTasksStatisticsProps) {
             
             <div class="${styles.plan_tasks__statistics_categories}">
                 <span>
-                    Категории
+                    ${t('plan.stats.categories')}
                 </span>
                 
                 <ul class="${styles.plan_tasks__statistics_categories_list}">

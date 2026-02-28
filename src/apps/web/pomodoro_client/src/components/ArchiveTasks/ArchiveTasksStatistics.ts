@@ -2,6 +2,7 @@ import type {ArchivePomodoroTasksStatistics} from "../../types/statistics.ts";
 import styles from "./ArchiveTasksStatistics.module.scss";
 import {escapeHtml} from "../../utils/html.ts";
 import {toHumanHourMinutesSecondsTime} from "../../utils/time.ts";
+import { t } from '../../i18n';
 
 /**
  * Свойства компонента статистики архива
@@ -25,13 +26,13 @@ export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsPro
         !categories || categories.length === 0
             ? `
             <div class="${styles.archive_tasks__statistics_categories}">
-                <span>Категории</span>
-                <div role="status" aria-live="polite">Нет данных</div>
+                <span>${t('archive.stats.categories')}</span>
+                <div role="status" aria-live="polite">${t('archive.stats.noData')}</div>
             </div>
         `
             : `
             <div class="${styles.archive_tasks__statistics_categories}">
-                <span>Категории</span>
+                <span>${t('archive.stats.categories')}</span>
                 <ul class="${styles.archive_tasks__statistics_categories_list}" role="list">
                     ${categories
                         .map(
@@ -52,14 +53,14 @@ export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsPro
                 <div class="${styles.archive_tasks__statistics_summary_row}">
                     <div class="${styles.archive_tasks__statistics_summary_label}">
                         <i class="fa-solid fa-trophy" aria-hidden="true"></i>
-                        <span>Выполнено помидоров</span>
+                        <span>${t('archive.stats.completed')}</span>
                     </div>
                     <div class="${styles.archive_tasks__statistics_summary_value}">${tasksCount}</div>
                 </div>
                 <div class="${styles.archive_tasks__statistics_summary_row}">
                     <div class="${styles.archive_tasks__statistics_summary_label}">
                         <i class="fa-solid fa-clock" aria-hidden="true"></i>
-                        <span>Общее время</span>
+                        <span>${t('archive.stats.totalTime')}</span>
                     </div>
                     <div class="${styles.archive_tasks__statistics_summary_value}">${tasksTimeText}</div>
                 </div>

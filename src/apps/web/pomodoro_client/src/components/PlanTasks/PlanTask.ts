@@ -6,6 +6,7 @@ import type {PlanPomodoroTask, PomodoroTask} from "../../types/task.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
 import {escapeHtml} from "../../utils/html.ts";
+import { t } from '../../i18n';
 
 export type PlanTaskProps = {
     isMobile: boolean;
@@ -208,41 +209,41 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
         buttonId: menuButtonId,
         buttonClass: `${globalStyles.button} ${commonStyles.outline_button} ${styles.plan_task__menu_button}`,
         buttonContent: "…",
-        buttonAriaLabel: "Действия с задачей",
+        buttonAriaLabel: t('plan.task.actionsAriaLabel'),
         dropdownId,
         items: [
-            { id: menuIncId, content: "+ помидор" },
-            { id: menuDecId, content: "− помидор" },
-            { id: menuArchiveId, content: "В архив" },
+            { id: menuIncId, content: t('plan.task.menuIncrement') },
+            { id: menuDecId, content: t('plan.task.menuDecrement') },
+            { id: menuArchiveId, content: t('plan.task.menuArchive') },
         ],
     });
 
     // Общая разметка для режима редактирования
     const editModeMarkup = `
-        <div 
+        <div
             id="${planTaskDivId}"
             data-planTaskId="${task.id}"
             class="${styles.plan_task}">
             <div class="${styles.plan_task__category}">
-                <input 
+                <input
                     id="${categoryInputId}"
                     class="${styles.plan_task_input}"
-                    value="${escapedCategory}" 
-                    aria-label="Категория задачи"
+                    value="${escapedCategory}"
+                    aria-label="${t('plan.task.editCategoryAriaLabel')}"
                 />
             </div>
             <div class="${styles.plan_task__description}">
-                <input 
+                <input
                     id="${descriptionInputId}"
                     class="${styles.plan_task_input}"
-                    value="${escapedDescription}" 
-                    aria-label="Описание задачи"
+                    value="${escapedDescription}"
+                    aria-label="${t('plan.task.editDescriptionAriaLabel')}"
                 />
             </div>
-            <button 
+            <button
                 id="${addTaskButtonId}"
                 class="${globalStyles.button} ${commonStyles.outline_button}"
-                aria-label="Сохранить изменения">
+                aria-label="${t('plan.task.editSaveAriaLabel')}">
                 S
             </button>
         </div>
@@ -264,7 +265,7 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
                     id="${taskCountId}"
                     class="${styles.plan_task__count} ${styles.plan_task__count_mobile}"
                     role="status"
-                    aria-label="Количество помидоро">
+                    aria-label="${t('plan.task.editCountAriaLabel')}">
                     ${count}
                 </div>
                 ${planTaskMenuMarkup}
@@ -288,7 +289,7 @@ export function PlanTask({ isMobile, planTaskIndex, planTask, completingClass, a
                     id="${taskCountId}"
                     class="${styles.plan_task__count}"
                     role="status"
-                    aria-label="Количество помидоро">
+                    aria-label="${t('plan.task.editCountAriaLabel')}">
                     ${count}
                 </div>
                 ${planTaskMenuMarkup}

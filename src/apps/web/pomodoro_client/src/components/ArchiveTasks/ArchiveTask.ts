@@ -7,6 +7,7 @@ import {toHumanMinutesSecondsTime, formatDateTime} from "../../utils/time.ts";
 import {escapeHtml} from "../../utils/html.ts";
 import {useEffect} from "../../utils/render.ts";
 import {generateId} from "../../utils/idGenerator.ts";
+import { t } from '../../i18n';
 
 export type ArchiveTaskProps = {
     isMobile: boolean;
@@ -57,17 +58,17 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
 
     // Общая разметка времени выполнения и завершения
     const timeMarkup = `
-        <div class="${styles.archive_task__task_time}" role="text" aria-label="Время выполнения задачи">
+        <div class="${styles.archive_task__task_time}" role="text" aria-label="${t('archive.task.timeAriaLabel')}">
             ${humanTaskTime}
         </div>
         <div class="${styles.archive_task__divider}" aria-hidden="true">
             /
         </div>
-        <time 
-            class="${styles.archive_task__task_time}" 
+        <time
+            class="${styles.archive_task__task_time}"
             datetime="${completedTime.iso}"
             role="text"
-            aria-label="Время завершения задачи">
+            aria-label="${t('archive.task.completedAtAriaLabel')}">
             ${completedTime.display}
         </time>
     `;
@@ -77,15 +78,15 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
         buttonId: menuButtonId,
         buttonClass: `${globalStyles.button} ${commonStyles.outline_button} ${styles.archive_task__menu_button}`,
         buttonContent: "…",
-        buttonAriaLabel: "Действия с задачей",
+        buttonAriaLabel: t('archive.task.actionsAriaLabel'),
         dropdownId,
-        items: [{ id: menuDeleteId, content: "Удалить" }],
+        items: [{ id: menuDeleteId, content: t('archive.task.menuDelete') }],
     });
 
     const refreshButtonMarkup = `
-        <button id="${refreshButtonId}" 
+        <button id="${refreshButtonId}"
                 class="${globalStyles.button} ${commonStyles.outline_button} ${styles.archive_task__refresh_button}"
-                aria-label="Обновить задачу">
+                aria-label="${t('archive.task.refreshAriaLabel')}">
             <i class="fa-solid fa-arrow-rotate-left ${styles.archive_task__refresh_icon}" aria-hidden="true"></i>
         </button>
     `;

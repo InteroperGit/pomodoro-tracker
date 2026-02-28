@@ -5,6 +5,8 @@ import { ActiveTaskController, type ActiveTaskControllerConfiguration } from "./
 import { createTaskActions } from "./actions/taskActions.ts";
 import { createTimerActions } from "./actions/timerActions.ts";
 import { createThemeActions } from "./actions/themeActions.ts";
+import { createLocaleActions } from "./actions/localeActions.ts";
+import { setLocale } from '../i18n';
 import { appConfig } from "./config.ts";
 
 let context: AppContext;
@@ -21,6 +23,8 @@ export function createContext(
     onTickCallback: (state: AppState) => void,
     onPomodoroCallback?: (event: PomodoroEvent) => void
 ) {
+    setLocale(initialState.locale);
+
     const configuration: ActiveTaskControllerConfiguration = {
         taskTime: appConfig.taskTime,
         shortBreakTime: appConfig.shortBreakTime,
@@ -49,8 +53,9 @@ export function createContext(
     const taskActions = createTaskActions(store, taskController, appConfig);
     const timerActions = createTimerActions(store, taskController, onPomodoroCallback);
     const themeActions = createThemeActions(store);
+    const localeActions = createLocaleActions(store);
 
-    const actions = { ...taskActions, ...timerActions, ...themeActions };
+    const actions = { ...taskActions, ...timerActions, ...themeActions, ...localeActions };
 
     taskController.addEventListener("tick", (restTime?: number) => {
         const s = store.getState();

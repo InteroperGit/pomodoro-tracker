@@ -1,5 +1,6 @@
 import styles from "./PlanTasksTitle.module.scss";
 import {toHumanHourMinutesTime} from "../../utils/time.ts";
+import { t } from '../../i18n';
 
 /**
  * Свойства заголовка плановых задач
@@ -23,7 +24,7 @@ export function PlanTasksTitle({ tasksCount, tasksTime }: PlanTasksTitleProps) {
     return `
         <div class="${styles.plan_tasks__title}">
             <div class="${styles.plan_tasks__title_desc}">
-                ЗАПЛАНИРОВАНО
+                ${t('plan.title')}
             </div>
         
             <div class="${styles.plan_tasks__title_tasks_count}">

@@ -11,6 +11,7 @@ export function makeState(overrides: Partial<AppState> = {}): AppState {
     return {
         isMobile: false,
         theme: 'light',
+        locale: 'ru',
         activeTask: null,
         editingPlanTaskIndex: null,
         planTasks: getInitPlanTasks(),

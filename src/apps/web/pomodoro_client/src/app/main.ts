@@ -5,6 +5,9 @@ import { type AppState, type PomodoroEvent } from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {appConfig} from "./config.ts";
 import {applyTheme} from "../utils/theme.ts";
+import { setLocale } from '../i18n';
+import type { Locale } from '../i18n/types.ts';
+import { t } from '../i18n/index.ts';
 import {getPlanTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged, useIsMobile} from "../utils/layout.ts";
@@ -52,12 +55,16 @@ const initApp = (root: HTMLElement) => {
     const theme = state?.theme === "dark" ? "dark" : "light";
     applyTheme(theme);
 
+    const locale: Locale = state?.locale === 'en' ? 'en' : 'ru';
+    setLocale(locale);
+
     const initialState: AppState = {
         editingPlanTaskIndex: null,
         activeTask,
         planTasks,
         archiveTasks,
         theme,
+        locale,
         isMobile: useIsMobile(),
     };
 
@@ -77,32 +84,38 @@ const initApp = (root: HTMLElement) => {
         switch (event.type) {
             case "started":
                 if (event.taskType === "task") {
-                    showToast("Помидор начат!", "info");
+                    showToast(t('toast.taskStarted'), "info");
                     void requestNotificationPermission();
+                } else if (event.taskType === "shortBreak") {
+                    showToast(t('toast.shortBreakStarted'), "info");
                 } else {
-                    showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                    showToast(t('toast.longBreakStarted'), "info");
                 }
                 break;
             case "completed":
                 if (event.taskType === "task") {
-                    showToast("Помидор завершён!", "success");
+                    showToast(t('toast.taskCompleted'), "success");
                     if (document.hidden) {
-                        sendNotification("Помидор завершён! Время для перерыва.");
+                        sendNotification(t('notification.taskCompleted'));
                     }
                 } else if (event.taskType === "shortBreak") {
-                    showToast("Короткий перерыв окончен", "success");
+                    showToast(t('toast.shortBreakEnded'), "success");
                     if (document.hidden) {
-                        sendNotification("Короткий перерыв окончен. Время работать!");
+                        sendNotification(t('notification.shortBreakEnded'));
                     }
                 } else {
-                    showToast("Длинный перерыв окончен", "success");
+                    showToast(t('toast.longBreakEnded'), "success");
                     if (document.hidden) {
-                        sendNotification("Длинный перерыв окончен. Время работать!");
+                        sendNotification(t('notification.longBreakEnded'));
                     }
                 }
                 break;
             case "breakStarted":
-                showToast(event.taskType === "shortBreak" ? "Короткий перерыв" : "Длинный перерыв", "info");
+                if (event.taskType === "shortBreak") {
+                    showToast(t('toast.shortBreakStarted'), "info");
+                } else {
+                    showToast(t('toast.longBreakStarted'), "info");
+                }
                 break;
         }
     };

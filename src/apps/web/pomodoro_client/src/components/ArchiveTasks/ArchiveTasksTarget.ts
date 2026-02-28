@@ -1,4 +1,5 @@
 import styles from "./ArchiveTasksTarget.module.scss";
+import { t } from '../../i18n';
 
 export type ArchiveTasksTargetProps = {
     tasksCount: number;
@@ -20,8 +21,8 @@ export type ArchiveTasksTargetProps = {
 export function ArchiveTasksTarget({ tasksCount, goal = 10 }: ArchiveTasksTargetProps) {
     const achieved = tasksCount >= goal;
     const text = achieved
-        ? `Цель достигнута. Выполнено ${tasksCount} из ${goal}`
-        : `Цель на день: осталось ${goal - tasksCount} из ${goal}`;
+        ? t('archive.target.achieved', { count: tasksCount, goal })
+        : t('archive.target.remaining', { remaining: goal - tasksCount, goal });
     const targetClass = achieved
         ? `${styles.archive_tasks__target} ${styles.archive_tasks__target_achieved}`
         : styles.archive_tasks__target;

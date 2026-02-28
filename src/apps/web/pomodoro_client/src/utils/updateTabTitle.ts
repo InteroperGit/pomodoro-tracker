@@ -3,19 +3,10 @@ import {
     ActivePomodoroTaskStatus,
     ActivePomodoroTaskType,
 } from "../types/task.ts";
+import { t } from '../i18n/index.ts';
 
 /** Заголовок вкладки по умолчанию */
 const DEFAULT_TITLE = "Pomodoro";
-
-/**
- * Метки типов задач для отображения в заголовке вкладки
- * @type {Record<number, string>}
- */
-const TYPE_LABELS: Record<number, string> = {
-    [ActivePomodoroTaskType.Task]: "Pomodoro",
-    [ActivePomodoroTaskType.ShortBreak]: "Перерыв",
-    [ActivePomodoroTaskType.LongBreak]: "Длинный перерыв",
-};
 
 /**
  * Форматирует время в формат ММ:СС
@@ -42,7 +33,14 @@ export function updateTabTitle(activeTask: ActivePomodoroTask | null | undefined
 
     if (showCountdown) {
         const timeStr = getTimeStr(activeTask.restTime);
-        const label = TYPE_LABELS[activeTask.type] ?? "Pomodoro";
+        let label: string;
+        if (activeTask.type === ActivePomodoroTaskType.ShortBreak) {
+            label = t('tabTitle.shortBreak');
+        } else if (activeTask.type === ActivePomodoroTaskType.LongBreak) {
+            label = t('tabTitle.longBreak');
+        } else {
+            label = "Pomodoro";
+        }
         document.title = `${timeStr} — ${label}`;
     } else {
         document.title = DEFAULT_TITLE;
