@@ -118,7 +118,7 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
     // Мобильная версия
     if (isMobile) {
         return `
-            <div id="${archiveTaskDivId}" class="${styles.archive_task_mobile}">
+            <div id="${archiveTaskDivId}" class="${styles.archive_task_mobile}" data-testid="archive-task-row">
                 <div class="${styles.archive_task__task}">
                     <div class="${styles.archive_task__category} ${styles.archive_task__category_mobile}">
                         ${escapedCategory}
@@ -138,7 +138,7 @@ export function ArchiveTask({ isMobile, archiveTask, index, actions }: ArchiveTa
 
     // Десктопная версия
     return `
-        <div id="${archiveTaskDivId}" class="${styles.archive_task}">
+        <div id="${archiveTaskDivId}" class="${styles.archive_task}" data-testid="archive-task-row">
             <div class="${styles.archive_task__category}">
                 ${escapedCategory}
             </div>

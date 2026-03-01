@@ -48,7 +48,7 @@ export function ArchiveTasksStatistics({ statistics }: ArchiveTasksStatisticsPro
         `;
 
     return `
-        <div class="${styles.archive_tasks__statistics}">
+        <div class="${styles.archive_tasks__statistics}" data-testid="archive-stats">
             <div class="${styles.archive_tasks__statistics_summary}">
                 <div class="${styles.archive_tasks__statistics_summary_row}">
                     <div class="${styles.archive_tasks__statistics_summary_label}">
