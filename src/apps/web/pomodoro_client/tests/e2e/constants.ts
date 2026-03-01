@@ -5,6 +5,7 @@ export const CATEGORY               = ru['plan.add.categoryPlaceholder'];
 export const DESCRIPTION            = ru['plan.add.descriptionPlaceholder'];
 export const ADD_TASK_BTN           = ru['plan.add.submitAriaLabel'];
 export const TASK_ACTIONS_BTN       = ru['plan.task.actionsAriaLabel'];
+export const EDIT_CATEGORY_LABEL    = ru['plan.task.editCategoryAriaLabel'];
 export const EDIT_DESCRIPTION_LABEL = ru['plan.task.editDescriptionAriaLabel'];
 export const COUNT_BADGE_LABEL      = ru['plan.task.editCountAriaLabel'];
 
@@ -23,15 +24,23 @@ export const BTN_SKIP               = ru['timer.button.skip'];
 
 // ─── Timer & plan messages ────────────────────────────────────────────────────
 export const TEXT_NO_PLAN           = ru['timer.empty.noPlanTitle'];
+export const TEXT_NO_ACTIVE         = ru['timer.empty.noActiveTitle'];
 export const TEXT_PLAN_EMPTY        = ru['plan.empty.title'];
+export const TEXT_PLAN_EMPTY_SUB    = ru['plan.empty.subtitle'];
 export const TEXT_SHORT_BREAK       = ru['break.short'];
 export const TEXT_LONG_BREAK        = ru['break.long'];
+export const TEXT_NEXT_LONG_BREAK   = ru['plan.stats.nextLongBreak'];
+export const TEXT_FINISH_TIME       = ru['plan.stats.finishTime'];
+export const TEXT_ANNOUNCE_STARTED  = 'Таймер запущен'; // partial prefix of timer.announce.started
+export const TEXT_ANNOUNCE_PAUSED   = ru['timer.announce.paused'];
+export const ANNOUNCER              = '#timer-announcer';
 
 // ─── Archive messages ─────────────────────────────────────────────────────────
 export const MENU_DELETE            = ru['archive.task.menuDelete'];
 export const REFRESH_BTN            = ru['archive.task.refreshAriaLabel'];
 export const TEXT_ARCHIVE_EMPTY     = ru['archive.empty.title'];
 export const TEXT_ARCHIVE_SUBTITLE  = ru['archive.empty.subtitle'];
+export const TEXT_ARCHIVE_STATS     = ru['archive.stats.completed'];
 
 // ─── Goal messages — partial matches against archive.target.* templates ───────
 export const TEXT_GOAL_REMAINING      = 'осталось 7 из 10'; // scenario: 3 of 10 archived
