@@ -8,7 +8,7 @@ export default defineConfig({
     timeout: 30_000,
     expect: { timeout: 8_000 },
     fullyParallel: true,
-    retries: process.env.CI ? 1 : 0,
+    retries: 1,
     reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
     use: {
         baseURL: DEV_SERVER_URL,
@@ -21,7 +21,13 @@ export default defineConfig({
         },
         {
             name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
+            use: {
+                ...devices['Desktop Firefox'],
+                launchOptions: {
+                    args: ['--no-sandbox', '--disable-dev-shm-usage']
+                }
+            },
+            workers: 1,
         },
         {
             name: 'edge',

@@ -1,24 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
-
-// ─── UI strings (Russian locale) ─────────────────────────────────────────────
-const CATEGORY          = "Категория";
-const DESCRIPTION       = "Описание";
-
-const BTN_START         = "СТАРТ";
-const BTN_PAUSE         = "ПАУЗА";
-const BTN_SKIP          = "ПРОПУСТИТЬ";
-
-const TIMER_TASK        = "25:00";
-const TIMER_SHORT_BREAK = "05:00";
-const TIMER_LONG_BREAK  = "15:00";
-
-const TEXT_SHORT_BREAK  = "Короткий перерыв";
-const TEXT_LONG_BREAK   = "Длинный перерыв";
-const TEXT_NO_PLAN      = "Нет задач в плане";
-
-const TIMER_DESCRIPTION = '[data-testid="timer-description"]';
-const ARCHIVE_ITEM      = 'li[role="listitem"]';
-const PLAN_ITEM         = "li[data-index]";
+import {
+    CATEGORY, DESCRIPTION,
+    BTN_START, BTN_PAUSE, BTN_SKIP,
+    TIMER_TASK, TIMER_SHORT_BREAK, TIMER_LONG_BREAK, TIMER_AFTER_1S, TIMER_LAST_SECOND,
+    TEXT_SHORT_BREAK, TEXT_LONG_BREAK, TEXT_NO_PLAN,
+    TIMER_DESCRIPTION, ARCHIVE_ITEM, PLAN_ITEM,
+} from './constants.ts';
 
 // ─── Timing constants (real durations — fake clock advances instantly) ────────
 const TASK_MS        = 25 * 60 * 1000;   // 1_500_000
@@ -75,7 +62,7 @@ test.describe('Timer countdown', () => {
         await page.clock.runFor(1000);
 
         await expect(page.getByRole('timer')).not.toHaveText(TIMER_TASK);
-        await expect(page.getByRole('timer')).toHaveText('24:59');
+        await expect(page.getByRole('timer')).toHaveText(TIMER_AFTER_1S);
     });
 
     test('timer shows "00:01" on the tick just before completing', async ({ page }) => {
@@ -83,7 +70,7 @@ test.describe('Timer countdown', () => {
         await page.getByRole('button', { name: BTN_START }).click();
         await page.clock.fastForward(TASK_MS - 1000);
 
-        await expect(page.getByRole('timer')).toHaveText('00:01');
+        await expect(page.getByRole('timer')).toHaveText(TIMER_LAST_SECOND);
     });
 });
 

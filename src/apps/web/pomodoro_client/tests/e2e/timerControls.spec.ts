@@ -1,25 +1,10 @@
 import { test, expect, type Page, type Locator } from '@playwright/test';
-
-// ─── UI strings (Russian locale) ─────────────────────────────────────────────
-const CATEGORY          = "Категория";
-const DESCRIPTION       = "Описание";
-
-const BTN_START         = "СТАРТ";
-const BTN_STOP          = "СТОП";
-const BTN_PAUSE         = "ПАУЗА";
-const BTN_RESUME        = "ПРОДОЛЖИТЬ";
-const BTN_DONE          = "СДЕЛАНО";
-const BTN_SKIP          = "ПРОПУСТИТЬ";
-
-const TIMER_NO_PLAN     = "Нет задач в плане";
-const TIMER_TASK        = "25:00";
-const TIMER_SHORT_BREAK = "05:00";
-
-const TIMER_CONTAINER   = "#timer-countdown";   // scopes queries to the timer block
-const PLAN_ITEM         = "li[data-index]";
-const ARCHIVE_ITEM      = 'li[role="listitem"]';
-const TASK_ACTIONS_BTN  = "Действия с задачей";
-const MENU_ARCHIVE      = "В архив";
+import {
+    CATEGORY, DESCRIPTION,
+    BTN_START, BTN_STOP, BTN_PAUSE, BTN_RESUME, BTN_DONE, BTN_SKIP,
+    TEXT_NO_PLAN, TIMER_TASK, TIMER_SHORT_BREAK,
+    TIMER_CONTAINER, PLAN_ITEM, ARCHIVE_ITEM, TASK_ACTIONS_BTN, MENU_ARCHIVE,
+} from './constants.ts';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -47,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Empty states', () => {
     test('shows "no plan tasks" empty state when plan is empty', async ({ page }) => {
-        await expect(page.getByText(TIMER_NO_PLAN)).toBeVisible();
+        await expect(page.getByText(TEXT_NO_PLAN)).toBeVisible();
     });
 
     test('shows "no plan tasks" empty state after all tasks are archived', async ({ page }) => {
@@ -57,7 +42,7 @@ test.describe('Empty states', () => {
         await openTaskDropdown(taskItem);
         await page.getByRole('menuitem', { name: MENU_ARCHIVE }).click();
 
-        await expect(page.getByText(TIMER_NO_PLAN)).toBeVisible();
+        await expect(page.getByText(TEXT_NO_PLAN)).toBeVisible();
     });
 });
 
@@ -141,8 +126,7 @@ test.describe('Paused state', () => {
         await addTask(page);
         await page.getByRole('button', { name: BTN_START }).click();
         await page.getByRole('button', { name: BTN_PAUSE }).click();
-
-        await page.clock.fastForward(2_000);
+        await expect(page.getByRole('button', { name: BTN_RESUME })).toBeVisible();
 
         await expect(page.getByRole('timer')).toHaveText(TIMER_TASK);
     });

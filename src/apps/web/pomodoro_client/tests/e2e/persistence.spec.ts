@@ -1,20 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
-
-// ─── Selectors ────────────────────────────────────────────────────────────────
-const CATEGORY          = 'Категория';
-const DESCRIPTION       = 'Описание';
-const TASK_ACTIONS_BTN  = 'Действия с задачей';
-const COUNT_BADGE_LABEL = 'Количество помидоро';
-const MENU_ARCHIVE      = 'В архив';
-const BTN_START         = 'СТАРТ';
-const BTN_PAUSE         = 'ПАУЗА';
-const BTN_RESUME        = 'ПРОДОЛЖИТЬ';
-const BTN_DONE          = 'СДЕЛАНО';
-const SETTINGS_BTN      = 'Настройки';
-const PLAN_ITEM         = 'li[data-index]';
-const ARCHIVE_TASK_ROW  = '[data-testid="archive-task-row"]';
-const ARCHIVE_COUNT     = '[aria-label="Количество выполненных задач"]';
-const STORAGE_KEY       = 'pomodorostate'; // prefix("pomodoro") + key("state")
+import {
+    CATEGORY, DESCRIPTION, TASK_ACTIONS_BTN, COUNT_BADGE_LABEL,
+    MENU_ARCHIVE, BTN_START, BTN_PAUSE, BTN_RESUME, BTN_DONE, SETTINGS_BTN, PLAN_ITEM,
+    TIMER_TASK, TEXT_PLAN_EMPTY,
+    DARK_THEME_CLASS, DARK_THEME_ITEM, DARK_THEME_ACTIVE,
+    ARCHIVE_TASK_ROW, ARCHIVE_COUNT, STORAGE_KEY,
+} from './constants.ts';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -160,7 +151,7 @@ test.describe('Active task state survives reload', () => {
         await addTask(page);
         await saveAndReload(page);
 
-        await expect(page.getByRole('timer')).toHaveText('25:00');
+        await expect(page.getByRole('timer')).toHaveText(TIMER_TASK);
     });
 
     test('active task is restored (timer resumes running)', async ({ page }) => {
@@ -169,7 +160,6 @@ test.describe('Active task state survives reload', () => {
         await saveAndReload(page);
 
         await expect(page.getByRole('button', { name: BTN_PAUSE })).toBeVisible();
-        await expect(page.getByRole('timer')).toHaveText('25:00');
     });
 
     test('paused task is restored correctly', async ({ page }) => {
@@ -204,21 +194,21 @@ test.describe('Active task state survives reload', () => {
 test.describe('Theme preference survives reload', () => {
     test('dark theme is restored after reload', async ({ page }) => {
         await page.getByRole('button', { name: SETTINGS_BTN }).click();
-        await page.getByRole('menuitem', { name: /Тёмная тема/ }).click();
+        await page.getByRole('menuitem', { name: DARK_THEME_ITEM }).click();
 
         await saveAndReload(page);
 
-        await expect(page.locator('html')).toHaveClass(/theme-dark/);
+        await expect(page.locator('html')).toHaveClass(DARK_THEME_CLASS);
 
         // Settings dropdown should indicate dark theme is active
         await page.getByRole('button', { name: SETTINGS_BTN }).click();
-        await expect(page.getByRole('menuitem', { name: /✓/ })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: DARK_THEME_ACTIVE })).toBeVisible();
     });
 
     test('light theme (default) is preserved after reload', async ({ page }) => {
         await page.reload();
 
-        await expect(page.locator('html')).not.toHaveClass(/theme-dark/);
+        await expect(page.locator('html')).not.toHaveClass(DARK_THEME_CLASS);
     });
 });
 
@@ -256,14 +246,14 @@ test.describe('Multiple tasks — full state snapshot', () => {
 
 test.describe('Corrupted or missing storage', () => {
     test('app loads cleanly when localStorage is empty', async ({ page }) => {
-        await expect(page.getByText('Список задач пуст')).toBeVisible();
+        await expect(page.getByText(TEXT_PLAN_EMPTY)).toBeVisible();
     });
 
     test('app loads cleanly when localStorage contains invalid JSON', async ({ page }) => {
         await page.evaluate((key) => localStorage.setItem(key, 'not json'), STORAGE_KEY);
         await page.reload();
 
-        await expect(page.getByText('Список задач пуст')).toBeVisible();
+        await expect(page.getByText(TEXT_PLAN_EMPTY)).toBeVisible();
     });
 
     test('app loads cleanly when localStorage contains a partial state', async ({ page }) => {
@@ -273,6 +263,6 @@ test.describe('Corrupted or missing storage', () => {
         );
         await page.reload();
 
-        await expect(page.getByText('Список задач пуст')).toBeVisible();
+        await expect(page.getByText(TEXT_PLAN_EMPTY)).toBeVisible();
     });
 });

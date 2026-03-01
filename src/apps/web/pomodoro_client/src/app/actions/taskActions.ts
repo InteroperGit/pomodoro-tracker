@@ -176,11 +176,17 @@ export function createTaskActions(
 
             const s = store.getState();
             const updatedPlanTasks = [{ task, count: 1 }, ...s.planTasks.tasks];
-            const updatedStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
+            const updatedPlanStatistics = getPlanTasksStatistics(updatedPlanTasks, planStatisticsConfig);
+            const updatedArchiveTasks = s.archiveTasks.tasks.filter(at => at.task.id !== task.id);
             taskController.activateNextTask(updatedPlanTasks, PREFER_TASK);
             store.setState({
                 ...s,
-                planTasks: { ...s.planTasks, tasks: updatedPlanTasks, statistics: updatedStatistics },
+                planTasks: { ...s.planTasks, tasks: updatedPlanTasks, statistics: updatedPlanStatistics },
+                archiveTasks: {
+                    ...s.archiveTasks,
+                    tasks: updatedArchiveTasks,
+                    statistics: getArchiveTasksStatistics(updatedArchiveTasks),
+                },
                 activeTask: taskController.activeTask,
             });
         },

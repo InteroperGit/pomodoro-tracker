@@ -1,17 +1,12 @@
 import { test, expect, type Page, type Locator } from '@playwright/test';
-
-// ─── Selectors ────────────────────────────────────────────────────────────────
-const CATEGORY         = 'Категория';
-const DESCRIPTION      = 'Описание';
-const TASK_ACTIONS_BTN = 'Действия с задачей';
-const MENU_ARCHIVE     = 'В архив';
-const MENU_DELETE      = 'Удалить';
-const REFRESH_BTN      = 'Обновить задачу';
-const PLAN_ITEM        = 'li[data-index]';
-const ARCHIVE_TASK_ROW = '[data-testid="archive-task-row"]';
-const ARCHIVE_COUNT    = '[aria-label="Количество выполненных задач"]';
-const ARCHIVE_STATS    = '[data-testid="archive-stats"]';
-const TIMER_CONTAINER  = '#timer-countdown';
+import {
+    CATEGORY, DESCRIPTION, TASK_ACTIONS_BTN,
+    MENU_ARCHIVE, MENU_DELETE, REFRESH_BTN,
+    PLAN_ITEM, ARCHIVE_TASK_ROW, ARCHIVE_COUNT, ARCHIVE_STATS, TIMER_CONTAINER,
+    TEXT_ARCHIVE_EMPTY, TEXT_ARCHIVE_SUBTITLE,
+    TEXT_GOAL_REMAINING, TEXT_GOAL_ACHIEVED, TEXT_GOAL_REMAINING_PART,
+    DURATION_PATTERN, TIMESTAMP_PATTERN,
+} from './constants.ts';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -50,8 +45,8 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Empty state', () => {
     test('archive shows empty state when no tasks have been completed', async ({ page }) => {
-        await expect(page.getByText('Архив пуст')).toBeVisible();
-        await expect(page.getByText('Выполненные задачи появятся здесь')).toBeVisible();
+        await expect(page.getByText(TEXT_ARCHIVE_EMPTY)).toBeVisible();
+        await expect(page.getByText(TEXT_ARCHIVE_SUBTITLE)).toBeVisible();
     });
 });
 
@@ -74,14 +69,14 @@ test.describe('Task appears in archive', () => {
         await addAndArchive(page, 'Work', 'Timed task');
 
         const archiveRow = page.locator(ARCHIVE_TASK_ROW).filter({ hasText: 'Timed task' });
-        await expect(archiveRow).toContainText(/\d+ мин/);
+        await expect(archiveRow).toContainText(DURATION_PATTERN);
     });
 
     test('archived task shows a completion timestamp', async ({ page }) => {
         await addAndArchive(page, 'Work', 'Timed task');
 
         const archiveRow = page.locator(ARCHIVE_TASK_ROW).filter({ hasText: 'Timed task' });
-        await expect(archiveRow).toContainText(/\d{2}:\d{2}/);
+        await expect(archiveRow).toContainText(TIMESTAMP_PATTERN);
     });
 });
 
@@ -99,7 +94,7 @@ test.describe('Statistics — archive section', () => {
     test('archive statistics total time increases after each archive', async ({ page }) => {
         await addAndArchive(page, 'Work', 'Test task');
 
-        await expect(page.locator(ARCHIVE_STATS)).toContainText(/\d+ мин/);
+        await expect(page.locator(ARCHIVE_STATS)).toContainText(DURATION_PATTERN);
     });
 
     test('archive statistics categories list appears', async ({ page }) => {
@@ -131,7 +126,7 @@ test.describe('Daily goal', () => {
             await addAndArchive(page, 'Work', `Goal Task ${i}`);
         }
 
-        await expect(page.getByText('осталось 7 из 10')).toBeVisible();
+        await expect(page.getByText(TEXT_GOAL_REMAINING)).toBeVisible();
     });
 
     test('goal shows achievement text when target is reached', async ({ page }) => {
@@ -139,7 +134,7 @@ test.describe('Daily goal', () => {
             await addAndArchive(page, 'Work', `Goal Task ${i}`);
         }
 
-        await expect(page.getByText('Цель достигнута')).toBeVisible();
+        await expect(page.getByText(TEXT_GOAL_ACHIEVED)).toBeVisible();
     });
 
     test('goal indicator changes visually on achievement', async ({ page }) => {
@@ -147,9 +142,9 @@ test.describe('Daily goal', () => {
             await addAndArchive(page, 'Work', `Goal Task ${i}`);
         }
 
-        const goalEl = page.getByRole('status').filter({ hasText: 'Цель достигнута' });
+        const goalEl = page.getByRole('status').filter({ hasText: TEXT_GOAL_ACHIEVED });
         await expect(goalEl).toBeVisible();
-        await expect(goalEl).not.toContainText('осталось');
+        await expect(goalEl).not.toContainText(TEXT_GOAL_REMAINING_PART);
     });
 });
 
@@ -234,6 +229,6 @@ test.describe('Delete from archive', () => {
         await openArchiveDropdown(archiveRow);
         await page.getByRole('menuitem', { name: MENU_DELETE }).click();
 
-        await expect(page.getByText('Архив пуст')).toBeVisible();
+        await expect(page.getByText(TEXT_ARCHIVE_EMPTY)).toBeVisible();
     });
 });

@@ -1,17 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
-
-const CATEGORY             = "Категория";
-const DESCRIPTION          = "Описание";
-const ADD_TASK_BTN         = "Добавить задачу";
-const PLAN_EMPTY_TEXT      = "Список задач пуст";
-const TASK_ACTIONS_BTN     = "Действия с задачей";
-const EDIT_DESCRIPTION_LABEL = "Описание задачи";
-const COUNT_BADGE_LABEL    = "Количество помидоро";
-const MENU_INC             = "+ помидор";
-const MENU_DEC             = "− помидор";
-const MENU_ARCHIVE         = "В архив";
-const PLAN_ITEM            = "li[data-index]";
-const ARCHIVE_ITEM         = 'li[role="listitem"]';
+import {
+    CATEGORY, DESCRIPTION, ADD_TASK_BTN, TEXT_PLAN_EMPTY,
+    TASK_ACTIONS_BTN, EDIT_DESCRIPTION_LABEL, COUNT_BADGE_LABEL,
+    MENU_INC, MENU_DEC, MENU_ARCHIVE, PLAN_ITEM, ARCHIVE_ITEM,
+} from './constants.ts';
 
 async function addTask(page: Page, category: string, description: string) {
     await page.getByPlaceholder(CATEGORY).fill(category);
@@ -73,7 +65,7 @@ test.describe('Adding tasks', () => {
     test('empty form does not add a task', async ({ page }) => {
         await page.getByRole('button', { name: ADD_TASK_BTN }).click();
 
-        await expect(page.getByText(PLAN_EMPTY_TEXT)).toBeVisible();
+        await expect(page.getByText(TEXT_PLAN_EMPTY)).toBeVisible();
     });
 
     test('form with only category adds the task', async ({ page }) => {
