@@ -9,8 +9,10 @@ import styles from "./Logo.module.scss";
  * Пример итоговой структуры (имена классов через CSS modules):
  * ```html
  * <div class="logo_xxx">
- *   <img class="logo_xxx__icon" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
- *   <span class="logo_xxx__label">Pomodoro Tracker</span>
+ *   <a href="/">
+ *     <img class="logo_xxx__icon" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
+ *     <span class="logo_xxx__label">Pomodoro Tracker</span>
+ *   </a>
  * </div>
  * ```
  *
@@ -25,8 +27,10 @@ import styles from "./Logo.module.scss";
 export function Logo() {
     return `
         <div class="${styles.logo}">
-            <img class="${styles.logo__icon}" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
-            <span class="${styles.logo__label}">Pomodoro Tracker</span>
+            <a href="/">
+                <img class="${styles.logo__icon}" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
+                <span class="${styles.logo__label}">Pomodoro Tracker</span>
+            </a>
         </div>
     `;
 }
