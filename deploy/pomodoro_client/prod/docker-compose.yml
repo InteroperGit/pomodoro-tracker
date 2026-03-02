@@ -1,0 +1,10 @@
+services:
+  pomodoro_client:
+    build:
+      context: ../../../src/apps/web/pomodoro_client
+      dockerfile: Dockerfile
+    image: pomodoro_client:prod
+    container_name: pomodoro_client_prod
+    ports:
+      - "80:80"
+    restart: unless-stopped
