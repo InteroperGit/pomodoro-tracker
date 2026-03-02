@@ -44,6 +44,11 @@ jobs:
       - name: Build
         working-directory: src/apps/web/pomodoro_client
         run: pnpm build:gh-pages
+        env:
+          VITE_TASK_TIME_MIN: ${{ vars.VITE_TASK_TIME_MIN }}
+          VITE_SHORT_BREAK_TIME_MIN: ${{ vars.VITE_SHORT_BREAK_TIME_MIN }}
+          VITE_LONG_BREAK_TIME_MIN: ${{ vars.VITE_LONG_BREAK_TIME_MIN }}
+          VITE_LONG_BREAK_AFTER: ${{ vars.VITE_LONG_BREAK_AFTER }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
