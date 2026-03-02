@@ -5,9 +5,8 @@ import { type AppState, type PomodoroEvent } from "../types/context.ts";
 import {createContext, registerContext} from "./appContext.ts";
 import {appConfig} from "./config.ts";
 import {applyTheme} from "../utils/theme.ts";
-import { setLocale } from '../i18n';
+import { setLocale, t } from '../i18n';
 import type { Locale } from '../i18n/types.ts';
-import { t } from '../i18n/index.ts';
 import {getPlanTasksStatistics} from "../utils/statistics.ts";
 import {render} from "../utils/render.ts";
 import {onLayoutChanged, useIsMobile} from "../utils/layout.ts";
@@ -66,7 +65,6 @@ const initApp = (root: HTMLElement) => {
         theme,
         locale,
         isMobile: useIsMobile(),
-        baseUrl: import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`,
     };
 
     const saveStateThrottle: (s: AppState) => void = throttle((s: AppState) => {

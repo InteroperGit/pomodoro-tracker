@@ -22,7 +22,6 @@ const TOOLBAR_LOCALE_TOGGLE_ID = "toolbar-locale-toggle";
 export type ToolbarProps = {
     isMobile: boolean;
     theme: "light" | "dark";
-    baseUrl: string;
 };
 
 /**
@@ -56,8 +55,8 @@ function toolbarMenuMarkup(theme: "light" | "dark") {
  * @param {ToolbarProps} props - свойства компонента
  * @returns {string} HTML-строка компонента
  */
-export function Toolbar({ isMobile, theme, baseUrl }: ToolbarProps) {
-    const logo = Logo({ baseUrl });
+export function Toolbar({ isMobile, theme }: ToolbarProps) {
+    const logo = Logo();
     const navigation = Navigation();
     const menu = toolbarMenuMarkup(theme);
 

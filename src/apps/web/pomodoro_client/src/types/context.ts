@@ -41,11 +41,13 @@ export type PomodoroEvent =
 /**
  * Полное состояние приложения
  * @typedef {Object} AppState
- * @property {number|null} [editingPlanTaskIndex] - индекс редактируемой задачи
- * @property {ActivePomodoroTask|null} [activeTask] - текущая активная задача
- * @property {PlanPomodoroTasksState} planTasks - плановые задачи
- * @property {ArchivePomodoroTasksState} archiveTasks - архив задач
- * @property {ThemeId} theme - текущая тема
+ * @property {number|null} [editingPlanTaskIndex] - индекс редактируемой задачи в плане
+ * @property {ActivePomodoroTask|null} [activeTask] - текущая активная задача или перерыв
+ * @property {PlanPomodoroTasksState} planTasks - плановые задачи со статистикой
+ * @property {ArchivePomodoroTasksState} archiveTasks - архив выполненных задач со статистикой
+ * @property {ThemeId} theme - текущая тема оформления
+ * @property {Locale} locale - текущий язык интерфейса
+ * @property {boolean} isMobile - признак мобильного представления (ширина ≤ 768px)
  */
 export type AppState = {
     editingPlanTaskIndex?: number | null;
@@ -55,7 +57,6 @@ export type AppState = {
     theme: ThemeId;
     locale: Locale;
     isMobile: boolean;
-    baseUrl: string;
 }
 
 /**
