@@ -1,7 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
-import { DEV_SERVER_HOST, DEV_SERVER_PORT } from './dev-server.config.ts'
+import { DEV_SERVER_HOST, DEV_SERVER_PORT } from './dev-server.config'
 
 export default defineConfig({
     server: {

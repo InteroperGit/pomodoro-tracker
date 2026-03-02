@@ -34,9 +34,9 @@ const APP_CONTAINER_ID = "pomodoro-app";
  */
 export function App(ctx: AppContext) {
     const state = ctx.store.getState();
-    const { isMobile } = state;
+    const { isMobile, baseUrl } = state;
 
-    const toolbar = Toolbar({ isMobile, theme: state.theme });
+    const toolbar = Toolbar({ isMobile, theme: state.theme, baseUrl });
     const timer = Timer({
         isMobile,
         activeTask: state.activeTask,

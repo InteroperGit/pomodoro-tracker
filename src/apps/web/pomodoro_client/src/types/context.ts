@@ -55,6 +55,7 @@ export type AppState = {
     theme: ThemeId;
     locale: Locale;
     isMobile: boolean;
+    baseUrl: string;
 }
 
 /**

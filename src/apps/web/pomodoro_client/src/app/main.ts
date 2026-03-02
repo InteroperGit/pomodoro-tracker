@@ -66,6 +66,7 @@ const initApp = (root: HTMLElement) => {
         theme,
         locale,
         isMobile: useIsMobile(),
+        baseUrl: import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`,
     };
 
     const saveStateThrottle: (s: AppState) => void = throttle((s: AppState) => {

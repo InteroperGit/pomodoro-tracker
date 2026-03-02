@@ -12,6 +12,7 @@ export function makeState(overrides: Partial<AppState> = {}): AppState {
         isMobile: false,
         theme: 'light',
         locale: 'ru',
+        baseUrl: '/',
         activeTask: null,
         editingPlanTaskIndex: null,
         planTasks: getInitPlanTasks(),

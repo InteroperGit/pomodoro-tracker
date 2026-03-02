@@ -34,10 +34,14 @@ import styles from "./Logo.module.scss";
  * const logoHTML = Logo();
  * document.querySelector('.toolbar').insertAdjacentHTML('afterbegin', logoHTML);
  */
-export function Logo() {
+export type LogoProps = {
+    baseUrl: string;
+};
+
+export function Logo({ baseUrl }: LogoProps) {
     return `
         <div class="${styles.logo}">
-            <img class="${styles.logo__icon}" src="assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
+            <img class="${styles.logo__icon}" src="${baseUrl}assets/icons/pomodoro.svg" alt="Pomodoro tracker" />
             <span class="${styles.logo__label}">Pomodoro Tracker</span>
         </div>
     `;
