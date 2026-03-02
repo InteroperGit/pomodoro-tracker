@@ -47,19 +47,16 @@ jobs:
         working-directory: src/apps/web/pomodoro_client
         run: pnpm build:gh-pages
         env:
-          VITE_TASK_TIME_MIN: ${{ vars.VITE_TASK_TIME_MIN || '25' }}  # Fallback для теста
+          VITE_TASK_TIME_MIN: ${{ vars.VITE_TASK_TIME_MIN || '25' }}
           VITE_SHORT_BREAK_TIME_MIN: ${{ vars.VITE_SHORT_BREAK_TIME_MIN || '5' }}
           VITE_LONG_BREAK_TIME_MIN: ${{ vars.VITE_LONG_BREAK_TIME_MIN || '15' }}
           VITE_LONG_BREAK_AFTER: ${{ vars.VITE_LONG_BREAK_AFTER || '4' }}
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4  # v4 обязательно
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: pomodoro-gh-pages  # Уникальное имя!
           path: src/apps/web/pomodoro_client/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact: pomodoro-gh-pages  # Укажите имя
