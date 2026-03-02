@@ -5,6 +5,7 @@ const DEV_SERVER_URL = `http://${DEV_SERVER_HOST}:${DEV_SERVER_PORT}`;
 
 export default defineConfig({
     testDir: './tests/e2e',
+    tsconfig: './tsconfig.e2e.json',
     timeout: 30_000,
     expect: { timeout: 8_000 },
     fullyParallel: true,

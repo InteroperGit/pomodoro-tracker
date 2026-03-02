@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "@playwright/test"],  // Node + Playwright
+    "lib": ["ES2022", "DOM"],  // Браузер + современный JS
+    "moduleResolution": "bundler",  // Совместимо с Vite
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false  // Для Playwright
+  },
+  "include": [
+    "tests/e2e/**/*.ts",
+    "playwright.config.ts",
+    "dev-server.config.ts"  // Ваши config'и
+  ]
+}
