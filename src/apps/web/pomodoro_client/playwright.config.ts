@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { DEV_SERVER_HOST, DEV_SERVER_PORT } from './dev-server.config.ts';
+import { DEV_SERVER_HOST, DEV_SERVER_PORT } from './dev-server.config';
 
 const DEV_SERVER_URL = `http://${DEV_SERVER_HOST}:${DEV_SERVER_PORT}`;
 
